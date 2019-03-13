@@ -1,5 +1,11 @@
-11/3 Monday
+README:
 
+To run the trainer, simply type:
+
+python bot_trainer.py
+
+
+11/3 Monday
 I started with basic weights of fold_threshold, raise_threshold and card_bias.
 
 Using trial-and-error, I arrived at 0.5, 0.2 and 0.0 for the values of the 3 weights that would beat the RaisePlayer and RandomPlayer consistently.
@@ -12,4 +18,6 @@ This spawned a large number of children that seemed to perform better and better
 
 Then I added the weights for pot_value, pot_bias and combined_bias. The previously elite agents were doing poorly, but some of them began to shine.
 
-I let the round robin training run for the night.
+I let the round robin training run for the night and 28 agents became 81.
+
+Children of 2?
