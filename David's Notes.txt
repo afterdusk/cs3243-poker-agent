@@ -1,0 +1,15 @@
+11/3 Monday
+
+I started with basic weights of fold_threshold, raise_threshold and card_bias.
+
+Using trial-and-error, I arrived at 0.5, 0.2 and 0.0 for the values of the 3 weights that would beat the RaisePlayer and RandomPlayer consistently.
+
+I created a function that would throw 2 bots against each other for a large number of rounds and evaluate the winner based on accumulated money at the end. The victor would reproduce and its offspring would have slightly mutated weights. Losers didn't get to have children.
+
+The values were stored in csv files. During each bot match, the values would be loaded from the file and used to construct a player.
+
+This spawned a large number of children that seemed to perform better and better over time. 
+
+Then I added the weights for pot_value, pot_bias and combined_bias. The previously elite agents were doing poorly, but some of them began to shine.
+
+I let the round robin training run for the night.
