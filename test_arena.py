@@ -6,7 +6,7 @@ from weighted_player import WeightedPlayer
 
 def play_game(agentOne, agentTwo, rounds):
     # Game Settings
-    config = setup_config(max_round=rounds, initial_stack=3000, small_blind_amount=10)
+    config = setup_config(max_round=rounds, initial_stack=10000, small_blind_amount=20)
     config.register_player(name="Player 1 ", algorithm=agentOne)
     config.register_player(name="Player 2 ", algorithm=agentTwo)
     game_result = start_poker(config, verbose=0)

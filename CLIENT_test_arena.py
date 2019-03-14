@@ -1,5 +1,5 @@
 from pypokerengine.api.game import setup_config, start_poker
-from synch_trainable_player import MySyncablePlayer
+from sync_trainable_player import MySyncablePlayer
 from weighted_player import WeightedPlayer
 
 # CLIENT SIDE
@@ -14,11 +14,11 @@ def add_matchup(new_matchup):
 def play_game(agent_one, agent_two, rounds):
     # Game Settings
     agent_one_name = agent_one[0]
-    agent_one_player = agent_one[1]
+    agent_one_player = agent_one[1].getPlayer()
     agent_two_name = agent_one[0]
-    agent_two_player = agent_two[1]
+    agent_two_player = agent_two[1].getPlayer()
 
-    config = setup_config(max_round=rounds, initial_stack=3000, small_blind_amount=10)
+    config = setup_config(max_round=rounds, initial_stack=10000, small_blind_amount=20)
     config.register_player(name=agent_one_name, algorithm=agent_one_player)
     config.register_player(name=agent_two_name, algorithm=agent_two_player)
     game_result = start_poker(config, verbose=0)
@@ -31,7 +31,7 @@ def play_bots(agent_one, agent_two, n, rounds):
     stack_one = 0
     stack_two = 0
     while i < n:
-        result = play_game(agent_one[1].getPlayer(),agent_two[1].getPlayer(), rounds)
+        result = play_game(agent_one,agent_two, rounds)
         # Counts winrate from agent_one perspective
         if result['players'][0]['stack']>result['players'][1]['stack'] :
             wincount += 1
@@ -55,10 +55,13 @@ def play_bots(agent_one, agent_two, n, rounds):
     return (winner[0],loser[0])
 
 
-# Each bot is in a tuple of {type, name, weights, stats}
+# Each bot is in a tuple of {bot_type, name, weights, stats}
 # training_regime is a tuple of {num_games, num_rounds per game}
-def train_bots(matchup, training_regime):
-    first_bot,second_bot = matchup
+def train_bots(matchup_job):
+    #print(matchup_job)
+    first_bot, second_bot = matchup_job[0]
+    training_regime = matchup_job[1]
+
     print("Currently Training: <" + first_bot[1] + "> vs <" + second_bot[1] + ">")
 
     # Initialization of players happens here
@@ -71,12 +74,15 @@ def train_bots(matchup, training_regime):
     rounds = training_regime[1]
     return play_bots(agent_one, agent_two, games, rounds)
 
+def recieve_matchup():
+    # E-Liang pls
+    pass
+    # get matchup from internet?
 
 # ============================ MAIN FUNCTION ============================
 def main():
     #while True:
-    if len(match_queue) > 0:
-        current_match = match_queue.pop()
-        train_bots(current_match)
-
-    # Accept jobs here
+    current_match = recieve_matchup()
+    outcome = train_bots(current_match)
+    # E-Liang help here
+    # return outcome somehow
