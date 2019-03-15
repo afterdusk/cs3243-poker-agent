@@ -91,14 +91,12 @@ def getRandomBotsFromBoard():
         second = random.randint(1,numberOfBots)
     return (leaderboard[first][0],leaderboard[second][0])
 
-def beginTrainingAllBots(cycles, incubateFrequency):
+def beginTrainingAllBots(cycles):
     iterations = 0
     while iterations < cycles:
         bots = getRandomBotsFromBoard()
         arrangeMatch(bots[0], bots[1], iterations)
         iterations += 1
-        if iterations % incubateFrequency == 0:
-            incubate(getBoard())
 
 def trainNamedBot(botName):
     board = getBoard()
@@ -134,7 +132,6 @@ def roundRobinTraining():
             line += 1
             continue
         trainNamedBot(bot)
-        incubate(getBoard())
 
         # TODO need to check if the bot being trained is still alive
         alive = 1
@@ -192,11 +189,18 @@ def sendMatchup(matchup_job):
     #  settleMatchOutcome(result)
     #  pass
 
+INCUBATEFREQUENCY = 100
+matchCount = 1
+
 # Processes outcomes received from remote clients
 # Message contains a tuple of (winner_name,loser_name)
 def handleOutcome(outcome):
+    global matchCount
     # E-Liang help pls
     settleMatchOutcome(outcome)
+    matchCount += 1
+    if matchCount % INCUBATEFREQUENCY == 0
+        incubate(getBoard())
 
 def arrangeMatch(agentOneName, agentTwoName, iterations):
     botOne = composeBot(agentOneName)
@@ -215,14 +219,15 @@ def getNextMatch():
         print("Got error getting next job", e)
         return None
 
-def init():
-    clearAllHistories()
-    beginTrainingAllBots(200,10)
+
+# def init():
+#     clearAllHistories()
+#     beginTrainingAllBots(200,10)
 
 # MAIN
 if __name__ == "__main__":
     clearAllHistories()
-    beginTrainingAllBots(200,10)
+    beginTrainingAllBots(200)
     # i = 0
     # while i < 50:
     #     roundRobinTraining()
