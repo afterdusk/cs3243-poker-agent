@@ -48,7 +48,9 @@ class Client:
                 topic += idToAppend
             else:
                 topic += self.id
-        self.mqttc.publish(topic, pickle.dumps(content))
+        payload = pickle.dumps(content)
+        #  print("PUBLISHING", topic, payload)
+        self.mqttc.publish(topic, payload)
 
     def register_callback(self, topicPrefix, callback):
         self.callbacks[topicPrefix] = callback

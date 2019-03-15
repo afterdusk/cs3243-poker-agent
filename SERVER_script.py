@@ -14,6 +14,7 @@ class TrainerServer:
 
     def on_connect(self, client):
         client.subscribe(config.mqttTopicJobReq)
+        client.subscribe(config.mqttTopicJobOutcome)
 
     def on_request(self, client, topic, content):
         print("GOT GAME REQUEST", topic, content)
@@ -22,7 +23,6 @@ class TrainerServer:
             client.send_message(nextMatch, config.mqttTopicJobRes, True, client.guess_interlocutor_id(topic))
 
     def on_outcome(self, client, topic, content):
-        # TODO: THIS ISN'T CALLED FOR OSME REASON
         print("GOT OUTCOME", topic, content)
         bot_trainer.receiveOutcome(outcome)
 
