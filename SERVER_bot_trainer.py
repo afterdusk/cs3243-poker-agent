@@ -220,9 +220,9 @@ def getNextMatch():
         return None
 
 
-# def init():
-#     clearAllHistories()
-#     beginTrainingAllBots(200,10)
+def init():
+    clearAllHistories()
+    beginTrainingAllBots(1000)
 
 # MAIN
 if __name__ == "__main__":
