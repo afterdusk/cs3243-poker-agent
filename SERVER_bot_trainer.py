@@ -199,7 +199,7 @@ def handleOutcome(outcome):
     # E-Liang help pls
     settleMatchOutcome(outcome)
     matchCount += 1
-    if matchCount % INCUBATEFREQUENCY == 0
+    if matchCount % INCUBATEFREQUENCY == 0:
         incubate(getBoard())
 
 def arrangeMatch(agentOneName, agentTwoName, iterations):
