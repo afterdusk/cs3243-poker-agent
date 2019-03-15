@@ -22,12 +22,17 @@ cma_instances = [
         cma.CMAEvolutionStrategy(mean, INITIAL_SD, CMA_OPTIONS)
         for mean in list(itertools.product(*([INITIAL_INTERVALS] * DIMENSIONS)))]
 
+# Get copy of mean of each instance.
 cma_means = [instance.result[5] for instance in cma_instances]
 
+# Update each instance against means of other instances.
 for (i, instance) in enumerate(cma_instances):
+
+    # Generate distribution samples.
     particles = instance.ask()
     particle_win_rates = [0] * len(particles)
 
+    # Calculate win rate for each sample.
     for (j, particle) in enumerate(particles):
         particle_win_count = 0
 
