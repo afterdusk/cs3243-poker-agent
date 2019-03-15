@@ -3,27 +3,27 @@
 import cma
 import itertools
 import math
+import random
 import multiprocessing
 from weighted_player import WeightedPlayer
 from test_arena import play_game
 
 DIMENSIONS = 7
-RANGE =[-1.0, 1.0]
-INITIAL_INTERVAL_COUNT = 2 # >= 2
-INITIAL_INTERVALS = [RANGE[0] + i * (RANGE[1] - RANGE[0]) / (INITIAL_INTERVAL_COUNT - 1) for i in xrange(0, INITIAL_INTERVAL_COUNT)]
-INITIAL_SD = math.sqrt(2) * (RANGE[1] - RANGE[0]) / (INITIAL_INTERVAL_COUNT - 1) / 2 / 3 # 3SD = 99.7%
+RANGE = [0.0, 1.0]
+INITIAL_SD = 0.3 / 3 # 3SD = 99.7%
 CMA_OPTIONS = cma.CMAOptions()
 CMA_OPTIONS.set('verbose', -9)
 CMA_OPTIONS.set('verb_disp', -1)
 CMA_OPTIONS.set('verb_log', 0)
+NUM_INSTANCES = 20
 NUM_GAMES = 4
 NUM_ROUNDS = 101
 NUM_THREADS = 3
 
 cma_instances = []
 
-for (i, mean) in enumerate(itertools.product(*([INITIAL_INTERVALS] * DIMENSIONS))):
-    print('Preparing CMA instance ' + str(i) + " / " + str(INITIAL_INTERVAL_COUNT ** DIMENSIONS - 1)) 
+for (i, mean) in enumerate([random.uniform(0, 1) for _ in xrange(DIMENSIONS)] for _ in xrange(NUM_INSTANCES)):
+    print('Preparing CMA instance ' + str(i + 1) + " / " + str(NUM_INSTANCES)) 
     cma_instances += [cma.CMAEvolutionStrategy(mean, INITIAL_SD, CMA_OPTIONS)]
 
 # Get copy of mean of each instance.
