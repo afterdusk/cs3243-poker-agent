@@ -1,6 +1,7 @@
 import csv
 import os
 import random
+from collections import deque
 from CLIENT_test_arena import train_bots
 from SERVER_incubator import incubate
 from file_utils import folderize, readFileAndGetData, writeToFile, getLeaderboard
@@ -141,29 +142,29 @@ def roundRobinTraining():
             break
         line += 1
 
-def reward(winnerName):
+def addWin(winnerName):
     # Open winnerName file
     data = readFileAndGetData(winnerName)
     newStats = data[1]
     newStats[0] = int(newStats[0]) + 1 #Increment wins
-    newStats[2] = int(newStats[2]) + 1 #Increment performance
+    # newStats[2] = int(newStats[2]) + 1 #Increment performance
+
     # Update the csv
     writeToFile(winnerName,[data[0],newStats])
 
-def penalize(loserName):
+def addLoss(loserName):
     # Open loserName file
     data = readFileAndGetData(loserName)
     newStats = data[1]
     newStats[1] = int(newStats[1]) + 1 #Increment losses
-    newStats[2] = int(newStats[2]) - 1 #Decrease performance
-    # Update the csv
-    writeToFile(loserName,[data[0],newStats])
+
+    #newStats[2] = int(newStats[2]) - 1 #Decrease performance
 
 def settleMatchOutcome(outcome):
     winnerName = outcome[0]
     loserName = outcome[1]
-    reward(winnerName)
-    penalize(loserName)
+    addWin(winnerName)
+    addLoss(loserName)
     updateAgentsLeaderboardStats(winnerName,loserName)
 
 #************================================************
@@ -177,19 +178,23 @@ def composeBot(agentName):
     agentClassName = "MySyncablePlayer"
     return (agentClassName, agentName, agentWeights,agentStats)
 
+# TODO: Move this to somewhere less awkward
+matchup_queue = deque()
+
 # Sends a message to the clients in the form of a tuple
 # matchup_job = ((bot_1, bot_2), training_configuration)
 def sendMatchup(matchup_job):
     # E-Liang help pls
+    matchup_queue.append(matchup_job)
 
     # Testing
-    result = train_bots(matchup_job)
-    settleMatchOutcome(result)
-    pass
+    #  result = train_bots(matchup_job)
+    #  settleMatchOutcome(result)
+    #  pass
 
-# Recieves from Clients
+# Processes outcomes received from remote clients
 # Message contains a tuple of (winner_name,loser_name)
-def recieveOutcome(port_or_something):
+def handleOutcome(outcome):
     # E-Liang help pls
     settleMatchOutcome(outcome)
 
@@ -203,13 +208,23 @@ def arrangeMatch(agentOneName, agentTwoName, iterations):
     matchup_job = ((botOne, botTwo),training_regime)
     sendMatchup(matchup_job)
 
+def getNextMatch():
+    try:
+        return matchup_queue.popleft()
+    except Exception as e:
+        print("Got error getting next job", e)
+        return None
 
+def init():
+    clearAllHistories()
+    beginTrainingAllBots(200,10)
 
 # MAIN
-clearAllHistories()
-beginTrainingAllBots(200,10)
-# i = 0
-# while i < 50:
-#     roundRobinTraining()
-#     print("/n/n%%%%%%%%%%%%%%%%%%%%%% Finished Round Robin round " + str(i+1) +"%%%%%%%%%%%%%%%%%%%%%%/n/n")
-#     i += 1
+if __name__ == "__main__":
+    clearAllHistories()
+    beginTrainingAllBots(200,10)
+    # i = 0
+    # while i < 50:
+    #     roundRobinTraining()
+    #     print("/n/n%%%%%%%%%%%%%%%%%%%%%% Finished Round Robin round " + str(i+1) +"%%%%%%%%%%%%%%%%%%%%%%/n/n")
+    #     i += 1
