@@ -17,9 +17,9 @@ CMA_OPTIONS = cma.CMAOptions()
 CMA_OPTIONS.set('verbose', -9)
 CMA_OPTIONS.set('verb_disp', -1)
 CMA_OPTIONS.set('verb_log', 0)
-NUM_INSTANCES = 10
-NUM_GAMES = 4
-NUM_ROUNDS = 101
+NUM_INSTANCES = 20
+NUM_GAMES = 2
+NUM_ROUNDS = 51
 NUM_THREADS = 23
 
 cma_instances = []
@@ -32,7 +32,7 @@ manager = multiprocessing.Manager()
 
 while True:
     for instance in cma_instances:
-        print(str(instance.result[0]) + " -> " + str(instance.result[1]))
+        print(str(instance.result[5]))
     particles = [instance.ask() for instance in cma_instances]
 
     jobs = manager.list()
@@ -74,12 +74,12 @@ while True:
             result = 1 if current_stack >= other_stack else 0
             results[job_index] += result
 
-            print("Instance = " + str(job[0]))
-            print("Particle = " + str(job[1]))
-            print("Other Instance = " + str(job[2]))
-            print("Result = " + str(result))
+            #print("Instance = " + str(job[0]))
+            #print("Particle = " + str(job[1]))
+            #print("Other Instance = " + str(job[2]))
+            #print("Result = " + str(result))
             print("Remaining = " + str(job_index_queue.qsize()) + " / " + str(len(jobs)))
-            print('')
+            #print('')
 
     processes = []
     for i in range(NUM_THREADS):
