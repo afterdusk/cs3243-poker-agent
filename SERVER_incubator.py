@@ -47,6 +47,7 @@ def mutateWeights(data, maxMutation):
     #print(data,newData)
     return newData
 
+
 def makeChildFromParents(parentA, parentB):
     parentAPartName = parentA[1][:8]
     parentBPartName = parentB[1][:8]
@@ -61,6 +62,8 @@ def makeChildFromParents(parentA, parentB):
     writeToFile(child, childData)
     print("Created child " + child)
 
+# Makes a child weight that takes the average of two parents and applies [+/-0.1] mutation
+
 def makeChildWeightsFromParents(pAWeights, pBWeights):
     childWeights = []
     i = 0
@@ -71,6 +74,7 @@ def makeChildWeightsFromParents(pAWeights, pBWeights):
     mutateWeights(childWeights,0.1)
     return childWeights
 
+# Evaluation function based on wins/loss ratio and multiplied by number of games played
 def evaluatePlayer(row):
     wins = int(row[1]) + 1
     losses = int(row[2]) + 1
@@ -78,9 +82,20 @@ def evaluatePlayer(row):
     final = ratio * (wins+losses) + (wins-losses)
     return final
 
+# Increase performance
+def reward():
+
+# Decrease performance
+def penalize():
+
+
 def incubate(leaderboard):
     print("..........INCUBATING..........")
-    topFive = [(0,"NULL"),]
+    gpThreshold = 5
+    goodPerformers = [(0,"NULL"),]
+    bpThreshold = 7
+    badPerformers = []
+
     valueBoard = []
     for row in leaderboard[1:]:
         currName = row[0]
@@ -88,5 +103,17 @@ def incubate(leaderboard):
         valueBoard.append((currValue,currName))
 
     valueBoard.sort(key=lambda tup: tup[0], reverse=True)
-    topFive = valueBoard[:5]
+    goodPerformers = valueBoard[:gpThreshold]
+    reward(goodPerformers)
+
+    valueBoard.sort(key=lambda tup: tup[0])
+    badPerformers = valueBoard[:bpThreshold]
+
+
+
+
     print(topFive)
+
+
+    # Update the csv
+    writeToFile(loserName,[data[0],newStats])

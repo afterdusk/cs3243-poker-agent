@@ -142,29 +142,29 @@ def roundRobinTraining():
             break
         line += 1
 
-def reward(winnerName):
+def addWin(winnerName):
     # Open winnerName file
     data = readFileAndGetData(winnerName)
     newStats = data[1]
     newStats[0] = int(newStats[0]) + 1 #Increment wins
-    newStats[2] = int(newStats[2]) + 1 #Increment performance
+    # newStats[2] = int(newStats[2]) + 1 #Increment performance
+
     # Update the csv
     writeToFile(winnerName,[data[0],newStats])
 
-def penalize(loserName):
+def addLoss(loserName):
     # Open loserName file
     data = readFileAndGetData(loserName)
     newStats = data[1]
     newStats[1] = int(newStats[1]) + 1 #Increment losses
-    newStats[2] = int(newStats[2]) - 1 #Decrease performance
-    # Update the csv
-    writeToFile(loserName,[data[0],newStats])
+
+    #newStats[2] = int(newStats[2]) - 1 #Decrease performance
 
 def settleMatchOutcome(outcome):
     winnerName = outcome[0]
     loserName = outcome[1]
-    reward(winnerName)
-    penalize(loserName)
+    addWin(winnerName)
+    addLoss(loserName)
     updateAgentsLeaderboardStats(winnerName,loserName)
 
 #************================================************
