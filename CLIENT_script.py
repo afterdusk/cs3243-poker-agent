@@ -1,4 +1,5 @@
 from syncengine.client import Client
+import CLIENT_test_arena as bot_arena
 import config
 
 class TrainerClient:
@@ -11,10 +12,15 @@ class TrainerClient:
     def on_connect(self, client):
         client.subscribe(config.mqttTopicJobRes, True)
         # Request for job
-        client.send_message([(23, 234, ("on", "ont")), (23, 234, ("on", "ont"))], config.mqttTopicJobReq, True)
+        client.send_message(None, config.mqttTopicJobReq, True)
 
     def on_job(self, client, topic, content):
-        print("GOT JOB", client, topic, content)
+        print("GOT JOB", topic, content)
+        # Play game
+        outcome = bot_arena.train_bots(content)
+        print("OSNTO")
+        print("oircoec", outcome, config.mqttTopicJobOutcome)
+        client.send_message(outcome, config.mqttTopicJobOutcome, True)
 
 if __name__ == "__main__":
     trainer = TrainerClient()

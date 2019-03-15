@@ -1,6 +1,7 @@
 import csv
 import os
 import random
+from collections import deque
 from CLIENT_test_arena import train_bots
 from SERVER_incubator import incubate
 from file_utils import folderize, readFileAndGetData, writeToFile, getLeaderboard
@@ -177,19 +178,23 @@ def composeBot(agentName):
     agentClassName = "MySyncablePlayer"
     return (agentClassName, agentName, agentWeights,agentStats)
 
+# TODO: Move this to somewhere less awkward
+matchup_queue = deque()
+
 # Sends a message to the clients in the form of a tuple
 # matchup_job = ((bot_1, bot_2), training_configuration)
 def sendMatchup(matchup_job):
     # E-Liang help pls
+    matchup_queue.append(matchup_job)
 
     # Testing
-    result = train_bots(matchup_job)
-    settleMatchOutcome(result)
-    pass
+    #  result = train_bots(matchup_job)
+    #  settleMatchOutcome(result)
+    #  pass
 
 # Recieves from Clients
 # Message contains a tuple of (winner_name,loser_name)
-def recieveOutcome(port_or_something):
+def recieveOutcome(outcome):
     # E-Liang help pls
     settleMatchOutcome(outcome)
 
@@ -203,13 +208,23 @@ def arrangeMatch(agentOneName, agentTwoName, iterations):
     matchup_job = ((botOne, botTwo),training_regime)
     sendMatchup(matchup_job)
 
+def getNextMatch():
+    try:
+        return matchup_queue.popleft()
+    except Exception as e:
+        print("Got error getting next job", e)
+        return None
 
+def init():
+    clearAllHistories()
+    beginTrainingAllBots(200,10)
 
 # MAIN
-clearAllHistories()
-beginTrainingAllBots(200,10)
-# i = 0
-# while i < 50:
-#     roundRobinTraining()
-#     print("/n/n%%%%%%%%%%%%%%%%%%%%%% Finished Round Robin round " + str(i+1) +"%%%%%%%%%%%%%%%%%%%%%%/n/n")
-#     i += 1
+if __name__ == "__main__":
+    clearAllHistories()
+    beginTrainingAllBots(200,10)
+    # i = 0
+    # while i < 50:
+    #     roundRobinTraining()
+    #     print("/n/n%%%%%%%%%%%%%%%%%%%%%% Finished Round Robin round " + str(i+1) +"%%%%%%%%%%%%%%%%%%%%%%/n/n")
+    #     i += 1
