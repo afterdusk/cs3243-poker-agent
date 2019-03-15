@@ -37,25 +37,26 @@ while True:
 
     jobs = manager.list()
     job_index_queue = manager.Queue()
+    results = manager.list()
     for i in xrange(NUM_INSTANCES):
         for j in xrange(len(particles[i])):
             for k in xrange(NUM_INSTANCES):
                 if k == i:
                     continue
                 job_index_queue.put_nowait(len(jobs))
-                job = [i, j, k, particles[i][j], cma_instances[k].result[5], 0]
+                job = [i, j, k, particles[i][j], cma_instances[k].result[5]]
                 jobs += [job]
+                results += [0]
 
-    def worker(jobs, job_index_queue):
+    def worker(jobs, job_index_queue, results):
         while True:
             try:
                 job_index = job_index_queue.get_nowait()
             except Queue.Empty:
-                print("END")
                 break
             job = jobs[job_index]
             remaining = job_index_queue.qsize()
-            
+
             win_count = 0
             current_stack = 0
             other_stack = 0
@@ -70,18 +71,19 @@ while True:
                     win_count += 1
                 current_stack = result['players'][0]['stack']
                 other_stack = result['players'][1]['stack']
-            job[5] += 1 if current_stack >= other_stack else 0
+            result = 1 if current_stack >= other_stack else 0
+            results[job_index] += result
 
             print("Instance = " + str(job[0]))
             print("Particle = " + str(job[1]))
             print("Other Instance = " + str(job[2]))
-            print("Result = " + str(job[5]))
+            print("Result = " + str(result))
             print("Remaining = " + str(job_index_queue.qsize()) + " / " + str(len(jobs)))
             print('')
 
     processes = []
     for i in range(NUM_THREADS):
-        process = multiprocessing.Process(target=worker, args=(jobs, job_index_queue))
+        process = multiprocessing.Process(target=worker, args=(jobs, job_index_queue, results))
         process.start()
         processes += [process]
 
@@ -89,8 +91,8 @@ while True:
         process.join()
 
     particle_values = [[0] * len(p) for p in particles]
-    for job in jobs:
-        particle_values[job[0]][job[1]] += job[5]
+    for (i, job) in enumerate(jobs):
+        particle_values[job[0]][job[1]] += results[i]
 
     for (i, p) in enumerate(particle_values):
         cma_instances[i].tell(particles[i], [-float(v) / (NUM_INSTANCES - 1) for v in p])
