@@ -83,10 +83,22 @@ def evaluatePlayer(row):
     return final
 
 # Increase performance
-def reward():
+def reward(bot):
+    stats = readFileAndGetData(bot)
+    stats[1][2] = stats[1][2] + 1
+    writeToFile(stats)
 
 # Decrease performance
 def penalize():
+    stats = readFileAndGetData(bot)
+    stats[1][2] = stats[1][2] - 1
+    writeToFile(stats)
+
+
+def applyToAll(bots, fun):
+    for bot in bots:
+        fun(bot)
+
 
 
 def incubate(leaderboard):
@@ -104,10 +116,11 @@ def incubate(leaderboard):
 
     valueBoard.sort(key=lambda tup: tup[0], reverse=True)
     goodPerformers = valueBoard[:gpThreshold]
-    reward(goodPerformers)
+    applyToAll(goodPerformers, reward)
 
     valueBoard.sort(key=lambda tup: tup[0])
     badPerformers = valueBoard[:bpThreshold]
+    applyToAll(badPerformers, penalize)
 
 
 
