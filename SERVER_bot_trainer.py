@@ -181,13 +181,7 @@ matchup_queue = deque()
 # Sends a message to the clients in the form of a tuple
 # matchup_job = ((bot_1, bot_2), training_configuration)
 def sendMatchup(matchup_job):
-    # E-Liang help pls
     matchup_queue.append(matchup_job)
-
-    # Testing
-    #  result = train_bots(matchup_job)
-    #  settleMatchOutcome(result)
-    #  pass
 
 INCUBATEFREQUENCY = 100
 matchCount = 1
@@ -196,7 +190,7 @@ matchCount = 1
 # Message contains a tuple of (winner_name,loser_name)
 def handleOutcome(outcome):
     global matchCount
-    # E-Liang help pls
+    print("\n============Match number " + str(matchCount) +"============")
     settleMatchOutcome(outcome)
     matchCount += 1
     if matchCount % INCUBATEFREQUENCY == 0:
@@ -208,7 +202,6 @@ def arrangeMatch(agentOneName, agentTwoName, iterations):
     num_games = 5
     num_rounds = 101
     training_regime = (num_games,num_rounds)
-    print("\n============Match number " + str(iterations) +"============")
     matchup_job = ((botOne, botTwo),training_regime)
     sendMatchup(matchup_job)
 
