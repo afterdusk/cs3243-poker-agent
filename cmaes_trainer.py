@@ -2,6 +2,7 @@
 
 import cma
 import itertools
+import math
 from weighted_player import WeightedPlayer
 from test_arena import play_game
 
@@ -9,7 +10,7 @@ DIMENSIONS = 7
 RANGE =[-1.0, 1.0]
 INITIAL_INTERVAL_COUNT = 2 # >= 2
 INITIAL_INTERVALS = [RANGE[0] + i * (RANGE[1] - RANGE[0]) / (INITIAL_INTERVAL_COUNT - 1) for i in xrange(0, INITIAL_INTERVAL_COUNT)]
-INITIAL_SD = (RANGE[1] - RANGE[0]) / (INITIAL_INTERVAL_COUNT - 1) / 2 / 3 # 3SD = 99.7%
+INITIAL_SD = math.sqrt(2) * (RANGE[1] - RANGE[0]) / (INITIAL_INTERVAL_COUNT - 1) / 2 / 3 # 3SD = 99.7%
 CMA_OPTIONS = cma.CMAOptions()
 CMA_OPTIONS.set('verbose', -9)
 CMA_OPTIONS.set('verb_disp', -1)
@@ -58,4 +59,7 @@ for (i, instance) in enumerate(cma_instances):
         
         # Normalize win count over number of other instances.
         particle_win_rates[j] = particle_win_count / (len(cma_instances) - 1)
-        
+    
+    # Update instance.
+    instance.tell(particles, particle_win_rates)
+
