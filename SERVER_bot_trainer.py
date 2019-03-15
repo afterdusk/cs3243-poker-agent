@@ -192,9 +192,9 @@ def sendMatchup(matchup_job):
     #  settleMatchOutcome(result)
     #  pass
 
-# Recieves from Clients
+# Processes outcomes received from remote clients
 # Message contains a tuple of (winner_name,loser_name)
-def recieveOutcome(outcome):
+def handleOutcome(outcome):
     # E-Liang help pls
     settleMatchOutcome(outcome)
 

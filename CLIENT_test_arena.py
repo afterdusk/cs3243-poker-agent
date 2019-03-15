@@ -74,13 +74,8 @@ def train_bots(matchup_job):
     rounds = training_regime[1]
     return play_bots(agent_one, agent_two, games, rounds)
 
-def recieve_matchup():
-    # E-Liang pls
-    pass
-    # get matchup from internet?
-
 # ============================ MAIN FUNCTION ============================
-def main():
+if __name__ == "__main__":
     #while True:
     current_match = recieve_matchup()
     outcome = train_bots(current_match)

@@ -24,7 +24,7 @@ class TrainerServer:
 
     def on_outcome(self, client, topic, content):
         print("GOT OUTCOME", topic, content)
-        bot_trainer.receiveOutcome(outcome)
+        bot_trainer.handleOutcome(outcome)
 
 if __name__ == "__main__":
     trainer = TrainerServer()
