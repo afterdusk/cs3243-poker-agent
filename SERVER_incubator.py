@@ -2,7 +2,7 @@ import csv
 import os
 import random
 from CLIENT_test_arena import train_bots
-from file_utils import folderize, readFileAndGetData, writeToFile
+from file_utils import folderize, readFileAndGetData, writeToFile, MASTERFILE
 
 # Handles the reinforcement learning. Creation of children and culling of weak agents
 
@@ -33,6 +33,39 @@ def removeAgent(agentName):
 
     #Deletes the file
     os.remove(folderize(agentName))
+
+def updateAgentsLeaderboardPerf(goodOnes, badOnes):
+    #updates the Agent_Leaderboard for PERFORMANCE
+    with open(folderize(MASTERFILE)) as readFile:
+        csvReader = csv.reader(readFile,  delimiter= ',')
+        rows = list(csvReader)
+    readFile.close()
+
+    changeRows = []
+    with open(folderize(MASTERFILE)) as readFile:
+        csvReader = csv.reader(readFile,  delimiter= ',')
+        line = 0
+        for row in csvReader:
+            if row[0] in goodOnes:
+                newRow = row
+                newRow[3] = int(row[3]) + 1
+                changeRows.append((line, newRow))
+            if row[0] in badOnes:
+                newRow = row
+                newRow[3] = int(row[3]) - 1
+                changeRows.append((line,newRow))
+            line += 1
+    readFile.close()
+
+    for changed in changeRows:
+        index = changed[0]
+        content = changed[1]
+        rows[index] = content
+
+    with open(folderize(MASTERFILE), mode='w') as writeFile:
+        writer = csv.writer(writeFile)
+        writer.writerows(rows)
+    writeFile.close()
 
 # Mutates all data weights in steps of [-max to max] in either positive or negative direction
 # If max > 1 then it resets to a default of 0.2
@@ -82,24 +115,22 @@ def evaluatePlayer(row):
     final = ratio * (wins+losses) + (wins-losses)
     return final
 
-# Increase performance
+# Increase performance on LOCAL FILE
 def reward(bot):
     stats = readFileAndGetData(bot)
-    stats[1][2] = stats[1][2] + 1
-    writeToFile(stats)
+    stats[1][2] = int(stats[1][2]) + 1
+    writeToFile(bot,stats)
 
-# Decrease performance
-def penalize():
+# Decrease performance on LOCAL FILE
+def penalize(bot):
     stats = readFileAndGetData(bot)
-    stats[1][2] = stats[1][2] - 1
-    writeToFile(stats)
+    stats[1][2] = int(stats[1][2]) - 1
+    writeToFile(bot,stats)
 
 
 def applyToAll(bots, fun):
     for bot in bots:
         fun(bot)
-
-
 
 def incubate(leaderboard):
     print("..........INCUBATING..........")
@@ -115,18 +146,15 @@ def incubate(leaderboard):
         valueBoard.append((currValue,currName))
 
     valueBoard.sort(key=lambda tup: tup[0], reverse=True)
-    goodPerformers = valueBoard[:gpThreshold]
-    applyToAll(goodPerformers, reward)
+    goodPerformers = list(map(lambda t: t[1], valueBoard[:gpThreshold]))
+
 
     valueBoard.sort(key=lambda tup: tup[0])
-    badPerformers = valueBoard[:bpThreshold]
+    badPerformers = list(map(lambda t: t[1], valueBoard[:bpThreshold]))
+
+    # updates Individual agent files
+    applyToAll(goodPerformers, reward)
     applyToAll(badPerformers, penalize)
 
-
-
-
-    print(topFive)
-
-
-    # Update the csv
-    writeToFile(loserName,[data[0],newStats])
+    # Update the leaderboard
+    updateAgentsLeaderboardPerf(goodPerformers,badPerformers)

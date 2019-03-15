@@ -2,6 +2,8 @@ import csv
 import os
 import random
 
+MASTERFILE = "Agent_Leaderboard"
+
 def writeToFile(filename, *data):
     contentToWrite = data[0]
     with open(folderize(filename), mode='w') as outputFile:

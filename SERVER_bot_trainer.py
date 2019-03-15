@@ -4,11 +4,9 @@ import random
 from collections import deque
 from CLIENT_test_arena import train_bots
 from SERVER_incubator import incubate
-from file_utils import folderize, readFileAndGetData, writeToFile, getLeaderboard
+from file_utils import folderize, readFileAndGetData, writeToFile, getLeaderboard, MASTERFILE
 
 # SERVER SIDE bot match taskmaster
-
-MASTERFILE = "Agent_Leaderboard"
 
 getBoard = lambda : getLeaderboard(MASTERFILE)
 
@@ -39,10 +37,8 @@ def updateAgentsLeaderboardStats(winAgentName, loseAgentName):
 
     newWinRow = oldInfo[0][1]
     newWinRow[1] = int(newWinRow[1]) + 1 # Increment wins
-    newWinRow[3] = int(newWinRow[3]) + 1 # Increment performance
     newLoseRow = oldInfo[1][1]
     newLoseRow[2] = int(newLoseRow[2]) + 1 # Increment losses
-    newLoseRow[3] = int(newLoseRow[3]) - 1  # Decrease performance
     rows[oldInfo[0][0]] = newWinRow
     rows[oldInfo[1][0]] = newLoseRow
     with open(folderize(MASTERFILE), mode='w') as writeFile:
@@ -144,7 +140,6 @@ def addWin(winnerName):
     data = readFileAndGetData(winnerName)
     newStats = data[1]
     newStats[0] = int(newStats[0]) + 1 #Increment wins
-    # newStats[2] = int(newStats[2]) + 1 #Increment performance
 
     # Update the csv
     writeToFile(winnerName,[data[0],newStats])
@@ -154,8 +149,6 @@ def addLoss(loserName):
     data = readFileAndGetData(loserName)
     newStats = data[1]
     newStats[1] = int(newStats[1]) + 1 #Increment losses
-
-    #newStats[2] = int(newStats[2]) - 1 #Decrease performance
 
 def settleMatchOutcome(outcome):
     winnerName = outcome[0]
@@ -183,23 +176,24 @@ matchup_queue = deque()
 def sendMatchup(matchup_job):
     matchup_queue.append(matchup_job)
 
-INCUBATEFREQUENCY = 100
+INCUBATEFREQUENCY = 3
 matchCount = 1
 
 # Processes outcomes received from remote clients
 # Message contains a tuple of (winner_name,loser_name)
 def handleOutcome(outcome):
     global matchCount
+    global INCUBATEFREQUENCY
     print("\n============Match number " + str(matchCount) +"============")
     settleMatchOutcome(outcome)
     matchCount += 1
-    if matchCount % INCUBATEFREQUENCY == 0:
+    if matchCount % INCUBATEFREQUENCY == 0 and matchCount >= INCUBATEFREQUENCY:
         incubate(getBoard())
 
 def arrangeMatch(agentOneName, agentTwoName, iterations):
     botOne = composeBot(agentOneName)
     botTwo = composeBot(agentTwoName)
-    num_games = 5
+    num_games = 3
     num_rounds = 101
     training_regime = (num_games,num_rounds)
     matchup_job = ((botOne, botTwo),training_regime)
@@ -219,8 +213,7 @@ def init():
 
 # MAIN
 if __name__ == "__main__":
-    clearAllHistories()
-    beginTrainingAllBots(200)
+    incubate(getBoard())
     # i = 0
     # while i < 50:
     #     roundRobinTraining()
