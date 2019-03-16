@@ -18,21 +18,26 @@ CMA_OPTIONS.set('verbose', -9)
 CMA_OPTIONS.set('verb_disp', -1)
 CMA_OPTIONS.set('verb_log', 0)
 NUM_INSTANCES = 20
-NUM_GAMES = 2
-NUM_ROUNDS = 51
+NUM_GAMES = 4
+NUM_ROUNDS = 101
 NUM_THREADS = 23
 
-instances = []
+manager = multiprocessing.Manager()
 
+instances = []
 for (i, mean) in enumerate([random.uniform(0, 1) for _ in xrange(DIMENSIONS)] for _ in xrange(NUM_INSTANCES)):
     print('Preparing CMA instance ' + str(i + 1) + " / " + str(NUM_INSTANCES)) 
     instances += [cma.CMAEvolutionStrategy(mean, INITIAL_SD, CMA_OPTIONS)]
 
-manager = multiprocessing.Manager()
-
+with open('cmaes_trainer_log.txt', 'w') as _:
+    None
+generation = 0
 while True:
-    for instance in instances:
-        print(str(instance.result[5]))
+    with open('cmaes_trainer_log.txt', 'a') as log_file:
+        log_file.write('Generation = ' + str(generation) + '\n')
+        for instance in instances:
+            log_file.write(' '.join(str(x) for x in instance.result[5]) + '\n')
+            print(' '.join(str(x) for x in instance.result[5]))
     particles = [instance.ask() for instance in instances]
 
     jobs = manager.list()
@@ -53,7 +58,7 @@ while True:
             except Queue.Empty:
                 break
             job = jobs[job_index]
-            remaining = job_index_queue.qsize()
+            print("Processing = " + str(len(jobs) - job_index_queue.qsize()) + " / " + str(len(jobs)))
 
             win_count = 0
             current_stack = 0
@@ -72,13 +77,6 @@ while True:
             result = 1 if current_stack >= other_stack else 0
             results[job_index] += result
 
-            #print("Instance = " + str(job[0]))
-            #print("Particle = " + str(job[1]))
-            #print("Other Instance = " + str(job[2]))
-            #print("Result = " + str(result))
-            print("Remaining = " + str(job_index_queue.qsize()) + " / " + str(len(jobs)))
-            #print('')
-
     processes = []
     for i in range(NUM_THREADS):
         process = multiprocessing.Process(target=worker, args=(jobs, job_index_queue, results))
@@ -94,3 +92,5 @@ while True:
 
     for (i, p) in enumerate(particle_values):
         instances[i].tell(particles[i], [-float(v) / (NUM_INSTANCES - 1) for v in p])
+
+    generation += 1 
