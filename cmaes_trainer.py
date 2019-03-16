@@ -22,18 +22,18 @@ NUM_GAMES = 2
 NUM_ROUNDS = 51
 NUM_THREADS = 23
 
-cma_instances = []
+instances = []
 
 for (i, mean) in enumerate([random.uniform(0, 1) for _ in xrange(DIMENSIONS)] for _ in xrange(NUM_INSTANCES)):
     print('Preparing CMA instance ' + str(i + 1) + " / " + str(NUM_INSTANCES)) 
-    cma_instances += [cma.CMAEvolutionStrategy(mean, INITIAL_SD, CMA_OPTIONS)]
+    instances += [cma.CMAEvolutionStrategy(mean, INITIAL_SD, CMA_OPTIONS)]
 
 manager = multiprocessing.Manager()
 
 while True:
-    for instance in cma_instances:
+    for instance in instances:
         print(str(instance.result[5]))
-    particles = [instance.ask() for instance in cma_instances]
+    particles = [instance.ask() for instance in instances]
 
     jobs = manager.list()
     job_index_queue = manager.Queue()
@@ -44,7 +44,7 @@ while True:
                 if k == i:
                     continue
                 job_index_queue.put_nowait(len(jobs))
-                job = [i, j, k, particles[i][j], cma_instances[k].result[5]]
+                job = [i, j, k, particles[i][j], instances[k].result[5]]
                 jobs += [job]
                 results += [0]
 
@@ -95,4 +95,4 @@ while True:
         particle_values[job[0]][job[1]] += results[i]
 
     for (i, p) in enumerate(particle_values):
-        cma_instances[i].tell(particles[i], [-float(v) / (NUM_INSTANCES - 1) for v in p])
+        instances[i].tell(particles[i], [-float(v) / (NUM_INSTANCES - 1) for v in p])
