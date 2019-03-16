@@ -26,7 +26,7 @@ manager = multiprocessing.Manager()
 
 instances = []
 for (i, mean) in enumerate([random.uniform(0, 1) for _ in xrange(DIMENSIONS)] for _ in xrange(NUM_INSTANCES)):
-    print('Preparing CMA instance ' + str(i + 1) + " / " + str(NUM_INSTANCES)) 
+    print('Preparing CMA instances (' + str(i + 1) + " / " + str(NUM_INSTANCES) + ')') 
     instances += [cma.CMAEvolutionStrategy(mean, INITIAL_SD, CMA_OPTIONS)]
 
 with open('cmaes_trainer_log.txt', 'w') as _:
@@ -35,9 +35,13 @@ generation = 0
 while True:
     with open('cmaes_trainer_log.txt', 'a') as log_file:
         log_file.write('Generation = ' + str(generation) + '\n')
-        for instance in instances:
-            log_file.write(' '.join(str(x) for x in instance.result[5]) + '\n')
-            print(' '.join(str(x) for x in instance.result[5]))
+        for (i, instance) in enumerate(instances):
+            log_file.write('(' + str(i).zfill(2) + ') Mean = ' + ' '.join(str(x) for x in instance.result[5]) + '\n')
+            log_file.write('(' + str(i).zfill(2) + ') SD =   ' + ' '.join(str(x) for x in instance.result[6]) + '\n')
+            print('(' + str(i).zfill(2) + ') Mean = ' + ' '.join(str(x) for x in instance.result[5]))
+            print('(' + str(i).zfill(2) + ') SD =   ' + ' '.join(str(x) for x in instance.result[6]))
+        log_file.write('\n')
+
     particles = [instance.ask() for instance in instances]
 
     jobs = manager.list()
@@ -58,7 +62,7 @@ while True:
             except Queue.Empty:
                 break
             job = jobs[job_index]
-            print("Processing = " + str(len(jobs) - job_index_queue.qsize()) + " / " + str(len(jobs)))
+            print("Processing... (" + str(len(jobs) - job_index_queue.qsize()) + " / " + str(len(jobs)) + ')')
 
             win_count = 0
             current_stack = 0
