@@ -38,15 +38,13 @@ while True:
     jobs = manager.list()
     job_index_queue = manager.Queue()
     results = manager.list()
-    for i in xrange(NUM_INSTANCES):
-        for j in xrange(len(particles[i])):
-            for k in xrange(NUM_INSTANCES):
-                if k == i:
-                    continue
-                job_index_queue.put_nowait(len(jobs))
-                job = [i, j, k, particles[i][j], instances[k].result[5]]
-                jobs += [job]
-                results += [0]
+    for (i, j, k) in itertools.product(xrange(NUM_INSTANCES), xrange(len(particles[i])), xrange(NUM_INSTANCES)):
+        if k == i:
+            continue
+        job_index_queue.put_nowait(len(jobs))
+        job = [i, j, k, particles[i][j], instances[k].result[5]]
+        jobs += [job]
+        results += [0]
 
     def worker(jobs, job_index_queue, results):
         while True:
@@ -61,7 +59,7 @@ while True:
             current_stack = 0
             other_stack = 0
 
-            for _ in range(0, NUM_GAMES):
+            for _ in xrange(NUM_GAMES):
                 current_player = WeightedPlayer()
                 current_player.initWeights(job[3])
                 other_player = WeightedPlayer()
