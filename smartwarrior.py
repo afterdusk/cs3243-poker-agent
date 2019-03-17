@@ -8,7 +8,7 @@ import time
 ############# Constants #############
 MAX_RAISES = 4
 SMALL_BLIND = 10
-DEBUG = False
+DEBUG = True
 #####################################
 
 
@@ -22,7 +22,8 @@ class SmartWarrior(BasePokerPlayer):
         enemy_state = round_state['seats'][enemy_index]
         
         my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises = self.parse_history(round_state['action_histories'], my_index == round_state['small_blind_pos'])
-        
+        enemy_moves = self.get_valid_moves(enemy_state['stack'], enemy_num_raises, round_state['street'], round_state['pot']['main']['amount'])
+
         max_player = PlayerState(
             my_state['stack'], 
             my_amount_bet, 
@@ -32,8 +33,7 @@ class SmartWarrior(BasePokerPlayer):
         min_player = PlayerState(
             enemy_state['stack'], 
             enemy_amount_bet,
-            #TODO
-            ["fold", "call", "raise"], 
+            enemy_moves, 
             enemy_num_raises, 
             [])
         game = GameState(round_state['pot']['main']['amount'], 
@@ -78,6 +78,19 @@ class SmartWarrior(BasePokerPlayer):
             my_turn = not my_turn
         return my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises
 
+    @staticmethod
+    def get_valid_moves(amount_left, num_raises, street, pot_amount):
+        raise_amount, raise_limit = ActionChecker.round_raise_amount(SMALL_BLIND, street_as_int(street))
+        if amount_left < raise_amount:
+            return []
+        if (num_raises >= MAX_RAISES or 
+            pot_amount >= raise_limit or  # TODO: check this condition
+            amount_left < raise_amount * 2):
+            return ["call", "fold"]
+        return ["raise", "call", "fold"]
+
+
+    
 
 
 class MinimaxTree:
