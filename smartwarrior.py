@@ -3,23 +3,46 @@ from pypokerengine.engine.poker_constants import PokerConstants
 from pypokerengine.engine.action_checker import *
 from time import sleep
 import pprint
+import time
 
 ############# Constants #############
 MAX_RAISES = 4
 SMALL_BLIND = 10
-DEBUG = True
+DEBUG = False
 #####################################
 
 
 class SmartWarrior(BasePokerPlayer):
 
     def declare_action(self, valid_actions, hole_card, round_state):
-        for i in valid_actions:
-            if i["action"] == "raise":
-                action = i["action"]
-                return action  # action returned here is sent to the poker engine
-        action = valid_actions[1]["action"]
-        return action  # action returned here is sent to the poker engine
+        print "Street: ", round_state['street']
+        my_index = round_state['next_player']
+        my_state = round_state['seats'][my_index]
+        enemy_index = 0 if round_state['next_player'] == 1 else 1
+        enemy_state = round_state['seats'][enemy_index]
+        
+        my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises = self.parse_history(round_state['action_histories'], my_index == round_state['small_blind_pos'])
+        
+        max_player = PlayerState(
+            my_state['stack'], 
+            my_amount_bet, 
+            map(lambda x: x.values()[0], valid_actions), 
+            my_num_raises, 
+            hole_card)
+        min_player = PlayerState(
+            enemy_state['stack'], 
+            enemy_amount_bet,
+            #TODO
+            ["fold", "call", "raise"], 
+            enemy_num_raises, 
+            [])
+        game = GameState(round_state['pot']['main']['amount'], 
+            round_state['community_card'],
+            round_state['street'])
+        tree = MinimaxTree(max_player, min_player, game)
+        decision, payoff = tree.minimax_decision()
+        print "Decision made: ", decision
+        return decision  # action returned here is sent to the poker engine
 
     def receive_game_start_message(self, game_info):
         pass
@@ -35,6 +58,26 @@ class SmartWarrior(BasePokerPlayer):
 
     def receive_round_result_message(self, winners, hand_info, round_state):
         pass
+
+    @staticmethod
+    def parse_history(history, is_small_blind):
+        my_amount_bet = 0
+        enemy_amount_bet = 0
+        my_num_raises = 0
+        enemy_num_raises = 0
+        my_turn = is_small_blind
+        flat_list = [i for street in history.values() for i in street]
+        for i in flat_list:
+            print i
+            if my_turn:
+                my_amount_bet = i['amount']
+                my_num_raises += (i['action'] == 'RAISE')
+            else:
+                enemy_amount_bet = i['amount']
+                enemy_num_raises += (i['action'] == 'RAISE')
+            my_turn = not my_turn
+        return my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises
+
 
 
 class MinimaxTree:
@@ -181,15 +224,15 @@ class PlayerState:
     def perform(self, action, game_state, adversary_state):
         # raise amount and limit is constant for betting round, can move following call elsewhere to reduce
         # unnecessary calls
-        raise_amount, raise_limit = ActionChecker.round_raise_amount(SMALL_BLIND, game_state.street)
+        raise_amount, raise_limit = ActionChecker.round_raise_amount(SMALL_BLIND, street_as_int(game_state.street))
         call_amount = adversary_state.amount_bet - self.amount_bet
 
-        if action == PokerConstants.Action.FOLD:
+        if action == "fold":
             # a fold ends the round
             self.valid_actions = []
             adversary_state.valid_actions = []
             self.has_folded = True
-        elif action == PokerConstants.Action.CALL:
+        elif action == "call":
             assert (self.amount_left >= call_amount)
             self.amount_left -= call_amount
             self.amount_bet += call_amount
@@ -197,7 +240,7 @@ class PlayerState:
             # a call ends the betting round
             self.valid_actions = []
             adversary_state.valid_actions = []
-        elif action == PokerConstants.Action.RAISE:
+        elif action == "raise":
             assert(self.amount_left >= raise_amount + call_amount)
             self.amount_left -= raise_amount + call_amount
             self.amount_bet += raise_amount + call_amount
@@ -205,16 +248,16 @@ class PlayerState:
             self.raises_made += 1
 
         # remove raise if insufficient cash to raise later
-        if PokerConstants.Action.RAISE in self.valid_actions and (self.raises_made >= MAX_RAISES or
+        if "raise" in self.valid_actions and (self.raises_made >= MAX_RAISES or
                                                                   game_state.pot_amount >= raise_limit or  # TODO: check this condition
                                                                   self.amount_left < raise_amount * 2):
-            self.valid_actions.remove(PokerConstants.Action.RAISE)
+            self.valid_actions.remove("raise")
         # remove call if unable to match opponent raise
-        if PokerConstants.Action.CALL in self.valid_actions and self.amount_left < raise_amount:
-            self.valid_actions.remove(PokerConstants.Action.CALL)
+        if "call" in self.valid_actions and self.amount_left < raise_amount:
+            self.valid_actions.remove("call")
         # remove fold if only move left is fold
         if len(self.valid_actions) == 1 and self.valid_actions[0] == PokerConstants.Action.FOLD:
-            self.valid_actions.remove(PokerConstants.Action.FOLD)
+            self.valid_actions.remove("fold")
 
     def copy(self):
         return PlayerState(self.amount_left,
@@ -251,15 +294,25 @@ def setup_ai():
 def main():
     # TODO: Valid actions for root node needs to be validated
     max_player = PlayerState(
-        40, 10, [PokerConstants.Action.FOLD, PokerConstants.Action.CALL, PokerConstants.Action.RAISE], 0, [])
+       40, 10, [PokerConstants.Action.FOLD, PokerConstants.Action.CALL, PokerConstants.Action.RAISE], 0, [])
     min_player = PlayerState(
-        40, 20, [PokerConstants.Action.FOLD, PokerConstants. Action.CALL, PokerConstants.Action.RAISE], 0, [])
+       40, 20, [PokerConstants.Action.FOLD, PokerConstants. Action.CALL, PokerConstants.Action.RAISE], 0, [])
     game = GameState(30, [], 0)
     tree = MinimaxTree(max_player, min_player, game)
     decision, payoff = tree.minimax_decision()
     print "Minimax Decision: " + constant_to_string(decision)
     print "Decision Payoff: " + str(payoff)
 
+def street_as_int(street):
+    street = street.lower()
+    if street == "preflop":
+        return 0
+    if street == "flop":
+        return 1
+    if street == "turn":
+        return 2
+    if street == "river":
+        return 3
 
 def constant_to_string(constant):
     if constant == PokerConstants.Action.FOLD:
@@ -268,7 +321,11 @@ def constant_to_string(constant):
         return "Call"
     elif constant == PokerConstants.Action.RAISE:
         return "Raise"
+    return constant
 
 
 if __name__ == '__main__':
+    start = time.time()
     main()
+    end = time.time()
+    print end - start
