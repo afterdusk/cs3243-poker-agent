@@ -5,10 +5,12 @@ import pprint
 class RaisedPlayer(BasePokerPlayer):
 
   def declare_action(self, valid_actions, hole_card, round_state):
-    for i in valid_actions:
-        if i["action"] == "raise":
-            action = i["action"]
-            return action  # action returned here is sent to the poker engine
+    print("Pot amt", round_state['pot']['main']['amount'])
+    if round_state['street'] == 'river':
+        for i in valid_actions:
+            if i["action"] == "raise":
+                action = i["action"]
+                return action  # action returned here is sent to the poker engine
     action = valid_actions[1]["action"]
     return action # action returned here is sent to the poker engine
 
