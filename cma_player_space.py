@@ -41,19 +41,19 @@ class CMAPlayerSpace:
 
         print('Running jobs...')
         completed_jobs = []
-        self.taskmaster.schedule_jobs(jobs, 5, lambda job, outcome: self.callback(job, outcome, len(jobs), completed_jobs))
+        self.taskmaster.schedule_jobs(jobs, 5, lambda job, outcome: self.callback(job, outcome, jobs, particles, completed_jobs))
     
-    def callback(self, job, outcome, num_jobs, completed_jobs):
+    def callback(self, job, outcome, jobs, particles, completed_jobs):
         completed_jobs += [(job, outcome)]
-        print('Progress (' + str(len(completed_jobs)) + '/' + str(num_jobs) + ')')
-        if len(completed_jobs) < num_jobs:
+        print('Progress (' + str(len(completed_jobs)) + '/' + str(len(jobs)) + ')')
+        if len(completed_jobs) < len(jobs):
             return
 
         print('Updating instances...')
         particle_outcomes = [[0] * len(p) for p in particles]
         for completed_job in completed_jobs:
-            particle_outcomes[completed_job[3][0]][completed_job[3][1]] += completed_job[1]
+            particle_outcomes[completed_job[0][2][0]][completed_job[0][2][1]] += completed_job[1]
         for (i, po) in enumerate(particle_outcomes):
-            instances[i].tell(particles[i], [-float(v) / (self.num_instances - 1) for v in po])
+            self.instances[i].tell(particles[i], [-float(v) / (self.num_instances - 1) for v in po])
 
         self.begin()
