@@ -7,9 +7,10 @@ import pickle
 import os
 
 class CMAPlayerSpace:
-    def __init__(self, taskmaster, name, num_dimensions, num_instances, initial_sd, num_games, num_rounds):
+    def __init__(self, taskmaster, name, player_class, num_dimensions, num_instances, initial_sd, num_games, num_rounds):
         self.name = name
         self.taskmaster = taskmaster
+        self.player_class = player_class
         self.num_dimensions = num_dimensions
         self.num_instances = num_instances
         self.initial_sd = initial_sd
@@ -60,7 +61,7 @@ class CMAPlayerSpace:
                         continue
                     other_mean = other_instance.result[5]
                     jobs += [[
-                        (('WeightedPlayer', particle), ('WeightedPlayer', other_mean)), 
+                        ((self.player_class, particle), (self.player_class, other_mean)), 
                         (self.num_games, self.num_rounds), 
                         (i, j, k)]]
 
