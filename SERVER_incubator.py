@@ -1,53 +1,30 @@
 import csv
 import os
 import random
-from CLIENT_test_arena import train_bots
-from file_utils import folderize, readFileAndGetData, writeToFile, MASTERFILE
-
 # Handles the reinforcement learning. Creation of children and culling of weak agents
 
 CHILD_THRESHOLD = 12
 KILL_THRESHOLD = 7 #This will be flipped negative
 
-
-def addAgentToBoard(agentName):
+def addAgentToBoard(agentName,leaderboard):
     print("ADDING " + agentName)
 
     # Initialize win/loss/performace to 0,0,0
-    newAgentRow = [agentName, 0, 0, 0]
-
-    with open(folderize(MASTERFILE), mode='a') as boardFile:
-        writer = csv.writer(boardFile)
-        writer.writerow(newAgentRow)
+    leaderboard[agentName] = (0,0,0)
 
 #Removes the agent from the table and DELETES the csv file
-def removeAgent(agentName):
+def removeAgent(agentName, leaderboard):
     #Deletes the csv file
     print("Removing " + agentName)
     os.remove(folderize(agentName))
 
     #Table entry removal
-    table = []
-    with open(folderize(MASTERFILE), mode='r') as readFile:
-        csvReader = csv.reader(readFile,  delimiter= ',')
-        for currRow in csvReader:
-            if currRow[0] == agentName:
-                continue
-            table.append(currRow)
+    leaderboard.pop(agentName)
 
-    readFile.close()
-    with open(folderize(MASTERFILE), mode='w') as writeFile:
-        writer = csv.writer(writeFile)
-        writer.writerows(table)
-    writeFile.close()
-
-
-def updateAgentsLeaderboardPerf(goodOnes, badOnes):
+def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
     #updates the Agent_Leaderboard for PERFORMANCE
-    with open(folderize(MASTERFILE)) as readFile:
-        csvReader = csv.reader(readFile,  delimiter= ',')
-        rows = list(csvReader)
-    readFile.close()
+    rows = list(leaderboard)
+    print(rows)
 
     changeRows = []
     toRemove = []
@@ -105,11 +82,10 @@ def mutateWeights(data, maxMutation):
     #print(data,newData)
     return newData
 
-
 def makeChildFromParents(botAName, botBName):
     parentA = readFileAndGetData(botAName)
     parentB = readFileAndGetData(botBName)
-    print(parentA,parentB)
+    #print(parentA,parentB)
     parentAPartName = botAName[:8]
     parentBPartName = botBName[:8]
     child = parentAPartName + "-" + parentBPartName + "#" + str(random.randint(0,99))
@@ -118,8 +94,6 @@ def makeChildFromParents(botAName, botBName):
     addAgentToBoard(child)
 
     childWeights = makeChildWeightsFromParents(parentA[0], parentB[0])
-
-
 
     childData = (childWeights, [0,0,0])
     # Create new CSV for child
@@ -141,8 +115,8 @@ def makeChildWeightsFromParents(pAWeights, pBWeights):
 
 # Evaluation function based on wins/loss ratio and multiplied by number of games played
 def evaluatePlayer(row):
-    wins = int(row[1]) + 1
-    losses = int(row[2]) + 1
+    wins = int(row[0]) + 1
+    losses = int(row[1]) + 1
     ratio = (wins/losses)
     final = ratio * (wins+losses) + (wins-losses)
     return final
@@ -166,16 +140,18 @@ def applyToAll(bots, fun):
 
 def incubate(leaderboard):
     print("..........INCUBATING..........")
+    return leaderboard
+
     gpThreshold = 7
     goodPerformers = []
     bpThreshold = 9
     badPerformers = []
 
     valueBoard = []
-    for row in leaderboard[1:]:
-        currName = row[0]
-        currValue = evaluatePlayer(row)
-        valueBoard.append((currValue,currName))
+    for name in leaderboard:
+        stats = leaderboard[name]
+        currValue = evaluatePlayer(stats)
+        valueBoard.append((currValue,name))
 
     valueBoard.sort(key=lambda tup: tup[0], reverse=True)
     goodPerformers = list(map(lambda t: t[1], valueBoard[:gpThreshold]))
@@ -190,4 +166,4 @@ def incubate(leaderboard):
     # applyToAll(badPerformers, penalize)
 
     # Update the leaderboard
-    updateAgentsLeaderboardPerf(goodPerformers,badPerformers)
+    updateAgentsLeaderboardPerf(goodPerformers,badPerformers, leaderboard)

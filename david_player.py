@@ -1,22 +1,30 @@
-from pypokerengine.players import BasePokerPlayer
-from pypokerengine.engine.hand_evaluator import HandEvaluator
+import csv
+import random
+import os
 from pypokerengine.engine.card import Card
+from pypokerengine.players import BasePokerPlayer
+from pypokerengine.utils.card_utils import estimate_hole_card_win_rate
 from time import sleep
-import math
-import pprint
 
-class WeightedPlayer(BasePokerPlayer):
 
+# A wrapper class for players
+class DavidPlayer(BasePokerPlayer):
     def __init__(self, weights):
         self.initWeights(weights)
+
     def initWeights(self, data):
+        # The higher these value, the more conservative the play
         self.raise_threshold = data[0]
         self.call_threshold = data[1]
-        #The higher this value, the more conservative
-        self.overall_bias = data[2]
+
+        # Multipliers
         self.card_weight = data[3]
-        self.pot_weight = data[4]
-        self.card_bias = data[5]
+        self.card_bias = data[4]
+        # self.card_bias = data[5]
+        # self.pot_weight = data[4]
+
+        # Flat biases
+        self.pot_weight = data[5]
         self.pot_bias = data[6]
         return self
 
@@ -27,17 +35,14 @@ class WeightedPlayer(BasePokerPlayer):
         properCommunityCards = []
         for c in common_cards:
             properCommunityCards.append(Card.from_str(c))
-        value = HandEvaluator.eval_hand(properHoleCards, properCommunityCards)
 
-        # Massage the value to be [0-1]
-        #adjvalue = (math.log(value,2)-14)/7  OLD FORMULA
-
-        adjvalue = math.sqrt(math.sqrt(value))/37
-        #print(str(value) + " " + str(adjvalue))
-        return adjvalue
+        NUM_SIMULATIONS = 3
+        NUM_PLAYERS = 2
+        monte_carlo_value = estimate_hole_card_win_rate(NUM_SIMULATIONS, NUM_PLAYERS, properHoleCards, properCommunityCards)
+        return monte_carlo_value
 
     def decide(self, holeValue, movesHistory,  pot_amount):
-        return self.card_weight*(holeValue+self.card_bias) + self.pot_weight*(pot_amount/100+self.pot_bias) + self.overall_bias
+        return self.card_weight*(holeValue+self.card_bias) + self.pot_weight*(pot_amount/100+self.pot_bias)
 
     def decideOnAction(self, valid_actions, cardValue, movesHistory, pot_amount):
         confidence = self.decide(cardValue, movesHistory, pot_amount)
@@ -64,8 +69,6 @@ class WeightedPlayer(BasePokerPlayer):
         pot_amount = round_state['pot']['main']['amount']
 
         return self.decideOnAction(valid_actions, cardValue, movesHistory, pot_amount)
-
-
 
     def receive_game_start_message(self, game_info):
         pass
