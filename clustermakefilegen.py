@@ -63,4 +63,4 @@ for node_collection_name in servers:
         if node_name in special_js:
             num_jobs = special_js[node_name]
         print(f"{node_name}.comp.nus.edu.sg:")
-        print(f"\tssh -o \"StrictHostKeyChecking no\" {node_name}.comp.nus.edu.sg -t \"cd cs3243-poker-agent; make -j{num_jobs}\"")
+        print(f"\tssh -o \"StrictHostKeyChecking no\" {node_name}.comp.nus.edu.sg -t \"cd cs3243-poker-agent; bash -cl 'make -j{num_jobs}'\"")
