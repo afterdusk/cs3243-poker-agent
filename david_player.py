@@ -1,11 +1,11 @@
 import csv
 import random
 import os
+import activation_functions
 from pypokerengine.engine.card import Card
 from pypokerengine.players import BasePokerPlayer
 from pypokerengine.utils.card_utils import estimate_hole_card_win_rate
 from time import sleep
-
 
 # A wrapper class for players
 class DavidPlayer(BasePokerPlayer):
@@ -14,18 +14,16 @@ class DavidPlayer(BasePokerPlayer):
 
     def initWeights(self, data):
         # The higher these value, the more conservative the play
-        self.raise_threshold = data[0]
-        self.call_threshold = data[1]
+        self.raise_threshold = activation_functions.logistic(0, 1, 4, 0)(data[0])
+        self.call_threshold = activation_functions.logistic(0, 1, 4, 0)(data[1])
 
         # Multipliers
-        self.card_weight = data[3]
-        self.card_bias = data[4]
-        # self.card_bias = data[5]
-        # self.pot_weight = data[4]
+        self.card_weight = activation_functions.logistic(0, 2, 4, -1)(data[2])
+        self.card_bias = activation_functions.logistic(0, 2, 4, -1)(data[3])
 
         # Flat biases
-        self.pot_weight = data[5]
-        self.pot_bias = data[6]
+        self.pot_weight = activation_functions.logistic(0, 2, 4, -1)(data[4])
+        self.pot_bias = activation_functions.logistic(0, 2, 4, -1)(data[5])
         return self
 
     def calculateHandValue(self, hole_cards, common_cards):
