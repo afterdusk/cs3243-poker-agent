@@ -1,10 +1,19 @@
 from syncengine.client import Client
+from syncengine.taskmaster import Taskmaster
 import config
-import SERVER_bot_trainer as bot_trainer
+
+# Import player spaces here
+
+def createPlayerSpaces(taskmaster):
+    # Init player spaces here
+    return []
+
 
 class TrainerServer:
     def __init__(self):
-        bot_trainer.init()
+        self.taskmaster = Taskmaster()
+
+        self.playerSpaces = createPlayerSpaces(self.taskmaster)
 
         self.client = Client()
         self.client.on_connect = self.on_connect
@@ -18,12 +27,12 @@ class TrainerServer:
 
     def on_request(self, client, topic, content):
         print("GOT GAME REQUEST", topic, content)
-        nextMatch = bot_trainer.getNextMatch()
-        client.send_message(nextMatch, config.mqttTopicJobRes, True, client.guess_interlocutor_id(topic))
+        next_job = self.taskmaster.get_next_job()
+        client.send_message(next_job, config.mqttTopicJobRes, True, client.guess_interlocutor_id(topic))
 
     def on_outcome(self, client, topic, content):
         print("GOT OUTCOME", topic, content)
-        bot_trainer.handleOutcome(content)
+        self.taskmaster.handle_outcome(content)
 
 if __name__ == "__main__":
     trainer = TrainerServer()
