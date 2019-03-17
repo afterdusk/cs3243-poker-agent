@@ -10,14 +10,25 @@ import time
 ############# Constants #############
 MAX_RAISES = 4
 SMALL_BLIND = 10
-DEBUG = True
+DEBUG = False
 #####################################
 
 
 class SmartWarrior(BasePokerPlayer):
 
+    def __init__(self, weights):
+       # weights = [0, 1, 2, 3, 4]
+       self.init_weights(weights)
+
+    def init_weights(self, weights):
+       self.overall_bias = weights[0]
+       self.card_weight = weights[1]
+       self.pot_weight = weights[2]
+       self.card_bias = weights[3]
+       self.pot_bias = weights[4]
+
     def declare_action(self, valid_actions, hole_card, round_state):
-        print "Street: ", round_state['street']
+        if DEBUG: print "Street: ", round_state['street']
         my_index = round_state['next_player']
         my_state = round_state['seats'][my_index]
         enemy_index = 0 if round_state['next_player'] == 1 else 1
@@ -31,20 +42,20 @@ class SmartWarrior(BasePokerPlayer):
             my_amount_bet, 
             map(lambda x: x.values()[0], valid_actions), 
             my_num_raises, 
-            hole_card, [])
+            hole_card)
 
         min_player = PlayerState(
             enemy_state['stack'], 
             enemy_amount_bet,
             enemy_moves, 
             enemy_num_raises, 
-            [], enemy_actions)
+            [])
 
         game = GameState(round_state['pot']['main']['amount'], 
             round_state['community_card'],
             round_state['street'])
 
-        tree = MinimaxTree(max_player, min_player, game)
+        tree = MinimaxTree(self, max_player, min_player, game)
         decision, payoff = tree.minimax_decision()
         print "Decision made: ", decision
         return decision  # action returned here is sent to the poker engine
@@ -134,10 +145,7 @@ class MinimaxTree:
         return False
 
     @staticmethod
-    # can be modified to accept a list of weights
-    def evaluation_function(hole_cards, community_cards, actions):
-        card_confidence = 0.5
-        player_confidence = 0.5
+    def eval(agent, hole_cards, community_cards, pot_amount):
         hole_cards_translated = []
         community_cards_translated = []
         action_score = 0
@@ -145,13 +153,15 @@ class MinimaxTree:
             hole_cards_translated.append(Card.from_str(card))
         for card in community_cards:
             community_cards_translated.append(Card.from_str(card))
-        card_strength = ceval.estimate_hole_card_win_rate(200, 2, hole_cards_translated, community_cards_translated)
-        print (actions)
-        for i in actions:
-            if i == "RAISE":
-                action_score -= 0.5
-        print "=" * 100
-        return card_confidence * ((card_strength - 0.5)/0.5) + player_confidence * action_score
+        hand_strength = ceval.estimate_hole_card_win_rate(200, 2, hole_cards_translated, community_cards_translated)
+        confidence = agent.card_weight * hand_strength + agent.card_bias +\
+            agent.pot_weight * pot_amount + agent.pot_bias + agent.overall_bias
+        # print (actions)
+        # for i in actions:
+        #    if i == "RAISE":
+        #        action_score -= 0.5
+        # print "=" * 100
+        return confidence
 
     @staticmethod
     def utility(node):
@@ -162,12 +172,14 @@ class MinimaxTree:
             return node.game_state.pot_amount - node.max_player_state.amount_bet
 
         # TODO: refine evaluation function
-        return MinimaxTree.evaluation_function(node.max_player_state.hole_cards,
-                                                node.game_state.community_cards, node.min_player_state.actions)
+        return MinimaxTree.eval(node.agent, 
+                                node.max_player_state.hole_cards, 
+                                node.game_state.community_cards, 
+                                node.game_state.pot_amount)
 
-    def __init__(self, max_player_state, min_player_state, game_state):
+    def __init__(self, agent, max_player_state, min_player_state, game_state):
         # root is always a max node
-        self.root = MinimaxNode(True, max_player_state,
+        self.root = MinimaxNode(agent, True, max_player_state,
                                 min_player_state, game_state)
 
     def minimax_decision(self):
@@ -191,7 +203,8 @@ class MinimaxTree:
 
 
 class MinimaxNode:
-    def __init__(self, is_max, max_player_state, min_player_state, game_state):
+    def __init__(self, agent, is_max, max_player_state, min_player_state, game_state):
+        self.agent = agent
         self.is_max = is_max
         self.max_player_state = max_player_state
         self.min_player_state = min_player_state
@@ -245,17 +258,16 @@ class MinimaxNode:
             new_max_player_state.perform(action, new_game_state, new_min_player_state)
         else:
             new_min_player_state.perform(action, new_game_state, new_max_player_state)
-        return MinimaxNode(not self.is_max, new_max_player_state, new_min_player_state, new_game_state)
+        return MinimaxNode(self.agent, not self.is_max, new_max_player_state, new_min_player_state, new_game_state)
 
 class PlayerState:
-    def __init__(self, amount_left, amount_bet, valid_actions, raises_made, hole_cards, actions):
+    def __init__(self, amount_left, amount_bet, valid_actions, raises_made, hole_cards):
         self.amount_left = amount_left
         self.amount_bet = amount_bet
         self.valid_actions = valid_actions
         self.raises_made = raises_made
         self.hole_cards = hole_cards
         self.has_folded = False
-        self.actions = actions
 
     def perform(self, action, game_state, adversary_state):
         # raise amount and limit is constant for betting round, can move following call elsewhere to reduce
@@ -300,8 +312,7 @@ class PlayerState:
                            self.amount_bet,
                            list(self.valid_actions),
                            self.raises_made,
-                           list(self.hole_cards),
-                           self.actions)
+                           list(self.hole_cards))
     def print_state(self):
         return "amount_left: {}, amount_bet: {}, valid_actions: {}, raises_made: {}, hole_cards: {}".format(self.amount_left,
                                                                                                             self.amount_bet,
