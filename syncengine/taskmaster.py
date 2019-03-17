@@ -67,7 +67,8 @@ class Taskmaster:
             timeout_index = [j[1] for j in self.timeout_heap].index(wrapped_job_data)
             heapq_remove_item_at_index(self.timeout_heap, timeout_index)
         except Exception as e:
-            print("Got error removing job from timeout heap", e)
+            print("Received duplicate outcome", e)
+            return
 
         # Call callback
         callback(wrapped_job_data[1], outcome)
