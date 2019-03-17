@@ -34,13 +34,13 @@ class DavidPlayer(BasePokerPlayer):
         for c in common_cards:
             properCommunityCards.append(Card.from_str(c))
 
-        NUM_SIMULATIONS = 3
+        NUM_SIMULATIONS = 5
         NUM_PLAYERS = 2
         monte_carlo_value = estimate_hole_card_win_rate(NUM_SIMULATIONS, NUM_PLAYERS, properHoleCards, properCommunityCards)
         return monte_carlo_value
 
     def decide(self, holeValue, movesHistory,  pot_amount):
-        return self.card_weight*(holeValue+self.card_bias) + self.pot_weight*(pot_amount/100+self.pot_bias)
+        return self.card_weight*(holeValue+self.card_bias) + self.pot_weight*(pot_amount/320+self.pot_bias)
 
     def decideOnAction(self, valid_actions, cardValue, movesHistory, pot_amount):
         confidence = self.decide(cardValue, movesHistory, pot_amount)
