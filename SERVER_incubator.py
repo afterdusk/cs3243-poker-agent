@@ -1,7 +1,6 @@
 import csv
 import os
 import random
-from CLIENT_test_arena import train_bots
 from file_utils import folderize, readFileAndGetData, writeToFile, MASTERFILE
 
 # Handles the reinforcement learning. Creation of children and culling of weak agents
@@ -118,8 +117,6 @@ def makeChildFromParents(botAName, botBName):
     addAgentToBoard(child)
 
     childWeights = makeChildWeightsFromParents(parentA[0], parentB[0])
-
-
 
     childData = (childWeights, [0,0,0])
     # Create new CSV for child
