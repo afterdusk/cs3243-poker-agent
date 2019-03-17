@@ -23,13 +23,9 @@ class SmartWarrior(BasePokerPlayer):
         enemy_index = 0 if round_state['next_player'] == 1 else 1
         enemy_state = round_state['seats'][enemy_index]
         
-<<<<<<< HEAD
         my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises = self.parse_history(round_state['action_histories'], my_index == round_state['small_blind_pos'])
         enemy_moves = self.get_valid_moves(enemy_state['stack'], enemy_num_raises, round_state['street'], round_state['pot']['main']['amount'])
-
-=======
-        my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises, enemy_actions = self.parse_history(round_state['action_histories'], my_index == round_state['small_blind_pos'])
->>>>>>> 41cbf752ee199b6a6ef57b311d80c9d290a1dbc8
+        
         max_player = PlayerState(
             my_state['stack'], 
             my_amount_bet, 
