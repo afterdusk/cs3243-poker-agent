@@ -21,7 +21,6 @@ def init(taskmaster):
             name = row[0]
             scores = tuple(map(lambda e: float(e), row[1:]))
             LEADERBOARD[name] = scores
-        #print(LEADERBOARD)
 
     def writeToLeaderboardFile():
         HEADER = ('Agent Name', 'Wins', 'Losses','Performance')
@@ -81,27 +80,28 @@ def init(taskmaster):
         line = 0
         for bot in botlist:
             trainNamedBot(bot, botlist)
-
+    def callIncubator():
+        global LEADERBOARD
+        LEADERBOARD = incubate(LEADERBOARD)
+        writeToLeaderboardFile()
     #************================================************
     #         Server-Client communication functions
     #************================================************
 
     matchCountArr = [1]
+    generations = [1]
     # Processes outcomes received from remote clients
     # Message contains a tuple of (winner_name,loser_name)
-    def handleOutcome(sentJob, outcome, matchCountArr, boardLength, qm, LEADERBOARD):
-        print(matchCountArr, boardLength)
+    def handleOutcome(sentJob, outcome):
+        boardLength = len(LEADERBOARD)
         UPDATE_BOARD_FREQUENCY = boardLength
-        INCUBATE_FREQUENCY = qm[0] + 1
+        INCUBATE_FREQUENCY = queuedMatches[0] + 1
+        #INCUBATE_FREQUENCY = boardLength + 1
 
-        print("\n============Training progress: " + str(matchCountArr[0]) + "/" + str(qm[0]) + "============")
+        print("\n============Training progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
 
-        if outcome == 1:
-            winnerName = sentJob[2][0]
-            loserName = sentJob[2][1]
-        else:
-            winnerName = sentJob[2][1]
-            loserName = sentJob[2][0]
+        winnerName = sentJob[2][1-outcome]
+        loserName = sentJob[2][outcome]
 
         updateAgentsLeaderboardStats(winnerName,loserName)
 
@@ -111,19 +111,20 @@ def init(taskmaster):
         matchCountArr[0] = matchCountArr[0] + 1
 
         if matchCountArr[0] >= INCUBATE_FREQUENCY:
-            print("%%%%%%%%%%%%%%%%%%%%%% Beginning a new Generation %%%%%%%%%%%%%%%%%%%%%%")
             matchCountArr[0] = 1
-            LEADERBOARD = incubate(LEADERBOARD)
-            writeToLeaderboardFile()
+            generations[0] = generations[0] + 1
+            callIncubator()
+            print("%%%%%%%%%%%%%%%%%%%%%% Beginning Generation "+ str(generations[0])+ "%%%%%%%%%%%%%%%%%%%%%%")
             roundRobinTraining()
 
+    def jobDone(returnedJob,outcome):
+        handleOutcome(returnedJob, outcome)
 
     # Sends a message to the clients in the form of a tuple
     # matchup_job = ((bot_1, bot_2), training_configuration, (b1Name, b2Name))
     def sendMatchup(matchup_job):
         boardLength =  len(list(LEADERBOARD))
-        callback = lambda job, outcome: handleOutcome(job,outcome, matchCountArr, boardLength, queuedMatches, LEADERBOARD)
-        TASKMASTER.schedule_job(matchup_job, 120, callback)
+        TASKMASTER.schedule_job(matchup_job, 120, jobDone)
 
     def composeBot(agentName):
         data = readFileAndGetData(agentName)
@@ -140,8 +141,6 @@ def init(taskmaster):
         botTwo = composeBot(agentTwoName)
         num_games = 5
         num_rounds = 101
-        # num_games = 1
-        num_rounds = 1
         training_regime = (num_games,num_rounds)
         # ((b1,b2), (ng,nr), (name1,name2))
         matchup_job = ((botOne, botTwo),training_regime,(agentOneName,agentTwoName))
@@ -153,6 +152,6 @@ def init(taskmaster):
     roundRobinTraining()
 
     # MAIN
-    if __name__ == "__main__":
-        cacheLeaderboard()
-        roundRobinTraining()
+if __name__ == "__main__":
+    print("YOOOO")
+    init("some")

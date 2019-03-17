@@ -1,10 +1,11 @@
 import csv
 import os
 import random
+from david_file_utils import readFileAndGetData, writeToFile, folderize
 # Handles the reinforcement learning. Creation of children and culling of weak agents
 
-CHILD_THRESHOLD = 12
-KILL_THRESHOLD = 7 #This will be flipped negative
+CHILD_THRESHOLD = 2
+KILL_THRESHOLD = -2 #This will be flipped negative
 
 def addAgentToBoard(agentName,leaderboard):
     print("ADDING " + agentName)
@@ -23,51 +24,30 @@ def removeAgent(agentName, leaderboard):
 
 def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
     #updates the Agent_Leaderboard for PERFORMANCE
-    rows = list(leaderboard)
-    print(rows)
+    for bot in goodOnes:
+        stats = leaderboard[bot]
+        perf = float(stats[2]) + 1
+        if bot in goodOnes[:9]:
+            perf += 1
 
-    changeRows = []
-    toRemove = []
-    line = 0
-    for row in rows:
-        if row[0] in goodOnes:
-            newRow = row
-            perf = float(row[3]) + 1
-            # Top 3
-            if row[0] in goodOnes[:2]:
-                perf += 1.5
-            if perf > CHILD_THRESHOLD:
-                makeChildFromParents(row[0],goodOnes[1])
-                perf = 0
-            newRow[3] = perf
-            changeRows.append((line, newRow))
+        if perf > CHILD_THRESHOLD:
+            makeChildFromParents(bot,random.choice(goodOnes), leaderboard)
+            perf = 0
 
-        if row[0] in badOnes:
-            newRow = row
-            perf = float(row[3]) - 1
-            # Worst 1
-            if row[0] == badOnes[0]:
-                perf -= 1
+        leaderboard[bot] = (stats[0], stats[1],perf)
 
-            if -1*perf > KILL_THRESHOLD:
-                toRemove.append(row[0])
-            else:
-                newRow[3] = perf
-                changeRows.append((line,newRow))
-        line += 1
+    for bot in badOnes:
+        stats = leaderboard[bot]
+        perf = float(stats[2]) - 1
+        if bot in badOnes[:9]:
+            perf -= 1
 
-    for changed in changeRows:
-        index = changed[0]
-        content = changed[1]
-        rows[index] = content
+        if perf < KILL_THRESHOLD:
+            removeAgent(bot, leaderboard)
+        else:
+            leaderboard[bot] = (stats[0], stats[1],perf)
 
-    for bot in toRemove:
-        removeAgent(bot)
-
-    with open(folderize(MASTERFILE), mode='w') as writeFile:
-        writer = csv.writer(writeFile)
-        writer.writerows(rows)
-    writeFile.close()
+        return leaderboard
 
 # Mutates all data weights in steps of [-max to max] in either positive or negative direction
 # If max > 1 then it resets to a default of 0.2
@@ -82,7 +62,7 @@ def mutateWeights(data, maxMutation):
     #print(data,newData)
     return newData
 
-def makeChildFromParents(botAName, botBName):
+def makeChildFromParents(botAName, botBName, leaderboard):
     parentA = readFileAndGetData(botAName)
     parentB = readFileAndGetData(botBName)
     #print(parentA,parentB)
@@ -91,17 +71,15 @@ def makeChildFromParents(botAName, botBName):
     child = parentAPartName + "-" + parentBPartName + "#" + str(random.randint(0,99))
 
     # Add child to board
-    addAgentToBoard(child)
-
+    addAgentToBoard(child, leaderboard)
     childWeights = makeChildWeightsFromParents(parentA[0], parentB[0])
-
     childData = (childWeights, [0,0,0])
+
     # Create new CSV for child
     writeToFile(child, childData)
     print("Created child " + child)
 
 # Makes a child weight that takes the average of two parents and applies [+/-0.1] mutation
-
 def makeChildWeightsFromParents(pAWeights, pBWeights):
     childWeights = []
     i = 0
@@ -110,42 +88,39 @@ def makeChildWeightsFromParents(pAWeights, pBWeights):
         childWeights.append((pAWeights[i]+pBWeights[i])/2)
         i+=1
 
+    #Muatate the weights by +/- 0.1
     mutateWeights(childWeights,0.1)
     return childWeights
 
+def spawnRandomChildren(num, leaderboard):
+    def id_generator(size=6, chars=string.ascii_uppercase):
+        return ''.join(random.choice(chars) for _ in range(size))
+    i = 0
+    while i < num:
+        botName = id_generator()
+        weights = generateRandomWeights(6)
+        addAgentToBoard(botName,leaderboard)
+        writeToFile(botName, weights)
+        i += 1
+
+    return leaderboard
 # Evaluation function based on wins/loss ratio and multiplied by number of games played
 def evaluatePlayer(row):
-    wins = int(row[0]) + 1
-    losses = int(row[1]) + 1
+    wins = float(row[0]) + 1
+    losses = float(row[1]) + 1
     ratio = (wins/losses)
     final = ratio * (wins+losses) + (wins-losses)
     return final
-
-# Increase performance on LOCAL FILE
-def reward(bot):
-    stats = readFileAndGetData(bot)
-    stats[1][2] = int(stats[1][2]) + 1
-    writeToFile(bot,stats)
-
-# Decrease performance on LOCAL FILE
-def penalize(bot):
-    stats = readFileAndGetData(bot)
-    stats[1][2] = int(stats[1][2]) - 1
-    writeToFile(bot,stats)
-
 
 def applyToAll(bots, fun):
     for bot in bots:
         fun(bot)
 
 def incubate(leaderboard):
+    FIXED_NUM_BOTS = 64
     print("..........INCUBATING..........")
-    return leaderboard
-
-    gpThreshold = 7
-    goodPerformers = []
-    bpThreshold = 9
-    badPerformers = []
+    gpThreshold = min(len(leaderboard)//3, 30)
+    bpThreshold = gpThreshold
 
     valueBoard = []
     for name in leaderboard:
@@ -156,14 +131,12 @@ def incubate(leaderboard):
     valueBoard.sort(key=lambda tup: tup[0], reverse=True)
     goodPerformers = list(map(lambda t: t[1], valueBoard[:gpThreshold]))
 
-
     valueBoard.sort(key=lambda tup: tup[0])
     badPerformers = list(map(lambda t: t[1], valueBoard[:bpThreshold]))
 
-    # updates Individual local agent files
-    # Screw it
-    # applyToAll(goodPerformers, reward)
-    # applyToAll(badPerformers, penalize)
+    if len(leaderboard) < FIXED_NUM_BOTS:
+        leaderboard = spawnRandomChildren(FIXED_NUM_BOTS - len(leaderboard),leaderboard)
 
     # Update the leaderboard
-    updateAgentsLeaderboardPerf(goodPerformers,badPerformers, leaderboard)
+    print("..........FINISHED..........")
+    return updateAgentsLeaderboardPerf(goodPerformers,badPerformers, leaderboard)
