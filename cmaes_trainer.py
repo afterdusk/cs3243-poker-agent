@@ -47,13 +47,15 @@ while True:
     jobs = manager.list()
     job_index_queue = manager.Queue()
     results = manager.list()
-    for (i, j, k) in itertools.product(xrange(NUM_INSTANCES), xrange(len(particles[i])), xrange(NUM_INSTANCES)):
-        if k == i:
-            continue
-        job_index_queue.put_nowait(len(jobs))
-        job = [i, j, k, particles[i][j], instances[k].result[5]]
-        jobs += [job]
-        results += [0]
+    for i in xrange(NUM_INSTANCES):
+        for j in xrange(len(particles[i])):
+            for k in xrange(NUM_INSTANCES):
+                if k == i:
+                    continue
+                job_index_queue.put_nowait(len(jobs))
+                job = [i, j, k, particles[i][j], instances[k].result[5]]
+                jobs += [job]
+                results += [0]
 
     def worker(jobs, job_index_queue, results):
         while True:

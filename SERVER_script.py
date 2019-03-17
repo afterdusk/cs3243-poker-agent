@@ -19,8 +19,7 @@ class TrainerServer:
     def on_request(self, client, topic, content):
         print("GOT GAME REQUEST", topic, content)
         nextMatch = bot_trainer.getNextMatch()
-        if nextMatch:
-            client.send_message(nextMatch, config.mqttTopicJobRes, True, client.guess_interlocutor_id(topic))
+        client.send_message(nextMatch, config.mqttTopicJobRes, True, client.guess_interlocutor_id(topic))
 
     def on_outcome(self, client, topic, content):
         print("GOT OUTCOME", topic, content)
