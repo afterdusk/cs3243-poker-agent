@@ -5,10 +5,13 @@ import math
 from player_space import PlayerSpace
 
 class CMAPlayerSpace:
-    def __init__(self, task_master, num_dimensions, num_instances):
+    def __init__(self, task_master, num_dimensions, num_instances, initial_sd, num_games, num_rounds):
         PlayerSpace.__init__(self, task_master)
         self.num_dimensions = num_dimensions
         self.num_instances = num_instances
+        self.initial_sd = initial_sd
+        self.num_games = num_games
+        self.num_rounds = num_rounds
 
         self.instances = []        
         cma_options = cma.CMAOptions()
@@ -16,7 +19,9 @@ class CMAPlayerSpace:
         cma_options.set('verb_disp', -1)
         cma_options.set('verb_log', 0)
         for mean in enumerate([random.uniform(-1, 1) for _ in xrange(num_dimensions)] for _ in xrange(num_instances)):
-            self.instances += [cma.CMAEvolutionStrategy(mean, 0.2 / 3, cma_options)]
+            self.instances += [cma.CMAEvolutionStrategy(mean, initial_sd, cma_options)]
+
+        self.begin()
 
     def begin(self):
         jobs = []    
@@ -28,7 +33,7 @@ class CMAPlayerSpace:
                     if i == k:
                         continue
                     other_mean = other_instance.result[5]
-                    jobs += [[('WeightedPlayer', particle), ('WeightedPlayer', other_mean), (4, 101), (i, j, k)]]
+                    jobs += [[('WeightedPlayer', particle), ('WeightedPlayer', other_mean), (self.num_games, self.num_rounds), (i, j, k)]]
 
         completed_jobs = []
         task_master.scheduleJobs(jobs, 5, lambda job, outcome: self.callback(job, outcome, len(jobs), completed_jobs))
