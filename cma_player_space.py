@@ -11,6 +11,7 @@ class CMAPlayerSpace:
         self.initial_sd = initial_sd
         self.num_games = num_games
         self.num_rounds = num_rounds
+        self.generation = 0
 
         self.instances = []        
         cma_options = cma.CMAOptions()
@@ -20,9 +21,20 @@ class CMAPlayerSpace:
         for mean in [[random.uniform(-1, 1) for _ in xrange(num_dimensions)] for _ in xrange(num_instances)]:
             self.instances += [cma.CMAEvolutionStrategy(mean, initial_sd, cma_options)]
 
+        with open('cmaes_trainer_log.txt', 'w') as _:
+            None
+
         self.begin()
 
     def begin(self):
+        print('Logging...')
+        with open('cmaes_trainer_log.txt', 'a') as log_file:
+            log_file.write('Generation = ' + str(self.generation) + '\n')
+            for (i, instance) in enumerate(self.instances):
+                log_file.write('(' + str(i).zfill(2) + ') Mean = ' + ' '.join(str(x) for x in instance.result[5]) + '\n')
+                log_file.write('(' + str(i).zfill(2) + ') SD =   ' + ' '.join(str(x) for x in instance.result[6]) + '\n')
+            log_file.write('\n')
+
         print('Generating jobs...')
 
         jobs = []    
@@ -56,4 +68,5 @@ class CMAPlayerSpace:
         for (i, po) in enumerate(particle_outcomes):
             self.instances[i].tell(particles[i], [-float(v) / (self.num_instances - 1) for v in po])
 
+        self.generation += 1
         self.begin()
