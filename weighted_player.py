@@ -42,7 +42,7 @@ class WeightedPlayer(BasePokerPlayer):
         return adjvalue
 
     def decide(self, holeValue, movesHistory,  pot_amount):
-        return self.card_weight*(holeValue+self.card_bias) + self.pot_weight*(pot_amount/100+self.pot_bias)
+        return self.card_weight*(holeValue+self.card_bias) + self.pot_weight*(pot_amount/320+self.pot_bias)
 
     def decideOnAction(self, valid_actions, cardValue, movesHistory, pot_amount):
         confidence = self.decide(cardValue, movesHistory, pot_amount)
