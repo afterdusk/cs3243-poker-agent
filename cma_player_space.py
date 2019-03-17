@@ -42,8 +42,8 @@ class CMAPlayerSpace:
     
     def callback(self, job, outcome, num_jobs, completed_jobs):
         completed_jobs += [(job, outcome)]
-        print('Progress (' + str(len(completed_jobs)) + '/' + len(jobs) + ')')
-        if len(completed_jobs) < len(jobs):
+        print('Progress (' + str(len(completed_jobs)) + '/' + str(num_jobs) + ')')
+        if len(completed_jobs) < num_jobs:
             return
 
         particle_outcomes = [[0] * len(p) for p in particles]
