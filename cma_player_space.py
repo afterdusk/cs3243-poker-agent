@@ -2,11 +2,9 @@ import cma
 import random
 import itertools
 import math
-from player_space import PlayerSpace
 
 class CMAPlayerSpace:
     def __init__(self, task_master, num_dimensions, num_instances, initial_sd, num_games, num_rounds):
-        PlayerSpace.__init__(self, task_master)
         self.num_dimensions = num_dimensions
         self.num_instances = num_instances
         self.initial_sd = initial_sd
@@ -18,7 +16,7 @@ class CMAPlayerSpace:
         cma_options.set('verbose', -9)
         cma_options.set('verb_disp', -1)
         cma_options.set('verb_log', 0)
-        for mean in enumerate([random.uniform(-1, 1) for _ in xrange(num_dimensions)] for _ in xrange(num_instances)):
+        for mean in [[random.uniform(-1, 1) for _ in xrange(num_dimensions)] for _ in xrange(num_instances)]:
             self.instances += [cma.CMAEvolutionStrategy(mean, initial_sd, cma_options)]
 
         self.begin()

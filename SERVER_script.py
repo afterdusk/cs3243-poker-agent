@@ -1,12 +1,15 @@
 from syncengine.client import Client
 from syncengine.taskmaster import Taskmaster
+from cma_player_space import CMAPlayerSpace
 import config
 
 # Import player spaces here
 
 def createPlayerSpaces(taskmaster):
     # Init player spaces here
-    return []
+    return [
+        CMAPlayerSpace(taskmaster, 7, 20, 0.1, 4, 101)
+    ]
 
 
 class TrainerServer:

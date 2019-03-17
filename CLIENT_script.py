@@ -1,7 +1,7 @@
 from time import sleep
 from syncengine.client import Client
 from syncengine.taskmaster import wrapped_outcome
-import CLIENT_test_arena as bot_arena
+import CLIENT_stadium as stadium
 import config
 
 class TrainerClient:
@@ -33,7 +33,7 @@ class TrainerClient:
         # Play game inform server, and request for job
         print("GOT JOB", topic, content)
         job_id, job_data = content
-        outcome = bot_arena.train_bots(job_data)
+        outcome = stadium.train_bots(job_data)
         client.send_message(wrapped_outcome(job_id, outcome), config.mqttTopicJobOutcome, True)
         self.get_new_job()
 
