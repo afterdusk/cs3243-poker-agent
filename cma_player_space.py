@@ -4,7 +4,8 @@ import itertools
 import math
 
 class CMAPlayerSpace:
-    def __init__(self, task_master, num_dimensions, num_instances, initial_sd, num_games, num_rounds):
+    def __init__(self, taskmaster, num_dimensions, num_instances, initial_sd, num_games, num_rounds):
+        self.taskmaster = taskmaster
         self.num_dimensions = num_dimensions
         self.num_instances = num_instances
         self.initial_sd = initial_sd
@@ -23,7 +24,7 @@ class CMAPlayerSpace:
 
     def begin(self):
         jobs = []    
-        particles = [instance.ask() for instance in self.instances()]
+        particles = [instance.ask() for instance in self.instances]
 
         for (i, instance) in enumerate(self.instances):
             for (j, particle) in enumerate(instance.ask()):
@@ -31,10 +32,13 @@ class CMAPlayerSpace:
                     if i == k:
                         continue
                     other_mean = other_instance.result[5]
-                    jobs += [[('WeightedPlayer', particle), ('WeightedPlayer', other_mean), (self.num_games, self.num_rounds), (i, j, k)]]
+                    jobs += [[
+                        (('WeightedPlayer', particle), ('WeightedPlayer', other_mean)), 
+                        (self.num_games, self.num_rounds), 
+                        (i, j, k)]]
 
         completed_jobs = []
-        task_master.scheduleJobs(jobs, 5, lambda job, outcome: self.callback(job, outcome, len(jobs), completed_jobs))
+        self.taskmaster.schedule_jobs(jobs, 5, lambda job, outcome: self.callback(job, outcome, len(jobs), completed_jobs))
     
     def callback(self, job, outcome, num_jobs, completed_jobs):
         completed_jobs += [(job, outcome)]
