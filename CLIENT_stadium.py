@@ -61,7 +61,7 @@ PLAYER_LIBRARY = {}
 PLAYER_LIBRARY['DavidPlayer'] = lambda w: DavidPlayer(w)
 PLAYER_LIBRARY['WeightedPlayer'] = lambda w: WeightedPlayer(w)
 
-# A job is {{bot1}, {bot2}, {training_regime}}
+# A job is {{bot1,bot2}, {training_regime}, {...extra info...}}
 # Each bot is in a tuple of {bot_type, weights}
 # training_regime is a tuple of {num_games, num_rounds per game}
 def train_bots(matchup_job):
