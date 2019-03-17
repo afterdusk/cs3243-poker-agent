@@ -1,6 +1,7 @@
 import csv
 import os
 import random
+import string
 from david_file_utils import readFileAndGetData, writeToFile, folderize
 # Handles the reinforcement learning. Creation of children and culling of weak agents
 
@@ -83,7 +84,7 @@ def makeChildFromParents(botAName, botBName, leaderboard):
 def makeChildWeightsFromParents(pAWeights, pBWeights):
     childWeights = []
     i = 0
-    while i < len(pAWeights):
+    while i < 6:
         # Takes the average of both parents
         childWeights.append((pAWeights[i]+pBWeights[i])/2)
         i+=1
@@ -91,6 +92,13 @@ def makeChildWeightsFromParents(pAWeights, pBWeights):
     #Muatate the weights by +/- 0.1
     mutateWeights(childWeights,0.1)
     return childWeights
+
+
+def generateRandomWeights(n):
+    w = []
+    while len(w) < n:
+        w.append(0)
+    return mutateWeights(w,0.99)
 
 def spawnRandomChildren(num, leaderboard):
     def id_generator(size=6, chars=string.ascii_uppercase):
@@ -100,7 +108,7 @@ def spawnRandomChildren(num, leaderboard):
         botName = id_generator()
         weights = generateRandomWeights(6)
         addAgentToBoard(botName,leaderboard)
-        writeToFile(botName, weights)
+        writeToFile(botName, (weights,))
         i += 1
 
     return leaderboard

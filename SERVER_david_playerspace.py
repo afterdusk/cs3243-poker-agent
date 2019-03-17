@@ -129,7 +129,6 @@ def init(taskmaster):
     def composeBot(agentName):
         data = readFileAndGetData(agentName)
         agentWeights = data[0]
-        agentStats = data[1]
         agentClassName = "DavidPlayer"
         return (agentClassName, agentWeights)
 
@@ -139,8 +138,8 @@ def init(taskmaster):
     def arrangeMatch(agentOneName, agentTwoName):
         botOne = composeBot(agentOneName)
         botTwo = composeBot(agentTwoName)
-        num_games = 5
-        num_rounds = 101
+        num_games = 1
+        num_rounds = 51
         training_regime = (num_games,num_rounds)
         # ((b1,b2), (ng,nr), (name1,name2))
         matchup_job = ((botOne, botTwo),training_regime,(agentOneName,agentTwoName))
