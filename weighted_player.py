@@ -4,20 +4,25 @@ from pypokerengine.engine.card import Card
 from time import sleep
 import math
 import pprint
+import activation_functions
 
 class WeightedPlayer(BasePokerPlayer):
 
     def __init__(self, weights):
         self.initWeights(weights)
+
     def initWeights(self, data):
-        self.raise_threshold = data[0]
-        self.call_threshold = data[1]
-        #The higher this value, the more conservative
-        self.overall_bias = data[2]
-        self.card_weight = data[3]
-        self.pot_weight = data[4]
-        self.card_bias = data[5]
-        self.pot_bias = data[6]
+        # The higher these value, the more conservative the play
+        self.raise_threshold = activation_functions.logistic(0, 1, 4, 0)(data[0])
+        self.call_threshold = activation_functions.logistic(0, 1, 4, 0)(data[1])
+
+        # Multipliers
+        self.card_weight = activation_functions.logistic(0, 2, 4, -1)(data[2])
+        self.card_bias = activation_functions.logistic(0, 2, 4, -1)(data[3])
+
+        # Flat biases
+        self.pot_weight = activation_functions.logistic(0, 2, 4, -1)(data[4])
+        self.pot_bias = activation_functions.logistic(0, 2, 4, -1)(data[5])
         return self
 
     def calculateHandValue(self, hole_cards, common_cards):
@@ -37,7 +42,7 @@ class WeightedPlayer(BasePokerPlayer):
         return adjvalue
 
     def decide(self, holeValue, movesHistory,  pot_amount):
-        return self.card_weight*(holeValue+self.card_bias) + self.pot_weight*(pot_amount/100+self.pot_bias) + self.overall_bias
+        return self.card_weight*(holeValue+self.card_bias) + self.pot_weight*(pot_amount/100+self.pot_bias)
 
     def decideOnAction(self, valid_actions, cardValue, movesHistory, pot_amount):
         confidence = self.decide(cardValue, movesHistory, pot_amount)
