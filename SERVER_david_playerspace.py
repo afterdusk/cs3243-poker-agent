@@ -7,13 +7,16 @@ from SERVER_incubator import incubate
 from david_file_utils import folderize, readFileAndGetData, writeToFile, getLeaderboard, MASTERFILE
 
 # SERVER SIDE david_player trainer
-rawLeaderboard = getLeaderboard(MASTERFILE)
-
 LEADERBOARD = {}
-for row in rawLeaderboard[1:]:
-    name = row[0]
-    scores = tuple(map(lambda e: float(e), row[1:]))
-    LEADERBOARD[name] = scores
+
+def cacheLeaderboard():
+    global LEADERBOARD
+    rawLeaderboard = getLeaderboard(MASTERFILE)
+
+    for row in rawLeaderboard[1:]:
+        name = row[0]
+        scores = tuple(map(lambda e: float(e), row[1:]))
+        LEADERBOARD[name] = scores
 
 def writeToLeaderboardFile():
     HEADER = ('Agent Name', 'Wins', 'Losses','Performance')
@@ -32,6 +35,7 @@ def writeToLeaderboardFile():
 #   File related functions
 #================================
 def updateAgentsLeaderboardStats(winAgentName, loseAgentName):
+    global LEADERBOARD
     #updates the LEADERBOARD
     stats = LEADERBOARD[winAgentName]
     LEADERBOARD[winAgentName] = (stats[0] + 1, stats[1], stats[2])
@@ -160,6 +164,7 @@ def getNextMatch():
 
 def init(taskmaster):
     # This is the main training
+    cacheLeaderboard()
     TASKMASTER = taskmaster
     try:
         beginTrainingAllBots(300)
