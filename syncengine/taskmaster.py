@@ -58,16 +58,16 @@ class Taskmaster:
 
     def handle_outcome(self, wrapped_outcome):
         job_id, outcome = wrapped_outcome
-        try:
-            # Retrieve data and remove from dict
-            wrapped_job_data, max_duration, callback = self.job_data[job_id]
-            del self.job_data[job_id]
+        # Retrieve data and remove from dict
+        wrapped_job_data, max_duration, callback = self.job_data[job_id]
+        del self.job_data[job_id]
 
+        try:
             # Remove job from timeout heap
             timeout_index = [j[1] for j in self.timeout_heap].index(wrapped_job_data)
             heapq_remove_item_at_index(self.timeout_heap, timeout_index)
-
-            # Call callback
-            callback(wrapped_job_data[1], outcome)
         except Exception as e:
-            print("Got error getting outcome", e)
+            print("Got error removing job from timeout heap", e)
+
+        # Call callback
+        callback(wrapped_job_data[1], outcome)
