@@ -6,7 +6,13 @@ from file_utils import folderize, readFileAndGetData, writeToFile, MASTERFILE
 
 # Handles the reinforcement learning. Creation of children and culling of weak agents
 
-def addAgentToBoard(agentName, weights):
+CHILD_THRESHOLD = 12
+KILL_THRESHOLD = 7 #This will be flipped negative
+
+
+def addAgentToBoard(agentName):
+    print("ADDING " + agentName)
+
     # Initialize win/loss/performace to 0,0,0
     newAgentRow = [agentName, 0, 0, 0]
 
@@ -16,6 +22,10 @@ def addAgentToBoard(agentName, weights):
 
 #Removes the agent from the table and DELETES the csv file
 def removeAgent(agentName):
+    #Deletes the csv file
+    print("Removing " + agentName)
+    os.remove(folderize(agentName))
+
     #Table entry removal
     table = []
     with open(folderize(MASTERFILE), mode='r') as readFile:
@@ -24,15 +34,13 @@ def removeAgent(agentName):
             if currRow[0] == agentName:
                 continue
             table.append(currRow)
-    readFile.close()
 
+    readFile.close()
     with open(folderize(MASTERFILE), mode='w') as writeFile:
         writer = csv.writer(writeFile)
         writer.writerows(table)
     writeFile.close()
 
-    #Deletes the file
-    os.remove(folderize(agentName))
 
 def updateAgentsLeaderboardPerf(goodOnes, badOnes):
     #updates the Agent_Leaderboard for PERFORMANCE
@@ -42,25 +50,42 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes):
     readFile.close()
 
     changeRows = []
-    with open(folderize(MASTERFILE)) as readFile:
-        csvReader = csv.reader(readFile,  delimiter= ',')
-        line = 0
-        for row in csvReader:
-            if row[0] in goodOnes:
-                newRow = row
-                newRow[3] = int(row[3]) + 1
-                changeRows.append((line, newRow))
-            if row[0] in badOnes:
-                newRow = row
-                newRow[3] = int(row[3]) - 1
+    toRemove = []
+    line = 0
+    for row in rows:
+        if row[0] in goodOnes:
+            newRow = row
+            perf = float(row[3]) + 1
+            # Top 3
+            if row[0] in goodOnes[:2]:
+                perf += 1.5
+            if perf > CHILD_THRESHOLD:
+                makeChildFromParents(row[0],goodOnes[1])
+                perf = 0
+            newRow[3] = perf
+            changeRows.append((line, newRow))
+
+        if row[0] in badOnes:
+            newRow = row
+            perf = float(row[3]) - 1
+            # Worst 1
+            if row[0] == badOnes[0]:
+                perf -= 1
+
+            if -1*perf > KILL_THRESHOLD:
+                toRemove.append(row[0])
+            else:
+                newRow[3] = perf
                 changeRows.append((line,newRow))
-            line += 1
-    readFile.close()
+        line += 1
 
     for changed in changeRows:
         index = changed[0]
         content = changed[1]
         rows[index] = content
+
+    for bot in toRemove:
+        removeAgent(bot)
 
     with open(folderize(MASTERFILE), mode='w') as writeFile:
         writer = csv.writer(writeFile)
@@ -81,14 +106,20 @@ def mutateWeights(data, maxMutation):
     return newData
 
 
-def makeChildFromParents(parentA, parentB):
-    parentAPartName = parentA[1][:8]
-    parentBPartName = parentB[1][:8]
+def makeChildFromParents(botAName, botBName):
+    parentA = readFileAndGetData(botAName)
+    parentB = readFileAndGetData(botBName)
+    print(parentA,parentB)
+    parentAPartName = botAName[:8]
+    parentBPartName = botBName[:8]
     child = parentAPartName + "-" + parentBPartName + "#" + str(random.randint(0,99))
-    childWeights = makeChildWeightsFromParents(parentA[2], parentB[2])
 
     # Add child to board
-    addAgentToBoard(child, childData[0])
+    addAgentToBoard(child)
+
+    childWeights = makeChildWeightsFromParents(parentA[0], parentB[0])
+
+
 
     childData = (childWeights, [0,0,0])
     # Create new CSV for child
@@ -100,9 +131,10 @@ def makeChildFromParents(parentA, parentB):
 def makeChildWeightsFromParents(pAWeights, pBWeights):
     childWeights = []
     i = 0
-    while i < len(aOWeights):
+    while i < len(pAWeights):
         # Takes the average of both parents
         childWeights.append((pAWeights[i]+pBWeights[i])/2)
+        i+=1
 
     mutateWeights(childWeights,0.1)
     return childWeights
@@ -134,9 +166,9 @@ def applyToAll(bots, fun):
 
 def incubate(leaderboard):
     print("..........INCUBATING..........")
-    gpThreshold = 5
-    goodPerformers = [(0,"NULL"),]
-    bpThreshold = 7
+    gpThreshold = 7
+    goodPerformers = []
+    bpThreshold = 9
     badPerformers = []
 
     valueBoard = []
@@ -152,9 +184,10 @@ def incubate(leaderboard):
     valueBoard.sort(key=lambda tup: tup[0])
     badPerformers = list(map(lambda t: t[1], valueBoard[:bpThreshold]))
 
-    # updates Individual agent files
-    applyToAll(goodPerformers, reward)
-    applyToAll(badPerformers, penalize)
+    # updates Individual local agent files
+    # Screw it
+    # applyToAll(goodPerformers, reward)
+    # applyToAll(badPerformers, penalize)
 
     # Update the leaderboard
     updateAgentsLeaderboardPerf(goodPerformers,badPerformers)

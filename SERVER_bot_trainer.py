@@ -21,19 +21,16 @@ def updateAgentsLeaderboardStats(winAgentName, loseAgentName):
         rows = list(csvReader)
     readFile.close()
 
-    with open(folderize(MASTERFILE)) as readFile:
-        csvReader = csv.reader(readFile,  delimiter= ',')
-        line = 0
-        winLine = 0
-        loseLine = 0
-        for row in csvReader:
-            if row[0] == winAgentName:
-                winLine = [line, row]
-            if row[0] == loseAgentName:
-                loseLine = [line,row]
-            line += 1
-        oldInfo = (winLine,loseLine)
-    readFile.close()
+    line = 0
+    winLine = 0
+    loseLine = 0
+    for row in rows:
+        if row[0] == winAgentName:
+            winLine = [line, row]
+        if row[0] == loseAgentName:
+            loseLine = [line,row]
+        line += 1
+    oldInfo = (winLine,loseLine)
 
     newWinRow = oldInfo[0][1]
     newWinRow[1] = int(newWinRow[1]) + 1 # Increment wins
@@ -41,6 +38,7 @@ def updateAgentsLeaderboardStats(winAgentName, loseAgentName):
     newLoseRow[2] = int(newLoseRow[2]) + 1 # Increment losses
     rows[oldInfo[0][0]] = newWinRow
     rows[oldInfo[1][0]] = newLoseRow
+
     with open(folderize(MASTERFILE), mode='w') as writeFile:
         writer = csv.writer(writeFile)
         writer.writerows(rows)
@@ -153,8 +151,9 @@ def addLoss(loserName):
 def settleMatchOutcome(outcome):
     winnerName = outcome[0]
     loserName = outcome[1]
-    addWin(winnerName)
-    addLoss(loserName)
+    # Don't waste time with local anymore
+    #addWin(winnerName)
+    #addLoss(loserName)
     updateAgentsLeaderboardStats(winnerName,loserName)
 
 #************================================************
@@ -176,8 +175,9 @@ matchup_queue = deque()
 def sendMatchup(matchup_job):
     matchup_queue.append(matchup_job)
 
-INCUBATEFREQUENCY = 3
+INCUBATEFREQUENCY = len(getBoard())
 matchCount = 1
+stabilizer = 197
 
 # Processes outcomes received from remote clients
 # Message contains a tuple of (winner_name,loser_name)
@@ -187,14 +187,15 @@ def handleOutcome(outcome):
     print("\n============Match number " + str(matchCount) +"============")
     settleMatchOutcome(outcome)
     matchCount += 1
-    if matchCount % INCUBATEFREQUENCY == 0 and matchCount >= INCUBATEFREQUENCY:
-        incubate(getBoard())
+    if matchCount > stabilizer:
+        if matchCount % INCUBATEFREQUENCY == 0 and matchCount >= INCUBATEFREQUENCY:
+            incubate(getBoard())
 
 def arrangeMatch(agentOneName, agentTwoName, iterations):
     botOne = composeBot(agentOneName)
     botTwo = composeBot(agentTwoName)
-    num_games = 3
-    num_rounds = 101
+    num_games = 5
+    num_rounds = 81
     training_regime = (num_games,num_rounds)
     matchup_job = ((botOne, botTwo),training_regime)
     sendMatchup(matchup_job)
@@ -209,7 +210,7 @@ def getNextMatch():
 
 def init():
     clearAllHistories()
-    beginTrainingAllBots(1000)
+    beginTrainingAllBots(3451)
 
 # MAIN
 if __name__ == "__main__":
