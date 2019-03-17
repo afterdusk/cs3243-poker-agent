@@ -23,6 +23,8 @@ class CMAPlayerSpace:
         self.begin()
 
     def begin(self):
+        print('Generating jobs...')
+
         jobs = []    
         particles = [instance.ask() for instance in self.instances]
 
@@ -37,6 +39,7 @@ class CMAPlayerSpace:
                         (self.num_games, self.num_rounds), 
                         (i, j, k)]]
 
+        print('Running jobs...')
         completed_jobs = []
         self.taskmaster.schedule_jobs(jobs, 5, lambda job, outcome: self.callback(job, outcome, len(jobs), completed_jobs))
     
@@ -46,6 +49,7 @@ class CMAPlayerSpace:
         if len(completed_jobs) < num_jobs:
             return
 
+        print('Updating instances...')
         particle_outcomes = [[0] * len(p) for p in particles]
         for completed_job in completed_jobs:
             particle_outcomes[completed_job[3][0]][completed_job[3][1]] += completed_job[1]
