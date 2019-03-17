@@ -126,11 +126,9 @@ def sendMatchup(matchup_job):
     print(matchup_job)
     outcome = train_bots(matchup_job)
     handleOutcome(outcome)
-    #schedule_job(matchup_job, 120, handleOutcome)
+    TASKMASTER.schedule_job(matchup_job, 120, handleOutcome)
 
-INCUBATEFREQUENCY = len(LEADERBOARD)
 matchCount = 1
-stabilizer = 197
 
 # Processes outcomes received from remote clients
 # Message contains a tuple of (winner_name,loser_name)
@@ -140,9 +138,6 @@ def handleOutcome(outcome):
     print("\n============Match number " + str(matchCount) +"============")
     settleMatchOutcome(outcome)
     matchCount += 1
-    # if matchCount > stabilizer:
-    #     if matchCount % INCUBATEFREQUENCY == 0 and matchCount >= INCUBATEFREQUENCY:
-    #         incubate(LEADERBOARD)
 
 # Composes the bots based on bot names
 def arrangeMatch(agentOneName, agentTwoName):
@@ -163,22 +158,19 @@ def getNextMatch():
         return None
 
 def init(taskmaster):
+    NUM_GENERATIONS = 20
     # This is the main training
+    global TASKMASTER
     cacheLeaderboard()
     TASKMASTER = taskmaster
-    try:
-        beginTrainingAllBots(300)
-    except Exception as e:
-        print(e)
+    i = 0
+    while i < NUM_GENERATIONS:
+        roundRobinTraining()
         writeToLeaderboardFile()
+        incubate()
+        print("/n/n%%%%%%%%%%%%%%%%%%%%%% Finished Generation " + str(i+1) +"%%%%%%%%%%%%%%%%%%%%%%/n/n")
+        i += 1
 
 # MAIN
 if __name__ == "__main__":
-    beginTrainingAllBots(300)
-
-#    init("blae")
-    # i = 0
-    # while i < 50:
-    #     roundRobinTraining()
-    #     print("/n/n%%%%%%%%%%%%%%%%%%%%%% Finished Round Robin round " + str(i+1) +"%%%%%%%%%%%%%%%%%%%%%%/n/n")
-    #     i += 1
+    roundRobinTraining()
