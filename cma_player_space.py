@@ -21,6 +21,8 @@ class CMAPlayerSpace:
         for mean in enumerate([random.uniform(-1, 1) for _ in xrange(num_dimensions)] for _ in xrange(num_instances)):
             self.instances += [cma.CMAEvolutionStrategy(mean, initial_sd, cma_options)]
 
+        self.begin()
+
     def begin(self):
         jobs = []    
         particles = [instance.ask() for instance in self.instances()]
