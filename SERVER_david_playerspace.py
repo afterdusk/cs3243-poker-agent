@@ -17,6 +17,7 @@ def cacheLeaderboard():
         name = row[0]
         scores = tuple(map(lambda e: float(e), row[1:]))
         LEADERBOARD[name] = scores
+    #print(LEADERBOARD)
 
 def writeToLeaderboardFile():
     HEADER = ('Agent Name', 'Wins', 'Losses','Performance')
@@ -62,49 +63,19 @@ def beginTrainingAllBots(cycles):
         arrangeMatch(bots[0], bots[1])
         iterations += 1
 
-def trainNamedBot(botName):
-    board = LEADERBOARD
-    iterations = 0
-    oppIndex = 1
-    for row in board:
-        opponent = board[oppIndex][0]
+def trainNamedBot(botName, botlist):
+    # Trains with every other bot
+    for opponent in botlist:
         if opponent == botName:
-            oppIndex += 1
-            if oppIndex < len(board):
-                opponent = board[oppIndex][0]
-            else:
-                break
-        arrangeMatch(botName,opponent, iterations)
-
-        oppIndex += 1
-        if oppIndex >= len(board):
-            break
-        iterations += 1
-    return True
+            continue
+        arrangeMatch(botName,opponent)
 
 def roundRobinTraining():
     print("ROUND ROBIN TRAINING")
-    board = LEADERBOARD
-    botlist = []
-    for row in board[0:]:
-        botlist.append(row[0])
+    botlist = list(LEADERBOARD)
     line = 0
     for bot in botlist:
-        if line == 0:
-            line += 1
-            continue
-        trainNamedBot(bot)
-
-        # TODO need to check if the bot being trained is still alive
-        alive = 1
-        if not alive:
-            break
-        line += 1
-
-def settleMatchOutcome(outcome):
-    winnerName = outcome[0]
-    loserName = outcome[1]
-    updateAgentsLeaderboardStats(winnerName,loserName)
+        trainNamedBot(bot, botlist)
 
 #************================================************
 #         Server-Client communication functions
@@ -120,23 +91,31 @@ def composeBot(agentName):
 # TODO: Move this to somewhere less awkward
 matchup_queue = deque()
 
+TASKMASTER = "SOME INSTANCE"
+
 # Sends a message to the clients in the form of a tuple
 # matchup_job = ((bot_1, bot_2), training_configuration, (b1Name, b2Name))
 def sendMatchup(matchup_job):
-    print(matchup_job)
-    outcome = train_bots(matchup_job)
-    handleOutcome(outcome)
+    #print(matchup_job)
     TASKMASTER.schedule_job(matchup_job, 120, handleOutcome)
 
 matchCount = 1
-
 # Processes outcomes received from remote clients
 # Message contains a tuple of (winner_name,loser_name)
-def handleOutcome(outcome):
+def handleOutcome(sentJob, outcome):
     global matchCount
     # global INCUBATEFREQUENCY
-    print("\n============Match number " + str(matchCount) +"============")
-    settleMatchOutcome(outcome)
+    if outcome == 1:
+        winnerName = sentJob[2][0]
+        loserName = sentJob[2][1]
+    else:
+        winnerName = sentJob[2][1]
+        loserName = sentJob[2][0]
+
+    updateAgentsLeaderboardStats(winnerName,loserName)
+
+    print("\n============Overall Match number: " + str(matchCount) +"============")
+
     matchCount += 1
 
 # Composes the bots based on bot names
@@ -157,6 +136,7 @@ def getNextMatch():
         print("Got error getting next job", e)
         return None
 
+# SERVER_script will call this
 def init(taskmaster):
     NUM_GENERATIONS = 20
     # This is the main training
@@ -173,4 +153,5 @@ def init(taskmaster):
 
 # MAIN
 if __name__ == "__main__":
+    cacheLeaderboard()
     roundRobinTraining()
