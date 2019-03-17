@@ -43,7 +43,11 @@ class Taskmaster:
             next_timeout_job = self.timeout_heap[0]
             if time() > next_timeout_job[0]:
                 heapq.heappop(self.timeout_heap)
-                return next_timeout_job[1]
+                next_wrapped_job = next_timeout_job[1]
+                job_id = next_wrapped_job[0]
+                wrapped_job_data, max_duration, callback = self.job_data[job_id]
+                self.schedule_timeout_job(next_wrapped_job, max_duration)
+                return next_wrapped_job
 
         # Try to get next queued job if possible
         try:
@@ -58,17 +62,23 @@ class Taskmaster:
 
     def handle_outcome(self, wrapped_outcome):
         job_id, outcome = wrapped_outcome
-        # Retrieve data and remove from dict
-        wrapped_job_data, max_duration, callback = self.job_data[job_id]
-        del self.job_data[job_id]
+
+        # Remove all instances of this job from timeout heap
+        while True:
+            try:
+                timeout_index = [j[1] for j in self.timeout_heap].index(wrapped_job_data)
+                heapq_remove_item_at_index(self.timeout_heap, timeout_index)
+            except Exception as e:
+                break
 
         try:
-            # Remove job from timeout heap
-            timeout_index = [j[1] for j in self.timeout_heap].index(wrapped_job_data)
-            heapq_remove_item_at_index(self.timeout_heap, timeout_index)
+            # Retrieve data and remove from dict
+            # If the job has already been completed, the next line will throw
+            # an IndexError
+            wrapped_job_data, max_duration, callback = self.job_data[job_id]
+            del self.job_data[job_id]
+
+            # Call callback
+            callback(wrapped_job_data[1], outcome)
         except Exception as e:
             print("Received duplicate outcome", e)
-            return
-
-        # Call callback
-        callback(wrapped_job_data[1], outcome)
