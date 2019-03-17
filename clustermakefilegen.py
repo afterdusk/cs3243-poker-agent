@@ -97,14 +97,17 @@ print("killall: $(KILLSERVERS)\n")
 
 for node_collection_name in servers:
     for idx in range(servers[node_collection_name]):
-        num_jobs = normal_j
         node_name = f"{node_collection_name}{idx}"
-        if node_name in blacklist:
-            continue
-        if node_name in special_js:
-            num_jobs = special_js[node_name]
         print("")
-        print(f"{node_name}.comp.nus.edu.sg:")
-        print(f"\t-ssh -oBatchMode=yes -oStrictHostKeyChecking=no {node_name}.comp.nus.edu.sg -t \"cd cs3243-poker-agent; bash -cl 'make -j{num_jobs} > /dev/null'\"")
+
         print(f"kill.{node_name}.comp.nus.edu.sg:")
         print(f"\t-ssh -oBatchMode=yes -oStrictHostKeyChecking=no {node_name}.comp.nus.edu.sg -t \"killall python\"")
+
+        if node_name in blacklist:
+            continue
+
+        num_jobs = normal_j
+        if node_name in special_js:
+            num_jobs = special_js[node_name]
+        print(f"{node_name}.comp.nus.edu.sg:")
+        print(f"\t-ssh -oBatchMode=yes -oStrictHostKeyChecking=no {node_name}.comp.nus.edu.sg -t \"cd cs3243-poker-agent; bash -cl 'make -j{num_jobs} > /dev/null'\"")
