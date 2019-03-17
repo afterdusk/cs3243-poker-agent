@@ -6,6 +6,9 @@ import math
 import pprint
 
 class WeightedPlayer(BasePokerPlayer):
+
+    def __init__(self, weights):
+        self.initWeights(weights)
     def initWeights(self, data):
         self.raise_threshold = data[0]
         self.call_threshold = data[1]
