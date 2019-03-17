@@ -1,12 +1,14 @@
 from syncengine.client import Client
 from syncengine.taskmaster import Taskmaster
-from cma_player_space import CMAPlayerSpace
 import config
 
 # Import player spaces here
+import SERVER_david_playerspace as david_playerspace
+from cma_player_space import CMAPlayerSpace
 
 def createPlayerSpaces(taskmaster):
     # Init player spaces here
+    david_playerspace.init(taskmaster)
     return [
         CMAPlayerSpace(taskmaster, 7, 20, 0.1, 4, 101)
     ]
