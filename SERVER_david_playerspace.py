@@ -46,7 +46,7 @@ def init(taskmaster):
         LEADERBOARD[winAgentName] = (stats[0] + 1, stats[1], stats[2])
 
         lstats = LEADERBOARD[loseAgentName]
-        LEADERBOARD[winAgentName] = (lstats[0], lstats[1] + 1, lstats[2])
+        LEADERBOARD[loseAgentName] = (lstats[0], lstats[1] + 1, lstats[2])
 
     #================================
     #   Training related functions
@@ -75,7 +75,8 @@ def init(taskmaster):
             arrangeMatch(botName,opponent)
 
     def roundRobinTraining():
-        #print("ROUND ROBIN TRAINING")
+        print("ROUND ROBIN TRAINING")
+        queuedMatches[0] = 0
         botlist = list(LEADERBOARD)
         line = 0
         for bot in botlist:
@@ -85,14 +86,16 @@ def init(taskmaster):
     #         Server-Client communication functions
     #************================================************
 
-    matchCount = 1
+    matchCountArr = [1]
     # Processes outcomes received from remote clients
     # Message contains a tuple of (winner_name,loser_name)
-    def handleOutcome(sentJob, outcome):
-        global matchCount
-        print("\n============Overall Match number: " + str(matchCount) +"============")
+    def handleOutcome(sentJob, outcome, matchCountArr, boardLength, qm, LEADERBOARD):
+        print(matchCountArr, boardLength)
+        UPDATE_BOARD_FREQUENCY = boardLength
+        INCUBATE_FREQUENCY = qm[0] + 1
 
-        # global INCUBATEFREQUENCY
+        print("\n============Training progress: " + str(matchCountArr[0]) + "/" + str(qm[0]) + "============")
+
         if outcome == 1:
             winnerName = sentJob[2][0]
             loserName = sentJob[2][1]
@@ -101,13 +104,26 @@ def init(taskmaster):
             loserName = sentJob[2][0]
 
         updateAgentsLeaderboardStats(winnerName,loserName)
-        matchCount += 1
+
+        if matchCountArr[0] >= UPDATE_BOARD_FREQUENCY and matchCountArr[0] % UPDATE_BOARD_FREQUENCY == 0:
+             writeToLeaderboardFile()
+
+        matchCountArr[0] = matchCountArr[0] + 1
+
+        if matchCountArr[0] >= INCUBATE_FREQUENCY:
+            print("%%%%%%%%%%%%%%%%%%%%%% Beginning a new Generation %%%%%%%%%%%%%%%%%%%%%%")
+            matchCountArr[0] = 1
+            LEADERBOARD = incubate(LEADERBOARD)
+            writeToLeaderboardFile()
+            roundRobinTraining()
+
 
     # Sends a message to the clients in the form of a tuple
     # matchup_job = ((bot_1, bot_2), training_configuration, (b1Name, b2Name))
     def sendMatchup(matchup_job):
-        #print(matchup_job)
-        TASKMASTER.schedule_job(matchup_job, 120, handleOutcome)
+        boardLength =  len(list(LEADERBOARD))
+        callback = lambda job, outcome: handleOutcome(job,outcome, matchCountArr, boardLength, queuedMatches, LEADERBOARD)
+        TASKMASTER.schedule_job(matchup_job, 120, callback)
 
     def composeBot(agentName):
         data = readFileAndGetData(agentName)
@@ -116,37 +132,25 @@ def init(taskmaster):
         agentClassName = "DavidPlayer"
         return (agentClassName, agentWeights)
 
-    # TODO: Move this to somewhere less awkward
-    matchup_queue = deque()
-
     # Composes the bots based on bot names
+    queuedMatches = [0]
+
     def arrangeMatch(agentOneName, agentTwoName):
         botOne = composeBot(agentOneName)
         botTwo = composeBot(agentTwoName)
         num_games = 5
         num_rounds = 101
+        # num_games = 1
+        num_rounds = 1
         training_regime = (num_games,num_rounds)
         # ((b1,b2), (ng,nr), (name1,name2))
         matchup_job = ((botOne, botTwo),training_regime,(agentOneName,agentTwoName))
         sendMatchup(matchup_job)
+        queuedMatches[0] = queuedMatches[0] + 1
 
-    def getNextMatch():
-        try:
-            return matchup_queue.popleft()
-        except Exception as e:
-            print("Got error getting next job", e)
-            return None
-
-    NUM_GENERATIONS = 5
-    # This is the main training
+    # This is the main stuff
     cacheLeaderboard()
-    i = 0
-    while i < NUM_GENERATIONS:
-        roundRobinTraining()
-        writeToLeaderboardFile()
-        #incubate()
-        print("\n\n%%%%%%%%%%%%%%%%%%%%%% Finished Generation " + str(i+1) +"%%%%%%%%%%%%%%%%%%%%%%\n\n")
-        i += 1
+    roundRobinTraining()
 
     # MAIN
     if __name__ == "__main__":

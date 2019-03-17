@@ -1,6 +1,8 @@
 from pypokerengine.players import BasePokerPlayer
 from pypokerengine.engine.poker_constants import PokerConstants
 from pypokerengine.engine.action_checker import *
+from pypokerengine.engine.card import Card
+from pypokerengine.utils import card_utils as ceval
 from time import sleep
 import pprint
 import time
@@ -21,24 +23,26 @@ class SmartWarrior(BasePokerPlayer):
         enemy_index = 0 if round_state['next_player'] == 1 else 1
         enemy_state = round_state['seats'][enemy_index]
         
-        my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises = self.parse_history(round_state['action_histories'], my_index == round_state['small_blind_pos'])
-        
+        my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises, enemy_actions = self.parse_history(round_state['action_histories'], my_index == round_state['small_blind_pos'])
         max_player = PlayerState(
             my_state['stack'], 
             my_amount_bet, 
             map(lambda x: x.values()[0], valid_actions), 
             my_num_raises, 
-            hole_card)
+            hole_card, [])
+
         min_player = PlayerState(
             enemy_state['stack'], 
             enemy_amount_bet,
             #TODO
-            ["fold", "call", "raise"], 
+            ["fold", "call", "raise"],
             enemy_num_raises, 
-            [])
+            [], enemy_actions)
+
         game = GameState(round_state['pot']['main']['amount'], 
             round_state['community_card'],
             round_state['street'])
+
         tree = MinimaxTree(max_player, min_player, game)
         decision, payoff = tree.minimax_decision()
         print "Decision made: ", decision
@@ -66,19 +70,19 @@ class SmartWarrior(BasePokerPlayer):
         my_num_raises = 0
         enemy_num_raises = 0
         my_turn = is_small_blind
+        enemy_actions = []
         flat_list = [i for street in history.values() for i in street]
         for i in flat_list:
-            print i
+            if DEBUG: print i
             if my_turn:
                 my_amount_bet = i['amount']
                 my_num_raises += (i['action'] == 'RAISE')
             else:
                 enemy_amount_bet = i['amount']
                 enemy_num_raises += (i['action'] == 'RAISE')
+                enemy_actions.append(i['action'])
             my_turn = not my_turn
-        return my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises
-
-
+        return my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises, enemy_actions
 
 class MinimaxTree:
     @staticmethod
@@ -120,6 +124,26 @@ class MinimaxTree:
         return False
 
     @staticmethod
+    # can be modified to accept a list of weights
+    def evaluation_function(hole_cards, community_cards, actions):
+        card_confidence = 0.5
+        player_confidence = 0.5
+        hole_cards_translated = []
+        community_cards_translated = []
+        action_score = 0
+        for card in hole_cards:
+            hole_cards_translated.append(Card.from_str(card))
+        for card in community_cards:
+            community_cards_translated.append(Card.from_str(card))
+        card_strength = ceval.estimate_hole_card_win_rate(200, 2, hole_cards_translated, community_cards_translated)
+        print (actions)
+        for i in actions:
+            if i == "RAISE":
+                action_score -= 0.5
+        print "=" * 100
+        return card_confidence * ((card_strength - 0.5)/0.5) + player_confidence * action_score
+
+    @staticmethod
     def utility(node):
         # if either player has folded
         if (node.max_player_state.has_folded):
@@ -127,8 +151,9 @@ class MinimaxTree:
         if (node.min_player_state.has_folded):
             return node.game_state.pot_amount - node.max_player_state.amount_bet
 
-        # TODO: write actual evaluation function
-        return node.game_state.pot_amount - node.max_player_state.amount_bet
+        # TODO: refine evaluation function
+        return MinimaxTree.evaluation_function(node.max_player_state.hole_cards,
+                                                node.game_state.community_cards, node.min_player_state.actions)
 
     def __init__(self, max_player_state, min_player_state, game_state):
         # root is always a max node
@@ -213,13 +238,14 @@ class MinimaxNode:
         return MinimaxNode(not self.is_max, new_max_player_state, new_min_player_state, new_game_state)
 
 class PlayerState:
-    def __init__(self, amount_left, amount_bet, valid_actions, raises_made, hole_cards):
+    def __init__(self, amount_left, amount_bet, valid_actions, raises_made, hole_cards, actions):
         self.amount_left = amount_left
         self.amount_bet = amount_bet
         self.valid_actions = valid_actions
         self.raises_made = raises_made
         self.hole_cards = hole_cards
         self.has_folded = False
+        self.actions = actions
 
     def perform(self, action, game_state, adversary_state):
         # raise amount and limit is constant for betting round, can move following call elsewhere to reduce
@@ -264,15 +290,14 @@ class PlayerState:
                            self.amount_bet,
                            list(self.valid_actions),
                            self.raises_made,
-                           list(self.hole_cards))
-
+                           list(self.hole_cards),
+                           self.actions)
     def print_state(self):
         return "amount_left: {}, amount_bet: {}, valid_actions: {}, raises_made: {}, hole_cards: {}".format(self.amount_left,
                                                                                                             self.amount_bet,
                                                                                                             map(constant_to_string, self.valid_actions),
                                                                                                             self.raises_made,
                                                                                                             self.hole_cards)
-
 
 class GameState:
     def __init__(self, pot_amount, community_cards, street):
