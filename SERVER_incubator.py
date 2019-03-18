@@ -11,7 +11,7 @@ KILL_THRESHOLD = -2 #This will be flipped negative
 def addAgent(agentName, weights, leaderboard):
     print("ADDING " + agentName)
     # Initialize win/loss/performace to 0,0,0
-    leaderboard[agentName] = ((0,0,0),weights)
+    leaderboard[agentName] = [(0,0,0),weights]
 
 #Removes the agent from the table
 def removeAgent(agentName, leaderboard):
@@ -21,7 +21,8 @@ def removeAgent(agentName, leaderboard):
 
 def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
     #updates the Agent_Leaderboard for PERFORMANCE
-    gl = min(len(goodOnes)//2, 10) #Extra reward
+    totalPlayers = len(leaderboard)
+    gl = min(len(goodOnes)//2, totalPlayers//4) #Extra reward
     for bot in goodOnes:
         stats = getStats(bot,leaderboard)
         performace = float(stats[2]) + 1
@@ -34,7 +35,7 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
 
         writeStats(bot,leaderboard,perf=performace)
 
-    bl = min(len(badOnes),15) #Extra penalty
+    bl = min(len(badOnes),totalPlayers//3) #Extra penalty
     toRemove = []
     for bot in badOnes:
         stats = getStats(bot,leaderboard)
@@ -121,8 +122,7 @@ def applyToAll(bots, fun):
         fun(bot)
 
 #def incubate(leaderboard):
-def incubate(leaderboard, numWeights):
-    FIXED_MIN_BOTS = 48
+def incubate(leaderboard, numWeights, minBots):
     print("..........INCUBATING..........")
     gpThreshold = max(len(leaderboard)//3, 20)
     bpThreshold = gpThreshold
@@ -142,14 +142,20 @@ def incubate(leaderboard, numWeights):
     # Constant addition of 5 randoms
     leaderboard = spawnRandomChildren(5,leaderboard, numWeights)
 
-    if len(leaderboard) < FIXED_MIN_BOTS:
-        leaderboard = spawnRandomChildren(FIXED_MIN_BOTS - len(leaderboard),leaderboard, numWeights)
+    # Top up to meet minimum
+    if len(leaderboard) < minBots:
+        leaderboard = spawnRandomChildren(minBots - len(leaderboard),leaderboard, numWeights)
 
     # Update the leaderboard
     print("..........FINISHED..........")
     return updateAgentsLeaderboardPerf(goodPerformers,badPerformers, leaderboard)
 
-from david_file_utils import cacheLeaderboard
+def generateLeaderboard(boardFileName, numPlayers, numWeights):
+    leaderboard = {}
+    spawnRandomChildren(numPlayers, leaderboard, numWeights)
+    writeToLeaderboardFile(leaderboard, 0, boardFileName)
+    return leaderboard
+
 if __name__ == "__main__":
     leaderboard = cacheLeaderboard()
     newBoard = incubate(leaderboard, 6)
