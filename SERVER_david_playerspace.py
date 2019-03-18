@@ -2,56 +2,29 @@ import csv
 import os
 import random
 from collections import deque
+from david_player import DavidPlayer
 from CLIENT_stadium import train_bots
 from SERVER_incubator import incubate
-from david_file_utils import folderize, readFileAndGetData, writeToFile, getLeaderboard, MASTERFILE
+from david_file_utils import *
 
 LEADERBOARD = {}
-
+# SERVER SIDE david_player trainer
 # SERVER_script will call this
+
 def init(taskmaster):
     TASKMASTER = taskmaster
+    AGENT_CLASS = DavidPlayer
 
-    # SERVER SIDE david_player trainer
-    def cacheLeaderboard():
-        global LEADERBOARD
-        rawLeaderboard = getLeaderboard(MASTERFILE)
-
-        for row in rawLeaderboard[1:]:
-            name = row[0]
-            scores = tuple(map(lambda e: float(e), row[1:]))
-            LEADERBOARD[name] = scores
-
-    def writeToLeaderboardFile():
-        HEADER = ('Agent Name', 'Wins', 'Losses','Performance')
-        fileContent = [HEADER,]
-        for agentName in LEADERBOARD:
-            stats = LEADERBOARD[agentName]
-            row = (agentName, stats[0], stats[1],stats[2])
-            fileContent.append(row)
-
-        with open(folderize(MASTERFILE), mode='w') as writeFile:
-            writer = csv.writer(writeFile)
-            writer.writerows(fileContent)
-        writeFile.close()
-
-    #================================
-    #   File related functions
-    #================================
     def updateAgentsLeaderboardStats(winAgentName, loseAgentName):
-        global LEADERBOARD
         #updates the LEADERBOARD
-        stats = LEADERBOARD[winAgentName]
-        LEADERBOARD[winAgentName] = (stats[0] + 1, stats[1], stats[2])
-
-        lstats = LEADERBOARD[loseAgentName]
-        LEADERBOARD[loseAgentName] = (lstats[0], lstats[1] + 1, lstats[2])
+        writeStats(winAgentName,LEADERBOARD, win=1)
+        writeStats(loseAgentName,LEADERBOARD, lose=1)
 
     def wipeWinLoss():
-        global LEADERBOARD
         for name in LEADERBOARD:
-            perf = LEADERBOARD[name][2]
-            LEADERBOARD[name] = (0,0, perf)
+            stats = getStats(name, LEADERBOARD)
+            perf = stats[2]
+            overwriteStats(name, LEADERBOARD, (0,0, perf))
     #================================
     #   Training related functions
     #================================
@@ -61,7 +34,7 @@ def init(taskmaster):
         first = random.choice(botNameList)
         second = random.choice(botNameList)
         while second == first:
-            second = random.choic(botNameList)
+            second = random.choice(botNameList)
         return (first,second)
 
     def beginTrainingAllBots(cycles):
@@ -88,9 +61,8 @@ def init(taskmaster):
             trainNamedBot(bot, botlist)
 
     def callIncubator():
-        global LEADERBOARD
-        LEADERBOARD = incubate(LEADERBOARD)
-        writeToLeaderboardFile()
+        LEADERBOARD = incubate(LEADERBOARD, AGENT_CLASS.number_of_weights)
+        writeToLeaderboardFile(LEADERBOARD, generations[0])
     #************================================************
     #         Server-Client communication functions
     #************================================************
@@ -103,7 +75,6 @@ def init(taskmaster):
         boardLength = len(LEADERBOARD)
         UPDATE_BOARD_FREQUENCY = boardLength
         INCUBATE_FREQUENCY = queuedMatches[0] + 1
-        #INCUBATE_FREQUENCY = boardLength + 1
 
         print("\n============Training progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
 
@@ -113,7 +84,7 @@ def init(taskmaster):
         updateAgentsLeaderboardStats(winnerName,loserName)
 
         if matchCountArr[0] >= UPDATE_BOARD_FREQUENCY and matchCountArr[0] % UPDATE_BOARD_FREQUENCY == 0:
-             writeToLeaderboardFile()
+             writeToLeaderboardFile(LEADERBOARD,generations[0])
 
         matchCountArr[0] = matchCountArr[0] + 1
 
@@ -125,18 +96,17 @@ def init(taskmaster):
             roundRobinTraining()
 
     def jobDone(returnedJob,outcome):
+        print("job returned!")
         handleOutcome(returnedJob, outcome)
 
     # Sends a message to the clients in the form of a tuple
     # matchup_job = ((bot_1, bot_2), training_configuration, (b1Name, b2Name))
     def sendMatchup(matchup_job):
-        boardLength =  len(list(LEADERBOARD))
-        TASKMASTER.schedule_job(matchup_job, 120, jobDone)
+        TASKMASTER.schedule_job(matchup_job, 25, jobDone)
 
     def composeBot(agentName):
-        data = readFileAndGetData(agentName)
-        agentWeights = data[0]
-        agentClassName = "DavidPlayer"
+        agentWeights = getWeights(agentName,LEADERBOARD)
+        agentClassName = AGENT_CLASS.__name__
         return (agentClassName, agentWeights)
 
     # Composes the bots based on bot names
@@ -147,14 +117,16 @@ def init(taskmaster):
         botTwo = composeBot(agentTwoName)
         num_games = 7
         num_rounds = 101
+        num_rounds = 15
         training_regime = (num_games,num_rounds)
         # ((b1,b2), (ng,nr), (name1,name2))
         matchup_job = ((botOne, botTwo),training_regime,(agentOneName,agentTwoName))
+
         sendMatchup(matchup_job)
         queuedMatches[0] = queuedMatches[0] + 1
 
     # This is the main stuff
-    cacheLeaderboard()
+    LEADERBOARD = cacheLeaderboard()
     roundRobinTraining()
 
     # MAIN

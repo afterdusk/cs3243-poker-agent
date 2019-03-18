@@ -2,53 +2,49 @@ import csv
 import os
 import random
 import string
-from david_file_utils import readFileAndGetData, writeToFile, folderize
+from david_file_utils import *
 # Handles the reinforcement learning. Creation of children and culling of weak agents
 
-CHILD_THRESHOLD = 1
-KILL_THRESHOLD = -1 #This will be flipped negative
+CHILD_THRESHOLD = 2
+KILL_THRESHOLD = -2 #This will be flipped negative
 
-def addAgentToBoard(agentName,leaderboard):
+def addAgent(agentName, weights, leaderboard):
     print("ADDING " + agentName)
-
     # Initialize win/loss/performace to 0,0,0
-    leaderboard[agentName] = (0,0,0)
+    leaderboard[agentName] = ((0,0,0),weights)
 
-#Removes the agent from the table and DELETES the csv file
+#Removes the agent from the table
 def removeAgent(agentName, leaderboard):
-    #Deletes the csv file
     print("Removing " + agentName)
-    os.remove(folderize(agentName))
-
     #Table entry removal
     leaderboard.pop(agentName)
 
 def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
     #updates the Agent_Leaderboard for PERFORMANCE
-    gl = min(len(goodOnes), 10) #Extra reward
+    gl = min(len(goodOnes)//2, 10) #Extra reward
     for bot in goodOnes:
-        stats = leaderboard[bot]
-        perf = float(stats[2]) + 1
+        stats = getStats(bot,leaderboard)
+        performace = float(stats[2]) + 1
         if bot in goodOnes[:gl]:
-            perf += 1
+            performace += 1
 
-        if perf >= CHILD_THRESHOLD:
+        if performace >= CHILD_THRESHOLD:
             makeChildFromParents(bot,random.choice(goodOnes), leaderboard)
             perf = 0
 
-        leaderboard[bot] = (stats[0], stats[1],perf)
+        writeStats(bot,leaderboard,perf=performace)
 
-    bl = min(len(badOnes),20) #Extra penalty
+    bl = min(len(badOnes),15) #Extra penalty
     toRemove = []
     for bot in badOnes:
-        stats = leaderboard[bot]
-        perf = float(stats[2]) - 1
+        stats = getStats(bot,leaderboard)
+        performace = float(stats[2]) - 1
         if bot in badOnes[:bl]:
-            perf -= 1
-        if perf <= KILL_THRESHOLD:
+            performace -= 1
+        if performace <= KILL_THRESHOLD:
             toRemove.append(bot)
         else:
-            leaderboard[bot] = (stats[0], stats[1],perf)
+            writeStats(bot,leaderboard,perf=performace)
 
     for bot in toRemove:
         removeAgent(bot, leaderboard)
@@ -69,27 +65,24 @@ def mutateWeights(data, maxMutation):
     return newData
 
 def makeChildFromParents(botAName, botBName, leaderboard):
-    parentA = readFileAndGetData(botAName)
-    parentB = readFileAndGetData(botBName)
+    parentAWeights = getWeights(botAName,leaderboard)
+    parentBWeights = getWeights(botBName,leaderboard)
     #print(parentA,parentB)
-    parentAPartName = botAName[:8]
-    parentBPartName = botBName[:8]
+    parentAPartName = botAName[:9]
+    parentBPartName = botBName[:9]
     child = parentAPartName + "-" + parentBPartName + "#" + str(random.randint(0,99))
 
     # Add child to board
-    addAgentToBoard(child, leaderboard)
-    childWeights = makeChildWeightsFromParents(parentA[0], parentB[0])
-    childData = (childWeights, [0,0,0])
+    childWeights = makeChildWeightsFromParents(parentAWeights,parentBWeights)
+    addAgent(child, childWeights, leaderboard)
 
-    # Create new CSV for child
-    writeToFile(child, childData)
     print("Created child " + child)
 
 # Makes a child weight that takes the average of two parents and applies [+/-0.1] mutation
 def makeChildWeightsFromParents(pAWeights, pBWeights):
     childWeights = []
     i = 0
-    while i < 6:
+    while i < len(pAWeights):
         # Takes the average of both parents
         childWeights.append((pAWeights[i]+pBWeights[i])/2)
         i+=1
@@ -102,17 +95,16 @@ def generateRandomWeights(n):
     w = []
     while len(w) < n:
         w.append(0)
-    return mutateWeights(w,0.99)
+    return mutateWeights(w,0.9)
 
-def spawnRandomChildren(num, leaderboard):
-    def id_generator(size=6, chars=string.ascii_uppercase):
+def spawnRandomChildren(num, leaderboard, numWeights):
+    def id_generator(size=4, chars=string.ascii_uppercase):
         return ''.join(random.choice(chars) for _ in range(size))
     i = 0
     while i < num:
         botName = id_generator()
-        weights = generateRandomWeights(6)
-        addAgentToBoard(botName,leaderboard)
-        writeToFile(botName, (weights,))
+        weights = generateRandomWeights(numWeights)
+        addAgent(botName, weights, leaderboard)
         i += 1
 
     return leaderboard
@@ -128,15 +120,16 @@ def applyToAll(bots, fun):
     for bot in bots:
         fun(bot)
 
-def incubate(leaderboard):
-    FIXED_MIN_BOTS = 64
+#def incubate(leaderboard):
+def incubate(leaderboard, numWeights):
+    FIXED_MIN_BOTS = 48
     print("..........INCUBATING..........")
-    gpThreshold = max(len(leaderboard)//3, 30)
+    gpThreshold = max(len(leaderboard)//3, 20)
     bpThreshold = gpThreshold
 
     valueBoard = []
     for name in leaderboard:
-        stats = leaderboard[name]
+        stats = getStats(name, leaderboard)
         currValue = evaluatePlayer(stats)
         valueBoard.append((currValue,name))
 
@@ -146,9 +139,18 @@ def incubate(leaderboard):
     valueBoard.sort(key=lambda tup: tup[0])
     badPerformers = list(map(lambda t: t[1], valueBoard[:bpThreshold]))
 
+    # Constant addition of 5 randoms
+    leaderboard = spawnRandomChildren(5,leaderboard, numWeights)
+
     if len(leaderboard) < FIXED_MIN_BOTS:
-        leaderboard = spawnRandomChildren(FIXED_MIN_BOTS - len(leaderboard),leaderboard)
+        leaderboard = spawnRandomChildren(FIXED_MIN_BOTS - len(leaderboard),leaderboard, numWeights)
 
     # Update the leaderboard
     print("..........FINISHED..........")
     return updateAgentsLeaderboardPerf(goodPerformers,badPerformers, leaderboard)
+
+from david_file_utils import cacheLeaderboard
+if __name__ == "__main__":
+    leaderboard = cacheLeaderboard()
+    newBoard = incubate(leaderboard, 6)
+    writeToLeaderboardFile(newBoard, 0)

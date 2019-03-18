@@ -9,11 +9,11 @@ from cma_player_space import CMAPlayerSpace
 def createPlayerSpaces(taskmaster):
     # Init player spaces here
     david_playerspace.init(taskmaster)
-    return [
-        CMAPlayerSpace(taskmaster, 'weighted_player_test_1', 'WeightedPlayer', 6, 20, 0.1, 4, 101)
-        # CMAPlayerSpace(taskmaster, 'david_player_test_1', 'DavidPlayer', 6, 20, 0.1, 4, 101)
-        # CMAPlayerSpace(taskmaster, 'smart_warrior_test_1', 'SmartWarrior', 5, 20, 0.1, 4, 101)
-    ]
+    # return [
+    #     CMAPlayerSpace(taskmaster, 'weighted_player_test_1', 'WeightedPlayer', 6, 20, 0.1, 4, 101)
+    #     # CMAPlayerSpace(taskmaster, 'david_player_test_1', 'DavidPlayer', 6, 20, 0.1, 4, 101)
+    #     # CMAPlayerSpace(taskmaster, 'smart_warrior_test_1', 'SmartWarrior', 5, 20, 0.1, 4, 101)
+    # ]
 
 
 class TrainerServer:

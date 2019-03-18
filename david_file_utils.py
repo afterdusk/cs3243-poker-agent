@@ -5,6 +5,48 @@ import random
 MASTERFILE = "Agent_Leaderboard"
 FOLDER_NAME = "david_player-seeds"
 
+def getStats(name, board):
+    return board[name][0]
+
+def getWeights(name, board):
+    return board[name][1]
+
+def writeStats(name, board, win = 0, lose = 0, perf = 0):
+    stats = getStats(name,board)
+    board[name][0] = (stats[0] + win, stats[1] + lose, stats[2] + perf)
+
+def overwriteStats(name, board, stats):
+    board[name][0] = stats
+
+def overwriteWeights(name, board, weights):
+    board[name][1] = weights
+
+def cacheLeaderboard():
+    rawLeaderboard = getLeaderboard(MASTERFILE)
+    leaderboard = {}
+    for row in rawLeaderboard[2:]:
+        name = row[0]
+        scores = tuple(map(lambda e: float(e), row[1:4])) #Last not inclusive
+        weights = list(map(lambda e: float(e), row[5:]))
+        leaderboard[name] = [scores, weights]
+    return leaderboard
+
+
+def writeToLeaderboardFile(leaderboard, generations):
+    HEADER = ('Agent Name', 'Wins', 'Losses','Performance')
+    GENERATIONS = ('Generation:', generations)
+    fileContent = [HEADER,GENERATIONS]
+    for agentName in leaderboard:
+        stats = leaderboard[agentName][0]
+        weights = leaderboard[agentName][1]
+        row = (agentName, stats[0], stats[1],stats[2], "Weights:") + tuple(weights)
+        fileContent.append(row)
+
+    with open(folderize(MASTERFILE), mode='w') as writeFile:
+        writer = csv.writer(writeFile)
+        writer.writerows(fileContent)
+    writeFile.close()
+
 def writeToFile(filename, *data):
     contentToWrite = data[0]
     with open(folderize(filename), mode='w') as outputFile:

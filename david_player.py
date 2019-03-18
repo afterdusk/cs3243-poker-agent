@@ -10,7 +10,10 @@ from time import sleep
 # A wrapper class for players
 class DavidPlayer(BasePokerPlayer):
     def __init__(self, weights):
-        self.initWeights(weights)
+        self.number_of_weights = 6
+        if len(weights) == self.number_of_weights:
+            self.initWeights(weights)
+
 
     def initWeights(self, data):
         # The higher these value, the more conservative the play
