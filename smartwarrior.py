@@ -17,7 +17,7 @@ DEBUG = False
 class SmartWarrior(BasePokerPlayer):
 
     def __init__(self, weights):
-       # weights = [0, 1, 2, 3, 4]
+       # weights = [0, 1, 2, 3, 4, 5, 6]
        self.init_weights(weights)
 
     def init_weights(self, weights):
@@ -26,6 +26,8 @@ class SmartWarrior(BasePokerPlayer):
        self.pot_weight = weights[2]
        self.card_bias = weights[3]
        self.pot_bias = weights[4]
+       self.confidence_bias = weights[5]
+       self.confidence_weight = weights[6]
 
     def declare_action(self, valid_actions, hole_card, round_state):
         if DEBUG: print "Street: ", round_state['street']
@@ -145,7 +147,7 @@ class MinimaxTree:
         return False
 
     @staticmethod
-    def eval(agent, hole_cards, community_cards, pot_amount):
+    def eval(agent, hole_cards, community_cards, pot_amount, raises_made):
         hole_cards_translated = []
         community_cards_translated = []
         action_score = 0
@@ -154,14 +156,15 @@ class MinimaxTree:
         for card in community_cards:
             community_cards_translated.append(Card.from_str(card))
         hand_strength = ceval.estimate_hole_card_win_rate(200, 2, hole_cards_translated, community_cards_translated)
-        confidence = agent.card_weight * hand_strength + agent.card_bias +\
-            agent.pot_weight * pot_amount + agent.pot_bias + agent.overall_bias
+        payoff = agent.card_weight * hand_strength + agent.card_bias +\
+            agent.pot_weight * pot_amount + agent.pot_bias + agent.overall_bias +\
+            agent.confidence_weight * raises_made + agent.confidence_bias
         # print (actions)
         # for i in actions:
         #    if i == "RAISE":
         #        action_score -= 0.5
         # print "=" * 100
-        return confidence
+        return payoff
 
     @staticmethod
     def utility(node):
@@ -175,7 +178,8 @@ class MinimaxTree:
         return MinimaxTree.eval(node.agent, 
                                 node.max_player_state.hole_cards, 
                                 node.game_state.community_cards, 
-                                node.game_state.pot_amount)
+                                node.game_state.pot_amount,
+                                node.min_player_state.raises_made)
 
     def __init__(self, agent, max_player_state, min_player_state, game_state):
         # root is always a max node
@@ -336,19 +340,6 @@ class GameState:
 def setup_ai():
     return SmartWarrior()
 
-
-def main():
-    # TODO: Valid actions for root node needs to be validated
-    max_player = PlayerState(
-       40, 10, [PokerConstants.Action.FOLD, PokerConstants.Action.CALL, PokerConstants.Action.RAISE], 0, [])
-    min_player = PlayerState(
-       40, 20, [PokerConstants.Action.FOLD, PokerConstants. Action.CALL, PokerConstants.Action.RAISE], 0, [])
-    game = GameState(30, [], 0)
-    tree = MinimaxTree(max_player, min_player, game)
-    decision, payoff = tree.minimax_decision()
-    print "Minimax Decision: " + constant_to_string(decision)
-    print "Decision Payoff: " + str(payoff)
-
 def street_as_int(street):
     street = street.lower()
     if street == "preflop":
@@ -368,10 +359,3 @@ def constant_to_string(constant):
     elif constant == PokerConstants.Action.RAISE:
         return "Raise"
     return constant
-
-
-if __name__ == '__main__':
-    start = time.time()
-    main()
-    end = time.time()
-    print end - start
