@@ -21,8 +21,8 @@ def overwriteStats(name, board, stats):
 def overwriteWeights(name, board, weights):
     board[name][1] = weights
 
-def cacheLeaderboard():
-    rawLeaderboard = getLeaderboard(MASTERFILE)
+def cacheLeaderboard(boardFileName):
+    rawLeaderboard = getLeaderboard(boardFileName)
     leaderboard = {}
     for row in rawLeaderboard[2:]:
         name = row[0]
@@ -32,9 +32,9 @@ def cacheLeaderboard():
     return leaderboard
 
 
-def writeToLeaderboardFile(leaderboard, generations):
+def writeToLeaderboardFile(leaderboard, generation, boardFilename):
     HEADER = ('Agent Name', 'Wins', 'Losses','Performance')
-    GENERATIONS = ('Generation:', generations)
+    GENERATIONS = ('Generation:', generation)
     fileContent = [HEADER,GENERATIONS]
     for agentName in leaderboard:
         stats = leaderboard[agentName][0]
@@ -42,7 +42,7 @@ def writeToLeaderboardFile(leaderboard, generations):
         row = (agentName, stats[0], stats[1],stats[2], "Weights:") + tuple(weights)
         fileContent.append(row)
 
-    with open(folderize(MASTERFILE), mode='w') as writeFile:
+    with open(folderize(boardFilename), mode='w') as writeFile:
         writer = csv.writer(writeFile)
         writer.writerows(fileContent)
     writeFile.close()
@@ -83,8 +83,8 @@ def getLeaderboard(filename):
     with open(folderize(filename), mode='r') as readFile:
         csvReader = csv.reader(readFile, delimiter = ",")
         leaderboard = list(csvReader)
-        readFile.close()
-        return leaderboard
+    readFile.close()
+    return leaderboard
 
 # References the folder and file extension
 def folderize(filename):

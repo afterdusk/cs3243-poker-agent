@@ -4,16 +4,20 @@ import random
 from collections import deque
 from david_player import DavidPlayer
 from CLIENT_stadium import train_bots
-from SERVER_incubator import incubate
+from SERVER_incubator import incubate, generateLeaderboard
 from david_file_utils import *
 
-LEADERBOARD = {}
 # SERVER SIDE david_player trainer
 # SERVER_script will call this
 
 def init(taskmaster):
-    TASKMASTER = taskmaster
+    # CONFIGURATIONS
     AGENT_CLASS = DavidPlayer
+    LEADERBOARD_FILENAME = "testssts"
+    LEAGUE_MIN_SIZE = 48
+
+    TASKMASTER = taskmaster
+    LEADERBOARD = {}
 
     def updateAgentsLeaderboardStats(winAgentName, loseAgentName):
         #updates the LEADERBOARD
@@ -61,8 +65,8 @@ def init(taskmaster):
             trainNamedBot(bot, botlist)
 
     def callIncubator():
-        LEADERBOARD = incubate(LEADERBOARD, AGENT_CLASS.number_of_weights)
-        writeToLeaderboardFile(LEADERBOARD, generations[0])
+        LEADERBOARD = incubate(LEADERBOARD, AGENT_CLASS.number_of_weights, LEAGUE_MIN_SIZE)
+        writeToLeaderboardFile(LEADERBOARD, generations[0], LEADERBOARD_FILENAME)
     #************================================************
     #         Server-Client communication functions
     #************================================************
@@ -84,7 +88,7 @@ def init(taskmaster):
         updateAgentsLeaderboardStats(winnerName,loserName)
 
         if matchCountArr[0] >= UPDATE_BOARD_FREQUENCY and matchCountArr[0] % UPDATE_BOARD_FREQUENCY == 0:
-             writeToLeaderboardFile(LEADERBOARD,generations[0])
+             writeToLeaderboardFile(LEADERBOARD,generations[0],LEADERBOARD_FILENAME)
 
         matchCountArr[0] = matchCountArr[0] + 1
 
@@ -117,7 +121,6 @@ def init(taskmaster):
         botTwo = composeBot(agentTwoName)
         num_games = 7
         num_rounds = 101
-        num_rounds = 15
         training_regime = (num_games,num_rounds)
         # ((b1,b2), (ng,nr), (name1,name2))
         matchup_job = ((botOne, botTwo),training_regime,(agentOneName,agentTwoName))
@@ -126,8 +129,12 @@ def init(taskmaster):
         queuedMatches[0] = queuedMatches[0] + 1
 
     # This is the main stuff
-    LEADERBOARD = cacheLeaderboard()
-    roundRobinTraining()
+    try:
+        LEADERBOARD = cacheLeaderboard(LEADERBOARD_FILENAME)
+    except:
+        LEADERBOARD = generateLeaderboard(LEADERBOARD_FILENAME, LEAGUE_MIN_SIZE, AGENT_CLASS.number_of_weights)
+    finally:
+        roundRobinTraining()
 
     # MAIN
 if __name__ == "__main__":

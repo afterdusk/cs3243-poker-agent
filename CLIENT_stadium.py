@@ -61,7 +61,6 @@ PLAYER_LIBRARY['WeightedPlayer'] = lambda w: WeightedPlayer(w)
 # Each bot is in a tuple of {bot_type, weights}
 # training_regime is a tuple of {num_games, num_rounds per game}
 def train_bots(matchup_job):
-    print("Hob",matchup_job)
     first_bot, second_bot = matchup_job[0]
     training_regime = matchup_job[1]
     extra = matchup_job[2]
@@ -85,8 +84,5 @@ def train_bots(matchup_job):
 
 # ============================ MAIN FUNCTION ============================
 if __name__ == "__main__":
-    #while True:
     current_match = recieve_matchup()
     outcome = train_bots(current_match)
-    # E-Liang help here
-    # return outcome somehow
