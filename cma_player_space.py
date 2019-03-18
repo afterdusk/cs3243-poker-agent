@@ -67,7 +67,7 @@ class CMAPlayerSpace:
 
         print('Running jobs...')
         completed_jobs = []
-        self.taskmaster.schedule_jobs(jobs, 20, lambda job, outcome: self.callback(job, outcome, jobs, particles, completed_jobs))
+        self.taskmaster.schedule_jobs(jobs, 120, lambda job, outcome: self.callback(job, outcome, jobs, particles, completed_jobs))
     
     def callback(self, job, outcome, jobs, particles, completed_jobs):
         completed_jobs += [(job, outcome)]
