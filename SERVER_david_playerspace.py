@@ -47,6 +47,11 @@ def init(taskmaster):
         lstats = LEADERBOARD[loseAgentName]
         LEADERBOARD[loseAgentName] = (lstats[0], lstats[1] + 1, lstats[2])
 
+    def wipeWinLoss():
+        global LEADERBOARD
+        for name in LEADERBOARD:
+            perf = LEADERBOARD[name][2]
+            LEADERBOARD[name] = (0,0, perf)
     #================================
     #   Training related functions
     #================================
@@ -74,12 +79,14 @@ def init(taskmaster):
             arrangeMatch(botName,opponent)
 
     def roundRobinTraining():
+        wipeWinLoss()
         print("ROUND ROBIN TRAINING")
         queuedMatches[0] = 0
         botlist = list(LEADERBOARD)
         line = 0
         for bot in botlist:
             trainNamedBot(bot, botlist)
+
     def callIncubator():
         global LEADERBOARD
         LEADERBOARD = incubate(LEADERBOARD)
@@ -138,8 +145,8 @@ def init(taskmaster):
     def arrangeMatch(agentOneName, agentTwoName):
         botOne = composeBot(agentOneName)
         botTwo = composeBot(agentTwoName)
-        num_games = 1
-        num_rounds = 51
+        num_games = 7
+        num_rounds = 101
         training_regime = (num_games,num_rounds)
         # ((b1,b2), (ng,nr), (name1,name2))
         matchup_job = ((botOne, botTwo),training_regime,(agentOneName,agentTwoName))

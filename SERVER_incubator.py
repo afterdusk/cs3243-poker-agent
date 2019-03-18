@@ -5,8 +5,8 @@ import string
 from david_file_utils import readFileAndGetData, writeToFile, folderize
 # Handles the reinforcement learning. Creation of children and culling of weak agents
 
-CHILD_THRESHOLD = 2
-KILL_THRESHOLD = -2 #This will be flipped negative
+CHILD_THRESHOLD = 1
+KILL_THRESHOLD = -1 #This will be flipped negative
 
 def addAgentToBoard(agentName,leaderboard):
     print("ADDING " + agentName)
@@ -25,30 +25,35 @@ def removeAgent(agentName, leaderboard):
 
 def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
     #updates the Agent_Leaderboard for PERFORMANCE
+    gl = min(len(goodOnes), 10) #Extra reward
     for bot in goodOnes:
         stats = leaderboard[bot]
         perf = float(stats[2]) + 1
-        if bot in goodOnes[:9]:
+        if bot in goodOnes[:gl]:
             perf += 1
 
-        if perf > CHILD_THRESHOLD:
+        if perf >= CHILD_THRESHOLD:
             makeChildFromParents(bot,random.choice(goodOnes), leaderboard)
             perf = 0
 
         leaderboard[bot] = (stats[0], stats[1],perf)
 
+    bl = min(len(badOnes),20) #Extra penalty
+    toRemove = []
     for bot in badOnes:
         stats = leaderboard[bot]
         perf = float(stats[2]) - 1
-        if bot in badOnes[:9]:
+        if bot in badOnes[:bl]:
             perf -= 1
-
-        if perf < KILL_THRESHOLD:
-            removeAgent(bot, leaderboard)
+        if perf <= KILL_THRESHOLD:
+            toRemove.append(bot)
         else:
             leaderboard[bot] = (stats[0], stats[1],perf)
 
-        return leaderboard
+    for bot in toRemove:
+        removeAgent(bot, leaderboard)
+
+    return leaderboard
 
 # Mutates all data weights in steps of [-max to max] in either positive or negative direction
 # If max > 1 then it resets to a default of 0.2
@@ -93,7 +98,6 @@ def makeChildWeightsFromParents(pAWeights, pBWeights):
     mutateWeights(childWeights,0.1)
     return childWeights
 
-
 def generateRandomWeights(n):
     w = []
     while len(w) < n:
@@ -125,9 +129,9 @@ def applyToAll(bots, fun):
         fun(bot)
 
 def incubate(leaderboard):
-    FIXED_NUM_BOTS = 64
+    FIXED_MIN_BOTS = 64
     print("..........INCUBATING..........")
-    gpThreshold = min(len(leaderboard)//3, 30)
+    gpThreshold = max(len(leaderboard)//3, 30)
     bpThreshold = gpThreshold
 
     valueBoard = []
@@ -142,8 +146,8 @@ def incubate(leaderboard):
     valueBoard.sort(key=lambda tup: tup[0])
     badPerformers = list(map(lambda t: t[1], valueBoard[:bpThreshold]))
 
-    if len(leaderboard) < FIXED_NUM_BOTS:
-        leaderboard = spawnRandomChildren(FIXED_NUM_BOTS - len(leaderboard),leaderboard)
+    if len(leaderboard) < FIXED_MIN_BOTS:
+        leaderboard = spawnRandomChildren(FIXED_MIN_BOTS - len(leaderboard),leaderboard)
 
     # Update the leaderboard
     print("..........FINISHED..........")
