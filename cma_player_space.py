@@ -29,7 +29,7 @@ class CMAPlayerSpace:
             cma_options.set('verbose', -9)
             cma_options.set('verb_disp', -1)
             cma_options.set('verb_log', 0)
-            for mean in [[random.uniform(-1, 1) for _ in xrange(num_dimensions)] for _ in xrange(num_instances)]:
+            for mean in [[random.uniform(0, 1) for _ in xrange(num_dimensions)] for _ in xrange(num_instances)]:
                 self.instances += [cma.CMAEvolutionStrategy(mean, initial_sd, cma_options)]
 
         with open('cma_log_' + self.name + '.txt', 'w') as _:
