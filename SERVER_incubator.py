@@ -20,6 +20,8 @@ def removeAgent(agentName, leaderboard):
     leaderboard.pop(agentName)
 
 def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
+    print(goodOnes, badOnes)
+
     #updates the Agent_Leaderboard for PERFORMANCE
     totalPlayers = len(leaderboard)
     gl = min(len(goodOnes)//2, totalPlayers//4) #Extra reward
@@ -31,17 +33,19 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
 
         if performace >= CHILD_THRESHOLD:
             makeChildFromParents(bot,random.choice(goodOnes), leaderboard)
-            perf = 0
+            performace = 0
 
         writeStats(bot,leaderboard,perf=performace)
 
     bl = min(len(badOnes),totalPlayers//3) #Extra penalty
     toRemove = []
+    print("bad bot",badOnes)
     for bot in badOnes:
         stats = getStats(bot,leaderboard)
         performace = float(stats[2]) - 1
         if bot in badOnes[:bl]:
             performace -= 1
+        print(bot,performace)
         if performace <= KILL_THRESHOLD:
             toRemove.append(bot)
         else:
@@ -157,6 +161,7 @@ def generateLeaderboard(boardFileName, numPlayers, numWeights):
     return leaderboard
 
 if __name__ == "__main__":
-    leaderboard = cacheLeaderboard()
-    newBoard = incubate(leaderboard, 6)
-    writeToLeaderboardFile(newBoard, 0)
+    bn = "Agent_Board"
+    leaderboard = cacheLeaderboard(bn)
+    newBoard = incubate(leaderboard, 6, 48)
+    writeToLeaderboardFile(newBoard, 0, bn)

@@ -88,4 +88,5 @@ def getLeaderboard(filename):
 
 # References the folder and file extension
 def folderize(filename):
-    return os.getcwd()+"/" + FOLDER_NAME +"/" + filename + ".csv"
+    return os.getcwd()+ "/" + filename + ".csv"
+    #return os.getcwd()+"/" + FOLDER_NAME +"/" + filename + ".csv"
