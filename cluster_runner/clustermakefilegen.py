@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 # NOTE: THIS IS A PYTHON >=3.6 PROGRAM
 # Generates the content of a Makefile that'll spawn clients on some servers
 # Run with python3 clustermakefilegen.py > ClusterMakefile
