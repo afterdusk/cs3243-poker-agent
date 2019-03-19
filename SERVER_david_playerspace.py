@@ -10,14 +10,17 @@ from david_file_utils import *
 # SERVER SIDE david_player trainer
 # SERVER_script will call this
 
+LEADERBOARD = {}
+
 def init(taskmaster):
     # CONFIGURATIONS
     AGENT_CLASS = DavidPlayer
-    LEADERBOARD_FILENAME = "testssts"
+    LEADERBOARD_FILENAME = ["Agent_Board"]
     LEAGUE_MIN_SIZE = 48
+    GENERATIONS_PER_CYCLE = 50
 
+    global LEADERBOARD
     TASKMASTER = taskmaster
-    LEADERBOARD = {}
 
     def updateAgentsLeaderboardStats(winAgentName, loseAgentName):
         #updates the LEADERBOARD
@@ -65,8 +68,10 @@ def init(taskmaster):
             trainNamedBot(bot, botlist)
 
     def callIncubator():
+        global LEADERBOARD
         LEADERBOARD = incubate(LEADERBOARD, AGENT_CLASS.number_of_weights, LEAGUE_MIN_SIZE)
-        writeToLeaderboardFile(LEADERBOARD, generations[0], LEADERBOARD_FILENAME)
+        writeToLeaderboardFile(LEADERBOARD, generations[0], LEADERBOARD_FILENAME[0])
+
     #************================================************
     #         Server-Client communication functions
     #************================================************
@@ -76,7 +81,10 @@ def init(taskmaster):
     # Processes outcomes received from remote clients
     # Message contains a tuple of (winner_name,loser_name)
     def handleOutcome(sentJob, outcome):
+        global LEADERBOARD
+        print("HANDLEIGN")
         boardLength = len(LEADERBOARD)
+        print("length", boardLength)
         UPDATE_BOARD_FREQUENCY = boardLength
         INCUBATE_FREQUENCY = queuedMatches[0] + 1
 
@@ -84,11 +92,10 @@ def init(taskmaster):
 
         winnerName = sentJob[2][1-outcome]
         loserName = sentJob[2][outcome]
-
         updateAgentsLeaderboardStats(winnerName,loserName)
 
         if matchCountArr[0] >= UPDATE_BOARD_FREQUENCY and matchCountArr[0] % UPDATE_BOARD_FREQUENCY == 0:
-             writeToLeaderboardFile(LEADERBOARD,generations[0],LEADERBOARD_FILENAME)
+            writeToLeaderboardFile(LEADERBOARD,generations[0],LEADERBOARD_FILENAME[0])
 
         matchCountArr[0] = matchCountArr[0] + 1
 
@@ -96,11 +103,15 @@ def init(taskmaster):
             matchCountArr[0] = 1
             generations[0] = generations[0] + 1
             callIncubator()
-            print("%%%%%%%%%%%%%%%%%%%%%% Beginning Generation "+ str(generations[0])+ "%%%%%%%%%%%%%%%%%%%%%%")
-            roundRobinTraining()
+            if generation[0] > GENERATIONS_PER_CYCLE:
+                LEADERBOARD_FILENAME[0] = LEADERBOARD_FILENAME[0] + "I"
+                print("NEW BOARD NAME",LEADERBOARD_FILENAME[0])
+                LEADERBOARD = generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE, AGENT_CLASS.number_of_weights)
+            else:
+                print("%%%%%%%%%%%%%%%%%%%%%% Beginning Generation "+ str(generations[0])+ "%%%%%%%%%%%%%%%%%%%%%%")
+                roundRobinTraining()
 
     def jobDone(returnedJob,outcome):
-        print("job returned!")
         handleOutcome(returnedJob, outcome)
 
     # Sends a message to the clients in the form of a tuple
@@ -130,9 +141,10 @@ def init(taskmaster):
 
     # This is the main stuff
     try:
-        LEADERBOARD = cacheLeaderboard(LEADERBOARD_FILENAME)
+        LEADERBOARD = cacheLeaderboard(LEADERBOARD_FILENAME[0])
     except:
-        LEADERBOARD = generateLeaderboard(LEADERBOARD_FILENAME, LEAGUE_MIN_SIZE, AGENT_CLASS.number_of_weights)
+        LEADERBOARD = generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE, AGENT_CLASS.number_of_weights)
+        LEADERBOARD = cacheLeaderboard(LEADERBOARD_FILENAME[0])
     finally:
         roundRobinTraining()
 
