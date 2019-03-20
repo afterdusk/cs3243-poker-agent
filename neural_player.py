@@ -1,13 +1,13 @@
 from pypokerengine.players import BasePokerPlayer
 from pypokerengine.engine.hand_evaluator import HandEvaluator
 from pypokerengine.engine.card import Card
-from pypokerengine.utils.card_utils import estimate_hole_card_win_rate
+from pypokerengine.utils.fast_card_utils import estimate_hole_card_win_rate
 from time import sleep
 import math
 import pprint
 import activation_functions
 import numpy
-import win_rate_estimator
+import win_rate_estimates
 
 class NeuralPlayer(BasePokerPlayer):
 
@@ -18,19 +18,14 @@ class NeuralPlayer(BasePokerPlayer):
         self.weights = data
         return self
 
-    def calculateHandValue(self, hole_cards, common_cards):
-        properHoleCards = []
-        for c in hole_cards:
-            properHoleCards.append(Card.from_str(c))
-        if len(common_cards) == 0:
-            return win_rate_estimator.estimates[properHoleCards[0].to_id() - 1][properHoleCards[1].to_id() - 1]
-
-        properCommunityCards = []
-        for c in common_cards:
-            properCommunityCards.append(Card.from_str(c))
-        
-        monte_carlo_value = estimate_hole_card_win_rate(100, 2, properHoleCards, properCommunityCards)
-        return monte_carlo_value
+    def calculateHandValue(self, hole, community):
+        hole = [Card.from_str(c).to_id() for c in hole]
+        community = [Card.from_str(c).to_id() for c in community]
+            
+        if len(community) == 0:
+            return win_rate_estimates.estimates[hole[0] - 1][hole[1] - 1]
+       
+        return estimate_hole_card_win_rate(100, hole, community)
 
     def evaluate_network(self, data):
         # Network:
