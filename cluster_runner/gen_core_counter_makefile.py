@@ -22,4 +22,4 @@ print("all: $(SERVERS)\n")
 for node_hostname in all_node_hostnames():
     print("")
     print(f"{node_hostname}:")
-    print(f"\t-ssh -oBatchMode=yes -oStrictHostKeyChecking=no {node_hostname} -t \"cd cs3243-poker-agent/cluster_runner; ./free_cpu_counter.py\" > free_core_data/{node_hostname}")
+    print(f"\t-ssh -oBatchMode=yes -oStrictHostKeyChecking=no {node_hostname} -t \"cd cs3243-poker-agent/cluster_runner; python3 free_cpu_counter.py\" > free_core_data/{node_hostname}")
