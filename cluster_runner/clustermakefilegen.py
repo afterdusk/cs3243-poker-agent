@@ -2,115 +2,88 @@
 # -*- coding: utf-8 -*-
 
 # NOTE: THIS IS A PYTHON >=3.6 PROGRAM
-# Generates the content of a Makefile that'll spawn clients on some servers
-# Run with python3 clustermakefilegen.py > ClusterMakefile
-# Run resulting makefile with make -f ClusterMakefile -j<number of clusters>
+# Generates MakefileCluster, a Makefile that'll spawn clients on some servers
+# Run with python3 clustermakefilegen.py
+# Run resulting makefile with make -f MakefileCluster -j<number of clusters>
 
-normal_j = 5
+from math import floor
+from cluster_specs import all_node_hostnames, node_name_to_hostname
 
-servers = {
-    # "xcna": 16, # Disable because tcarlson is running a lot of jobs
-    "xgpa": 5,
-    "xcnb": 20,
-    "xcnc": 50,
-    "xcnd": 60,
-    "xgpb": 3,
-    "xgpc": 10,
-    "xgpd": 10,
-}
-
-blacklist = [
-    "xcnb0",
-    # Everything below is hogged by tcarlson
-    "xcnd45",
-    "xcnd46",
-    "xcnd47",
-    "xcnd48",
-    "xcnd49",
-    "xcnd50",
-    "xcnd51",
-    "xcnd52",
-    "xcnd53",
-    "xcnd54",
-    "xcnd55",
-    "xcnd56",
-    "xcnd57",
-    "xcnd58",
-    "xcnd59",
+blacklist_node_names = [
+    "xcna1",
 ]
 
-special_js = {
-    "xgpa0": 20,
-    "xgpa1": 20,
-    "xgpa2": 20,
-    "xgpa3": 20,
-    "xgpa4": 20,
-    "xgpc6": 16,
-    "xgpd3": 16,
-    # "xcna1": 20, # We'll manually handle the server machine
-    "xcnb1": 20,
-    "xcnb2": 20,
-    "xcnb3": 20,
-    "xcnb4": 20,
-    "xcnb5": 20,
-    "xcnb6": 20,
-    "xcnb7": 20,
-    "xcnb8": 20,
-    "xcnb9": 20,
-    "xcnb10": 20,
-    "xcnb11": 20,
-    "xcnb12": 20,
-    "xcnb13": 20,
-    "xcnb14": 20,
-    "xcnb15": 20,
-    "xcnb16": 20,
-    "xcnb17": 20,
-    "xcnb18": 20,
-    "xcnb19": 20,
-    "xcnd33": 20,
-    "xcnd34": 20,
-    "xcnd35": 20,
-    "xcnd36": 20,
-    "xcnd37": 20,
-    "xcnd40": 20,
-    "xcnd41": 20,
-    "xcnd42": 20,
-    "xcnd43": 20,
-    "xcnd44": 20,
-}
+blacklist = [node_name_to_hostname(n) for n in blacklist_node_names]
 
-print("SERVERS=\\")
-for node_collection_name in servers:
-    for idx in range(servers[node_collection_name]):
-        node_name = f"{node_collection_name}{idx}"
-        if node_name in blacklist:
-            continue
-        print(f"{node_name}.comp.nus.edu.sg\\")
-print("")
+def num_jobs_for_node(node_hostname):
+    with open(f"free_core_data/{node_hostname}", 'r') as f:
+        lines = f.readlines()
+        if len(lines) < 2:
+            return None
+        num_cores = int(lines[-1])
+        num_free_cores = int(lines[-2])
 
-print("KILLSERVERS=\\")
-for node_collection_name in servers:
-    for idx in range(servers[node_collection_name]):
-        node_name = f"{node_collection_name}{idx}"
-        print(f"kill.{node_name}.comp.nus.edu.sg\\")
-print("")
+    # If server has too few cores, don't allocate jobs to it
+    num_jobs = 0
+    if num_free_cores < 10:
+        num_jobs = 0
+    # If server is basically idle, commandeer
+    elif num_free_cores > num_cores - 5:
+        num_jobs = num_free_cores - 2
+    # Otherwise only allocate 70% of cores, up to a limit
+    else:
+        num_jobs = min(floor(num_cores * 0.7), num_free_cores - 5)
+    return (num_jobs, num_free_cores, num_cores)
 
-print("all: $(SERVERS)\n")
-print("killall: $(KILLSERVERS)\n")
 
-for node_collection_name in servers:
-    for idx in range(servers[node_collection_name]):
-        node_name = f"{node_collection_name}{idx}"
-        print("")
+if __name__ == "__main__":
+    node_hostnames = all_node_hostnames()
+    with open("MakefileCluster", 'w') as f:
+        f.write("SERVERS=\\\n")
+        for node_hostname in node_hostnames:
+            if node_hostname in blacklist:
+                continue
+            f.write(f"{node_hostname}\\\n")
+        f.write("\n")
 
-        print(f"kill.{node_name}.comp.nus.edu.sg:")
-        print(f"\t-ssh -oBatchMode=yes -oStrictHostKeyChecking=no {node_name}.comp.nus.edu.sg -t \"killall python\"")
+        f.write("KILLSERVERS=\\\n")
+        for node_hostname in node_hostnames:
+            f.write(f"kill.{node_hostname}\\\n")
+        f.write("\n")
 
-        if node_name in blacklist:
-            continue
+        f.write("all: $(SERVERS)\n\n")
+        f.write("killall: $(KILLSERVERS)\n\n")
 
-        num_jobs = normal_j
-        if node_name in special_js:
-            num_jobs = special_js[node_name]
-        print(f"{node_name}.comp.nus.edu.sg:")
-        print(f"\t-ssh -oBatchMode=yes -oStrictHostKeyChecking=no {node_name}.comp.nus.edu.sg -t \"cd cs3243-poker-agent; bash -cl 'make -j{num_jobs} > /dev/null'\"")
+        # Stats for convenience
+        total_jobs = 0
+        total_free_cores = 0
+        total_cores = 0
+
+        for node_hostname in node_hostnames:
+            f.write("\n")
+
+            f.write(f"kill.{node_hostname}:\n")
+            f.write(f"\t-ssh -oBatchMode=yes -oStrictHostKeyChecking=no {node_hostname} -t \"killall python\"\n")
+
+            if node_hostname in blacklist:
+                continue
+
+            job_and_core_stats = num_jobs_for_node(node_hostname)
+            if job_and_core_stats is None:
+                num_jobs = 0
+                print(f"{node_hostname} uncontactable.")
+            else:
+                num_jobs, num_free_cores, num_cores = job_and_core_stats
+                total_jobs += num_jobs
+                total_free_cores += num_free_cores
+                total_cores += num_cores
+                print("{:2d} jobs on {:2d}/{:2d} free cores on {}.".format(num_jobs, num_free_cores, num_cores, node_hostname))
+
+            if num_jobs == 0:
+                # Print empty recipe for full/uncontactable servers
+                f.write(f"{node_hostname}: ;\n")
+            else:
+                f.write(f"{node_hostname}:\n")
+                f.write(f"\t-ssh -oBatchMode=yes -oStrictHostKeyChecking=no {node_hostname} -t \"cd cs3243-poker-agent; bash -cl 'make -j{num_jobs} > /dev/null'\"\n")
+    
+    print(f"Allocated {total_jobs} jobs on {total_free_cores}/{total_cores} free cores on {len(node_hostnames)} nodes.")

@@ -14,3 +14,4 @@ def count_free_cpus():
 
 if __name__ == "__main__":
     print(count_free_cpus())
+    print(psutil.cpu_count())
