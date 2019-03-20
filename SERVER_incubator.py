@@ -9,13 +9,12 @@ CHILD_THRESHOLD = 2
 KILL_THRESHOLD = -2 #This will be flipped negative
 
 def addAgent(agentName, weights, leaderboard):
-    print("ADDING " + agentName)
     # Initialize win/loss/performace to 0,0,0
     leaderboard[agentName] = [(0,0,0),weights]
 
 #Removes the agent from the table
 def removeAgent(agentName, leaderboard):
-    print("Removing " + agentName)
+    #print("Removing " + agentName)
     #Table entry removal
     leaderboard.pop(agentName)
 
@@ -39,13 +38,11 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
 
     bl = min(len(badOnes),totalPlayers//3) #Extra penalty
     toRemove = []
-    print("bad bot",badOnes)
     for bot in badOnes:
         stats = getStats(bot,leaderboard)
         performace = float(stats[2]) - 1
         if bot in badOnes[:bl]:
             performace -= 1
-        print(bot,performace)
         if performace <= KILL_THRESHOLD:
             toRemove.append(bot)
         else:
@@ -81,7 +78,7 @@ def makeChildFromParents(botAName, botBName, leaderboard):
     childWeights = makeChildWeightsFromParents(parentAWeights,parentBWeights)
     addAgent(child, childWeights, leaderboard)
 
-    print("Created child " + child)
+    #print("Created child " + child)
 
 # Makes a child weight that takes the average of two parents and applies [+/-0.1] mutation
 def makeChildWeightsFromParents(pAWeights, pBWeights):
