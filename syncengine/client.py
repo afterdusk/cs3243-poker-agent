@@ -3,6 +3,7 @@ import pickle
 from uuid import uuid4
 import config
 
+
 class Client:
     def __init__(self):
         self.mqttc = mqtt.Client()
@@ -59,4 +60,7 @@ class Client:
         return topic.split("/")[-1]
 
     def connect(self):
-        self.mqttc.connect(config.mqttBrokerHost, config.mqttBrokerPort)
+        self.mqttc.connect(config.mqttBrokerHost,
+                           port=config.mqttBrokerPort,
+                           keepalive=1800)
+

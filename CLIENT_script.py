@@ -4,6 +4,7 @@ from syncengine.taskmaster import wrapped_outcome
 import CLIENT_stadium as stadium
 import config
 
+
 class TrainerClient:
     def __init__(self):
         self.client = Client()
@@ -34,8 +35,10 @@ class TrainerClient:
         print("GOT JOB", topic, content)
         job_id, job_data = content
         outcome = stadium.train_bots(job_data)
-        client.send_message(wrapped_outcome(job_id, outcome), config.mqttTopicJobOutcome, True)
+        message = wrapped_outcome(job_id, outcome)
+        client.send_message(message, config.mqttTopicJobOutcome, True)
         self.get_new_job()
+
 
 if __name__ == "__main__":
     trainer = TrainerClient()
@@ -45,3 +48,4 @@ if __name__ == "__main__":
         print("SLEEPING")
         sleep(10)  # Time to wait before reconnecting
         print("\n\nRECONNECTING")
+

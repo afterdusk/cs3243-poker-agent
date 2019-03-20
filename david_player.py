@@ -9,8 +9,13 @@ from time import sleep
 
 # A wrapper class for players
 class DavidPlayer(BasePokerPlayer):
+
+    # Static variable
+    number_of_weights = 6
+
     def __init__(self, weights):
-        self.initWeights(weights)
+        if len(weights) == self.number_of_weights:
+            self.initWeights(weights)
 
     def initWeights(self, data):
         # The higher these value, the more conservative the play
@@ -34,7 +39,7 @@ class DavidPlayer(BasePokerPlayer):
         for c in common_cards:
             properCommunityCards.append(Card.from_str(c))
 
-        NUM_SIMULATIONS = 5
+        NUM_SIMULATIONS = 100
         NUM_PLAYERS = 2
         monte_carlo_value = estimate_hole_card_win_rate(NUM_SIMULATIONS, NUM_PLAYERS, properHoleCards, properCommunityCards)
         return monte_carlo_value

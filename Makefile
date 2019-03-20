@@ -47,6 +47,11 @@ TARGETS=\
     client39\
     client40\
 
-all: $(TARGETS)
+all: bridge_broker $(TARGETS)
+
+bridge_broker:
+	~/.linuxbrew/sbin/mosquitto -c mosquitto_client_cluster_broker.conf
+
 $(TARGETS):
+	sleep 5
 	python CLIENT_script.py

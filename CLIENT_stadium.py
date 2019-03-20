@@ -1,6 +1,7 @@
 from pypokerengine.api.game import setup_config, start_poker
 from david_player import DavidPlayer
 from weighted_player import WeightedPlayer
+from neural_player import NeuralPlayer
 
 # CLIENT SIDE
 # This will be run on each thread aka each core processor.
@@ -34,10 +35,9 @@ def play_bots(agent_one, agent_two, n, rounds):
         stack_one += result['players'][0]['stack']
         stack_two += result['players'][1]['stack']
 
-    print("P1 stack vs P2 stack: ")
+    print(agent_one[0] + " stack vs "+ agent_two[0] + " stack: ")
     print(str(stack_one) + " vs " + str(stack_two))
     print("winrate: " + str(wincount*100/n) + "%")
-
 
     if stack_one > stack_two:
         winner = agent_one
@@ -53,13 +53,11 @@ def play_bots(agent_one, agent_two, n, rounds):
     # returns 1 if first is the winner and 0 if the second is winner
     return result
 
-    # returns names of winner and loser in that order
-    return (winner[0],loser[0])
-
 # w is a tuple of weights
 PLAYER_LIBRARY = {}
 PLAYER_LIBRARY['DavidPlayer'] = lambda w: DavidPlayer(w)
 PLAYER_LIBRARY['WeightedPlayer'] = lambda w: WeightedPlayer(w)
+PLAYER_LIBRARY['NeuralPlayer'] = lambda w: NeuralPlayer(w)
 
 # A job is {{bot1,bot2}, {training_regime}, {...extra info...}}
 # Each bot is in a tuple of {bot_type, weights}
@@ -80,7 +78,7 @@ def train_bots(matchup_job):
     agent_two = [p2_name, PLAYER_LIBRARY[second_bot[0]](second_bot[1])]
 
 
-    print("Currently Training: <" + agent_one[0] + "> vs <" + agent_two[0] + ">")
+    print("Currently Training: <" + p1_name + "> vs <" + p2_name + ">")
 
     games = training_regime[0]
     rounds = training_regime[1]
@@ -88,8 +86,5 @@ def train_bots(matchup_job):
 
 # ============================ MAIN FUNCTION ============================
 if __name__ == "__main__":
-    #while True:
     current_match = recieve_matchup()
     outcome = train_bots(current_match)
-    # E-Liang help here
-    # return outcome somehow
