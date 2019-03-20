@@ -20,7 +20,7 @@ def estimate_hole_card_win_rate(nb_simulation, hole, community=[]):
         hole_score = evaluator_d.evaluate(community_sim_d, hole_d)
         opp_sim_score = evaluator_d.evaluate(community_sim_d, opp_sim_d)
         
-        if hole_score >= opp_sim_score:
+        if hole_score <= opp_sim_score:
             wins += 1
 
     return float(wins) / nb_simulation
