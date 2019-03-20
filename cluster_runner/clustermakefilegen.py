@@ -63,7 +63,7 @@ if __name__ == "__main__":
             f.write("\n")
 
             f.write(f"kill.{node_hostname}:\n")
-            f.write(f"\t-ssh -oBatchMode=yes -oStrictHostKeyChecking=no {node_hostname} -t \"killall python\"\n")
+            f.write(f"\t-ssh -oBatchMode=yes -oStrictHostKeyChecking=no {node_hostname} -t \"killall python mosquitto\"\n")
 
             if node_hostname in blacklist:
                 continue
