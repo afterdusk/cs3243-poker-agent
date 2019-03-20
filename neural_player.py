@@ -7,6 +7,7 @@ import math
 import pprint
 import activation_functions
 import numpy
+import win_rate_estimator
 
 class NeuralPlayer(BasePokerPlayer):
 
@@ -21,6 +22,9 @@ class NeuralPlayer(BasePokerPlayer):
         properHoleCards = []
         for c in hole_cards:
             properHoleCards.append(Card.from_str(c))
+        if len(common_cards) == 0:
+            return win_rate_estimator.estimates[properHoleCards[0].to_id() - 1][properHoleCards[1].to_id() - 1]
+
         properCommunityCards = []
         for c in common_cards:
             properCommunityCards.append(Card.from_str(c))
