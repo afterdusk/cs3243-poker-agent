@@ -62,5 +62,5 @@ class Client:
     def connect(self):
         self.mqttc.connect(config.mqttBrokerHost,
                            port=config.mqttBrokerPort,
-                           keepalive=300)
+                           keepalive=1800)
 
