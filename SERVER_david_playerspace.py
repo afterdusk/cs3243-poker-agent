@@ -124,7 +124,7 @@ def init(taskmaster):
     # Sends a message to the clients in the form of a tuple
     # matchup_job = ((bot_1, bot_2), training_configuration, (b1Name, b2Name))
     def sendMatchup(matchup_job):
-        TASKMASTER.schedule_job(matchup_job, 25, jobDone)
+        TASKMASTER.schedule_job(matchup_job, 1200, jobDone)
 
     def composeBot(agentName):
         agentWeights = getWeights(agentName,LEADERBOARD)
