@@ -16,8 +16,10 @@ def init(taskmaster):
     # CONFIGURATIONS
     AGENT_CLASS = DavidPlayer
     LEADERBOARD_FILENAME = ["Agent_Board"]
-    LEAGUE_MIN_SIZE = 70
-    GENERATIONS_PER_CYCLE = 40
+    LEAGUE_MIN_SIZE = 64
+    GENERATIONS_PER_CYCLE = 100
+    # League shrink per generation
+    SHRINK_RATE = 0.25
 
     global LEADERBOARD
     TASKMASTER = taskmaster
@@ -69,9 +71,10 @@ def init(taskmaster):
 
     def callIncubator():
         global LEADERBOARD
-        reducedLeague = max(LEAGUE_MIN_SIZE - 2 * generations[0],30)
-        LEADERBOARD = incubate(LEADERBOARD, AGENT_CLASS.number_of_weights, reducedLeague)
+        reducedLeague = max(LEAGUE_MIN_SIZE - (SHRINK_RATE * generations[0])//1, 30)
+        LEADERBOARD, plateauBool = incubate(LEADERBOARD, AGENT_CLASS.number_of_weights, reducedLeague)
         writeToLeaderboardFile(LEADERBOARD, generations[0], LEADERBOARD_FILENAME[0])
+        return plateauBool
 
     #************================================************
     #         Server-Client communication functions
@@ -83,9 +86,8 @@ def init(taskmaster):
     # Message contains a tuple of (winner_name,loser_name)
     def handleOutcome(sentJob, outcome):
         global LEADERBOARD
-        print("HANDLEIGN")
+        PLATEAU_BUFFER = 10
         boardLength = len(LEADERBOARD)
-        print("length", boardLength)
         UPDATE_BOARD_FREQUENCY = boardLength
         INCUBATE_FREQUENCY = queuedMatches[0] + 1
 
@@ -103,8 +105,12 @@ def init(taskmaster):
         if matchCountArr[0] >= INCUBATE_FREQUENCY:
             matchCountArr[0] = 1
             generations[0] = generations[0] + 1
-            callIncubator()
-            if generation[0] > GENERATIONS_PER_CYCLE:
+            
+            plateauBool = callIncubator()
+            if generations[0] < PLATEAU_BUFFER:
+                plateauBool = False
+
+            if generation[0] > GENERATIONS_PER_CYCLE or plateauBool:
                 LEADERBOARD_FILENAME[0] = LEADERBOARD_FILENAME[0] + "I"
                 print("NEW BOARD NAME",LEADERBOARD_FILENAME[0])
                 LEADERBOARD = generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE, AGENT_CLASS.number_of_weights)
