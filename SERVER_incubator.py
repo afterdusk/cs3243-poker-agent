@@ -126,7 +126,7 @@ def applyToAll(bots, fun):
 def incubate(leaderboard, numWeights, minBots):
     print("..........INCUBATING..........")
     gpThreshold = max(len(leaderboard)//3, 20)
-    bpThreshold = gpThreshold
+    bpThreshold = max(len(leaderboard)//2, 20)
 
     valueBoard = []
     for name in leaderboard:

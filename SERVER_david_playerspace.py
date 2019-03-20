@@ -16,8 +16,8 @@ def init(taskmaster):
     # CONFIGURATIONS
     AGENT_CLASS = DavidPlayer
     LEADERBOARD_FILENAME = ["Agent_Board"]
-    LEAGUE_MIN_SIZE = 48
-    GENERATIONS_PER_CYCLE = 50
+    LEAGUE_MIN_SIZE = 70
+    GENERATIONS_PER_CYCLE = 40
 
     global LEADERBOARD
     TASKMASTER = taskmaster
@@ -69,7 +69,8 @@ def init(taskmaster):
 
     def callIncubator():
         global LEADERBOARD
-        LEADERBOARD = incubate(LEADERBOARD, AGENT_CLASS.number_of_weights, LEAGUE_MIN_SIZE)
+        reducedLeague = max(LEAGUE_MIN_SIZE - 2 * generations[0],30)
+        LEADERBOARD = incubate(LEADERBOARD, AGENT_CLASS.number_of_weights, reducedLeague)
         writeToLeaderboardFile(LEADERBOARD, generations[0], LEADERBOARD_FILENAME[0])
 
     #************================================************
