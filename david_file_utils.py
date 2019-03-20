@@ -3,7 +3,7 @@ import os
 import random
 
 MASTERFILE = "Agent_Leaderboard"
-FOLDER_NAME = "david_player-seeds"
+FOLDER_NAME = "agentboards"
 
 def getStats(name, board):
     return board[name][0]
@@ -88,5 +88,5 @@ def getLeaderboard(filename):
 
 # References the folder and file extension
 def folderize(filename):
-    return os.getcwd()+ "/" + filename + ".csv"
-    #return os.getcwd()+"/" + FOLDER_NAME +"/" + filename + ".csv"
+#    return os.getcwd()+ "/" + filename + ".csv"
+    return os.getcwd()+"/" + FOLDER_NAME +"/" + filename + ".csv"
