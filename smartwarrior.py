@@ -1,3 +1,4 @@
+from __future__ import division
 from pypokerengine.players import BasePokerPlayer
 from pypokerengine.engine.poker_constants import PokerConstants
 from pypokerengine.engine.action_checker import *
@@ -10,27 +11,27 @@ import time
 ############# Constants #############
 MAX_RAISES = 4
 SMALL_BLIND = 10
-DEBUG = False
+DEBUG = 0
+MAX_POT_AMOUNT = 320
 #####################################
 
 
 class SmartWarrior(BasePokerPlayer):
 
     def __init__(self, weights):
-       # weights = [0, 1, 2, 3, 4, 5, 6]
+       # weights = [0.5, 0.5, 0.5, 0.5]
        self.init_weights(weights)
 
     def init_weights(self, weights):
        self.overall_bias = weights[0]
        self.card_weight = weights[1]
        self.pot_weight = weights[2]
-       self.card_bias = weights[3]
-       self.pot_bias = weights[4]
-       self.confidence_bias = weights[5]
-       self.confidence_weight = weights[6]
+       self.confidence_weight = weights[3]
 
     def declare_action(self, valid_actions, hole_card, round_state):
-        if DEBUG: print "Street: ", round_state['street']
+        if DEBUG:
+            print round_state['action_histories']
+            print "Street: ", round_state['street']
         my_index = round_state['next_player']
         my_state = round_state['seats'][my_index]
         enemy_index = 0 if round_state['next_player'] == 1 else 1
@@ -39,19 +40,26 @@ class SmartWarrior(BasePokerPlayer):
         my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises = self.parse_history(round_state['action_histories'], my_index == round_state['small_blind_pos'])
         enemy_moves = self.get_valid_moves(enemy_state['stack'], enemy_num_raises, round_state['street'], round_state['pot']['main']['amount'])
         
+        # remove fold from enemy moves
+        if "fold" in enemy_moves: enemy_moves.remove("fold")
+
         max_player = PlayerState(
             my_state['stack'], 
             my_amount_bet, 
             map(lambda x: x.values()[0], valid_actions), 
             my_num_raises, 
-            hole_card)
-
+            hole_card,
+            False,
+            False)
+        
         min_player = PlayerState(
             enemy_state['stack'], 
             enemy_amount_bet,
             enemy_moves, 
             enemy_num_raises, 
-            [])
+            [],
+            False,
+            False)
 
         game = GameState(round_state['pot']['main']['amount'], 
             round_state['community_card'],
@@ -79,19 +87,21 @@ class SmartWarrior(BasePokerPlayer):
 
     @staticmethod
     def parse_history(history, is_small_blind):
-        my_amount_bet = 0
-        enemy_amount_bet = 0
+        my_turn = is_small_blind
+        my_amount_bet = SMALL_BLIND if is_small_blind else 2 * SMALL_BLIND
+        enemy_amount_bet = SMALL_BLIND if is_small_blind else 2 * SMALL_BLIND
         my_num_raises = 0
         enemy_num_raises = 0
-        my_turn = is_small_blind
         flat_list = [i for street in history.values() for i in street]
         for i in flat_list:
             if DEBUG: print i
+            if i['action'] == "SMALLBLIND" or i['action'] == "BIGBLIND":
+                continue
             if my_turn:
-                my_amount_bet = i['amount']
+                my_amount_bet += i['paid']
                 my_num_raises += (i['action'] == 'RAISE')
             else:
-                enemy_amount_bet = i['amount']
+                enemy_amount_bet += i['paid']
                 enemy_num_raises += (i['action'] == 'RAISE')
             my_turn = not my_turn
         return my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises
@@ -117,8 +127,10 @@ class MinimaxTree:
         for (action, state) in node.successors():
             best = max(best, MinimaxTree.min_value(state, alpha, beta))
             if best >= beta:
+                if DEBUG: print "pruned best: {}".format(best)
                 return best
             alpha = max(alpha, best)
+        if DEBUG: print "best: {}".format(best)
         return best
 
     @staticmethod
@@ -130,8 +142,10 @@ class MinimaxTree:
         for (action, state) in node.successors():
             best = min(best, MinimaxTree.max_value(state, alpha, beta))
             if best <= alpha:
+                if DEBUG: print "pruned best: {}".format(best)
                 return best
             beta = min(beta, best)
+        if DEBUG: print "best: {}".format(best)
         return best
 
     @staticmethod
@@ -156,25 +170,23 @@ class MinimaxTree:
         for card in community_cards:
             community_cards_translated.append(Card.from_str(card))
         hand_strength = ceval.estimate_hole_card_win_rate(200, 2, hole_cards_translated, community_cards_translated)
-        payoff = agent.card_weight * hand_strength + agent.card_bias +\
-            agent.pot_weight * pot_amount + agent.pot_bias + agent.overall_bias +\
-            agent.confidence_weight * raises_made + agent.confidence_bias
-        # print (actions)
-        # for i in actions:
-        #    if i == "RAISE":
-        #        action_score -= 0.5
-        # print "=" * 100
+        payoff = agent.card_weight * hand_strength +\
+            agent.pot_weight * pot_amount/MAX_POT_AMOUNT +\
+            agent.confidence_weight * raises_made/MAX_RAISES +\
+            agent.overall_bias
+        if DEBUG: print "eval: {}".format(payoff)
         return payoff
 
     @staticmethod
     def utility(node):
         # if either player has folded
         if (node.max_player_state.has_folded):
-            return - node.max_player_state.amount_bet
+            if DEBUG: print "fold: {}".format(- (node.max_player_state.amount_bet / MAX_POT_AMOUNT))
+            return - (node.max_player_state.amount_bet / MAX_POT_AMOUNT)
         if (node.min_player_state.has_folded):
-            return node.game_state.pot_amount - node.max_player_state.amount_bet
+            if DEBUG: print "fold: {}".format((node.game_state.pot_amount - node.max_player_state.amount_bet) / MAX_POT_AMOUNT)
+            return (node.game_state.pot_amount - node.max_player_state.amount_bet) / MAX_POT_AMOUNT
 
-        # TODO: refine evaluation function
         return MinimaxTree.eval(node.agent, 
                                 node.max_player_state.hole_cards, 
                                 node.game_state.community_cards, 
@@ -199,7 +211,7 @@ class MinimaxTree:
                 best_action = action
             alpha = max(alpha, utility)
             results.append((action, utility))
-        if DEBUG:
+        if True:
             for (action, utility) in results:
                 print "(action: {}, payoff: {})".format(
                     constant_to_string(action), utility)
@@ -265,13 +277,15 @@ class MinimaxNode:
         return MinimaxNode(self.agent, not self.is_max, new_max_player_state, new_min_player_state, new_game_state)
 
 class PlayerState:
-    def __init__(self, amount_left, amount_bet, valid_actions, raises_made, hole_cards):
+    
+    def __init__(self, amount_left, amount_bet, valid_actions, raises_made, hole_cards, has_folded, has_played):
         self.amount_left = amount_left
         self.amount_bet = amount_bet
         self.valid_actions = valid_actions
         self.raises_made = raises_made
         self.hole_cards = hole_cards
-        self.has_folded = False
+        self.has_folded = has_folded
+        self.has_played = has_played
 
     def perform(self, action, game_state, adversary_state):
         # raise amount and limit is constant for betting round, can move following call elsewhere to reduce
@@ -284,20 +298,24 @@ class PlayerState:
             self.valid_actions = []
             adversary_state.valid_actions = []
             self.has_folded = True
+            self.has_played = True
         elif action == "call":
             assert (self.amount_left >= call_amount)
             self.amount_left -= call_amount
             self.amount_bet += call_amount
             game_state.pot_amount += call_amount
-            # a call ends the betting round
-            self.valid_actions = []
-            adversary_state.valid_actions = []
+            self.has_played = True
+            # a call ends the betting round if the opponent has played
+            if (adversary_state.has_played):
+                self.valid_actions = []
+                adversary_state.valid_actions = []
         elif action == "raise":
             assert(self.amount_left >= raise_amount + call_amount)
             self.amount_left -= raise_amount + call_amount
             self.amount_bet += raise_amount + call_amount
             game_state.pot_amount += raise_amount + call_amount
             self.raises_made += 1
+            self.has_played = True
 
         # remove raise if insufficient cash to raise later
         if "raise" in self.valid_actions and (self.raises_made >= MAX_RAISES or
@@ -316,7 +334,9 @@ class PlayerState:
                            self.amount_bet,
                            list(self.valid_actions),
                            self.raises_made,
-                           list(self.hole_cards))
+                           list(self.hole_cards),
+                           self.has_folded,
+                           self.has_played)
     def print_state(self):
         return "amount_left: {}, amount_bet: {}, valid_actions: {}, raises_made: {}, hole_cards: {}".format(self.amount_left,
                                                                                                             self.amount_bet,
@@ -335,7 +355,6 @@ class GameState:
 
     def print_state(self):
         return "pot_amount: {}, community_cards: {}, street: {}".format(self.pot_amount, self.community_cards, self.street)
-
 
 def setup_ai():
     return SmartWarrior()
@@ -359,3 +378,33 @@ def constant_to_string(constant):
     elif constant == PokerConstants.Action.RAISE:
         return "Raise"
     return constant
+
+def main():
+    max_player = PlayerState(
+        990, 
+        10, 
+        ["fold", "call", "raise"], 
+        0, 
+        ["C2", "C4"],
+        False,
+        False)
+
+    min_player = PlayerState(
+    980,
+    20,
+    ["call", "raise"], 
+    0, 
+    [],
+    False,
+    False)
+
+    game = GameState(30, 
+        ["H3", "C9", "S3", "S2", "H4"],
+        "preflop")
+
+    tree = MinimaxTree(SmartWarrior(), max_player, min_player, game)
+    decision, payoff = tree.minimax_decision()
+    print "Decision made: ", decision
+
+if __name__ == '__main__':
+    main()
