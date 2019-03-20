@@ -7,7 +7,7 @@ import pickle
 import os
 
 class CMAPlayerSpace:
-    def __init__(self, taskmaster, name, player_class, num_dimensions, num_instances, initial_sd, num_games, num_rounds):
+    def __init__(self, taskmaster, name, player_class, num_dimensions, num_instances, initial_sd, num_games, num_rounds, timeout):
         self.name = name
         self.taskmaster = taskmaster
         self.player_class = player_class
@@ -16,6 +16,7 @@ class CMAPlayerSpace:
         self.initial_sd = initial_sd
         self.num_games = num_games
         self.num_rounds = num_rounds
+        self.timeout = timeout
         self.generation = 0
 
         if os.path.isfile('cma_state_' + self.name + '.txt'):
@@ -67,7 +68,7 @@ class CMAPlayerSpace:
 
         print('Running jobs...')
         completed_jobs = []
-        self.taskmaster.schedule_jobs(jobs, 120, lambda job, outcome: self.callback(job, outcome, jobs, particles, completed_jobs))
+        self.taskmaster.schedule_jobs(jobs, self.timeout, lambda job, outcome: self.callback(job, outcome, jobs, particles, completed_jobs))
     
     def callback(self, job, outcome, jobs, particles, completed_jobs):
         completed_jobs += [(job, outcome)]

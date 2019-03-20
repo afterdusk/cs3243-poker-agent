@@ -14,7 +14,7 @@ def createPlayerSpaces(taskmaster):
         # CMAPlayerSpace(taskmaster, 'weighted_player_test_1', 'WeightedPlayer', 6, 20, 0.1, 4, 101)
         # CMAPlayerSpace(taskmaster, 'david_player_test_1', 'DavidPlayer', 6, 20, 0.1, 4, 101)
         # CMAPlayerSpace(taskmaster, 'smart_warrior_test_1', 'SmartWarrior', 5, 20, 0.1, 4, 101)
-        CMAPlayerSpace(taskmaster, 'neural_player_test_1', 'NeuralPlayer', 50, 50, 0.1, 4, 101)
+        CMAPlayerSpace(taskmaster, 'neural_player_test_1', 'NeuralPlayer', 50, 30, 0.1, 4, 101, 60 * 45)
     ]
 
 
