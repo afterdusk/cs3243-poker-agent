@@ -15,11 +15,10 @@ LEADERBOARD = {}
 def init(taskmaster):
     # CONFIGURATIONS
     AGENT_CLASS = DavidPlayer
-    LEADERBOARD_FILENAME = ["Agent_Board"]
+    LEADERBOARD_FILENAME = ["Player_Board"]
     LEAGUE_MIN_SIZE = 64
-    GENERATIONS_PER_CYCLE = 100
-    # League shrink per generation
-    SHRINK_RATE = 0.25
+    GENERATIONS_PER_CYCLE = 100 # Limit on number of generations per training
+    SHRINK_RATE = 0.5 # League shrink per generation
 
     global LEADERBOARD
     TASKMASTER = taskmaster
@@ -71,9 +70,9 @@ def init(taskmaster):
 
     def callIncubator():
         global LEADERBOARD
-        reducedLeague = max(LEAGUE_MIN_SIZE - (SHRINK_RATE * generations[0])//1, 30)
+        reducedLeague = LEAGUE_MIN_SIZE - int(SHRINK_RATE * gens[0])
         LEADERBOARD, plateauBool = incubate(LEADERBOARD, AGENT_CLASS.number_of_weights, reducedLeague)
-        writeToLeaderboardFile(LEADERBOARD, generations[0], LEADERBOARD_FILENAME[0])
+        writeToLeaderboardFile(LEADERBOARD, gens[0], LEADERBOARD_FILENAME[0])
         return plateauBool
 
     #************================================************
@@ -81,12 +80,12 @@ def init(taskmaster):
     #************================================************
 
     matchCountArr = [1]
-    generations = [1]
+    gens = [1]
     # Processes outcomes received from remote clients
     # Message contains a tuple of (winner_name,loser_name)
     def handleOutcome(sentJob, outcome):
         global LEADERBOARD
-        PLATEAU_BUFFER = 10
+        PLATEAU_BUFFER = 10 # Number of generations before checking for Plateau
         boardLength = len(LEADERBOARD)
         UPDATE_BOARD_FREQUENCY = boardLength
         INCUBATE_FREQUENCY = queuedMatches[0] + 1
@@ -98,25 +97,24 @@ def init(taskmaster):
         updateAgentsLeaderboardStats(winnerName,loserName)
 
         if matchCountArr[0] >= UPDATE_BOARD_FREQUENCY and matchCountArr[0] % UPDATE_BOARD_FREQUENCY == 0:
-            writeToLeaderboardFile(LEADERBOARD,generations[0],LEADERBOARD_FILENAME[0])
+            writeToLeaderboardFile(LEADERBOARD,gens[0],LEADERBOARD_FILENAME[0])
 
         matchCountArr[0] = matchCountArr[0] + 1
 
         if matchCountArr[0] >= INCUBATE_FREQUENCY:
             matchCountArr[0] = 1
-            generations[0] = generations[0] + 1
-            
-            plateauBool = callIncubator()
-            if generations[0] < PLATEAU_BUFFER:
-                plateauBool = False
+            gens[0] = gens[0] + 1
 
-            if generation[0] > GENERATIONS_PER_CYCLE or plateauBool:
+            plateauBool = callIncubator()
+            plateauBool = plateauBool and (gens[0] > PLATEAU_BUFFER)
+
+            if gens[0] > GENERATIONS_PER_CYCLE or plateauBool:
+                gens[0] = 1
                 LEADERBOARD_FILENAME[0] = LEADERBOARD_FILENAME[0] + "I"
-                print("NEW BOARD NAME",LEADERBOARD_FILENAME[0])
                 LEADERBOARD = generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE, AGENT_CLASS.number_of_weights)
-            else:
-                print("%%%%%%%%%%%%%%%%%%%%%% Beginning Generation "+ str(generations[0])+ "%%%%%%%%%%%%%%%%%%%%%%")
-                roundRobinTraining()
+
+            print("%%%%%%%%%%%%%%%%%%%%%% Beginning Generation "+ str(gens[0])+ "%%%%%%%%%%%%%%%%%%%%%%")
+            roundRobinTraining()
 
     def jobDone(returnedJob,outcome):
         handleOutcome(returnedJob, outcome)
@@ -124,7 +122,7 @@ def init(taskmaster):
     # Sends a message to the clients in the form of a tuple
     # matchup_job = ((bot_1, bot_2), training_configuration, (b1Name, b2Name))
     def sendMatchup(matchup_job):
-        TASKMASTER.schedule_job(matchup_job, 1200, jobDone)
+        TASKMASTER.schedule_job(matchup_job, 600, jobDone)
 
     def composeBot(agentName):
         agentWeights = getWeights(agentName,LEADERBOARD)

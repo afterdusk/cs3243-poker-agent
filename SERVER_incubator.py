@@ -34,7 +34,7 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
 
     #updates the Agent_Leaderboard for PERFORMANCE
     totalPlayers = len(leaderboard)
-    gl = min(len(goodOnes)//2, totalPlayers//4) #Extra reward
+    gl = int(totalPlayers//10) #Extra reward for top 10%
     for bot in goodOnes:
         stats = getStats(bot,leaderboard)
         performace = float(stats[2]) + 1
@@ -42,12 +42,18 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
             performace += 1
 
         if performace >= CHILD_THRESHOLD:
-            makeChildFromParents(bot,random.choice(goodOnes), leaderboard)
+            partner = random.choice(goodOnes)
+            while partner == bot:
+                partner = random.choice(goodOnes)
+            makeChildFromParents(bot, partner, leaderboard)
             performace = 0
 
         writeStats(bot,leaderboard,perf=performace)
 
-    bl = min(len(badOnes),totalPlayers//3) #Extra penalty
+    #Extra penalty. Instant die
+    bl = int(len(leaderboard)//2.5) #40%
+    print(bl, len(badOnes))
+
     toRemove = []
     for bot in badOnes:
         stats = getStats(bot,leaderboard)
@@ -88,7 +94,6 @@ def makeChildFromParents(botAName, botBName, leaderboard):
     # Add child to board
     childWeights = makeChildWeightsFromParents(parentAWeights,parentBWeights)
     addAgent(child, childWeights, leaderboard)
-
     #print("Created child " + child)
 
 # Makes a child weight that takes the average of two parents and applies [+/-0.1] mutation
@@ -145,11 +150,9 @@ def evaluateBoard(board):
         i += 1
     return eval
 
-
 def checkPlateau(old, new, numWeights):
     oldStats = evaluateBoard(old)
     newStats = evaluateBoard(new)
-    print(oldStats,newStats)
     i = 0
     meanDiffs = 0
     stdDevDiffs = 0
@@ -157,14 +160,13 @@ def checkPlateau(old, new, numWeights):
         meanDiffs += abs(oldStats[i][0] - newStats[i][0])
         stdDevDiffs += abs(oldStats[i][1] - newStats[i][1])
         i += 1
-    print("eval",meanDiffs,stdDevDiffs)
+    print("Evaluating: ", meanDiffs, stdDevDiffs/numWeights)
     return meanDiffs < 0.1 and (stdDevDiffs/numWeights < 0.02)
-
 
 def incubate(leaderboard, numWeights, minBots):
     print("..........INCUBATING..........")
-    gpThreshold = max(len(leaderboard)//3, 20)
-    bpThreshold = max(len(leaderboard)//2, 20)
+    gpThreshold = len(leaderboard)//3 # Top 33.33%
+    bpThreshold = len(leaderboard)//2 # Bottom 50%
 
     oldBoard = leaderboard.copy()
 
@@ -192,6 +194,8 @@ def incubate(leaderboard, numWeights, minBots):
 
     plateauBool = checkPlateau(oldBoard, updatedBoard, numWeights)
 
+    print("Plateau detected?",plateauBool)
+
     # Update the leaderboard
     print("..........FINISHED..........")
     return updatedBoard, plateauBool
@@ -203,8 +207,8 @@ def generateLeaderboard(boardFileName, numPlayers, numWeights):
     return leaderboard
 
 if __name__ == "__main__":
-    bn = "Agent_Board"
-    #leaderboard = generateLeaderboard(bn, 50, 6)
+    bn = "incubateboard"
+    leaderboard = generateLeaderboard(bn, 50, 6)
     leaderboard = cacheLeaderboard(bn)
     newBoard, plateauBool = incubate(leaderboard, 6, 48)
     print(plateauBool)
