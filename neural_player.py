@@ -38,23 +38,23 @@ class NeuralPlayer(BasePokerPlayer):
         n = [data, [0] * 5, [0] * 5, [0] * 3]
         
         # First layer
-        n[1][0] = activation_functions.logistic(1.5, 1, 3, 0)(numpy.dot(self.weights[0:2], n[0]))
-        n[1][1] = activation_functions.logistic(1.5, 1, 3, 0)(numpy.dot(self.weights[2:4], n[0]))
-        n[1][2] = activation_functions.logistic(1.5, 1, 3, 0)(numpy.dot(self.weights[4:6], n[0]))
-        n[1][3] = activation_functions.logistic(1.5, 1, 3, 0)(numpy.dot(self.weights[6:8], n[0]))
-        n[1][4] = activation_functions.logistic(1.5, 1, 3, 0)(numpy.dot(self.weights[8:10], n[0]))
+        n[1][0] = activation_functions.tanh(1.5, 0.5, float(2) / 1.5, 0.5)(numpy.dot(self.weights[0:2], n[0]))
+        n[1][1] = activation_functions.tanh(1.5, 0.5, float(2) / 1.5, 0.5)(numpy.dot(self.weights[2:4], n[0]))
+        n[1][2] = activation_functions.tanh(1.5, 0.5, float(2) / 1.5, 0.5)(numpy.dot(self.weights[4:6], n[0]))
+        n[1][3] = activation_functions.tanh(1.5, 0.5, float(2) / 1.5, 0.5)(numpy.dot(self.weights[6:8], n[0]))
+        n[1][4] = activation_functions.tanh(1.5, 0.5, float(2) / 1.5, 0.5)(numpy.dot(self.weights[8:10], n[0]))
 
         # Second layer
-        n[2][0] = activation_functions.logistic(2.5, 1, 2, 0)(numpy.dot(self.weights[10:15], n[1]))
-        n[2][1] = activation_functions.logistic(2.5, 1, 2, 0)(numpy.dot(self.weights[15:20], n[1]))
-        n[2][2] = activation_functions.logistic(2.5, 1, 2, 0)(numpy.dot(self.weights[20:25], n[1]))
-        n[2][3] = activation_functions.logistic(2.5, 1, 2, 0)(numpy.dot(self.weights[25:30], n[1]))
-        n[2][4] = activation_functions.logistic(2.5, 1, 2, 0)(numpy.dot(self.weights[30:35], n[1]))
+        n[2][0] = activation_functions.tanh(2.5, 0.5, float(2) / 2.5, 0.5)(numpy.dot(self.weights[10:15], n[1]))
+        n[2][1] = activation_functions.tanh(2.5, 0.5, float(2) / 2.5, 0.5)(numpy.dot(self.weights[15:20], n[1]))
+        n[2][2] = activation_functions.tanh(2.5, 0.5, float(2) / 2.5, 0.5)(numpy.dot(self.weights[20:25], n[1]))
+        n[2][3] = activation_functions.tanh(2.5, 0.5, float(2) / 2.5, 0.5)(numpy.dot(self.weights[25:30], n[1]))
+        n[2][4] = activation_functions.tanh(2.5, 0.5, float(2) / 2.5, 0.5)(numpy.dot(self.weights[30:35], n[1]))
 
         # Third layer
-        n[3][0] = activation_functions.logistic(2.5, 1, 2, 0)(numpy.dot(self.weights[35:40], n[2]))
-        n[3][1] = activation_functions.logistic(2.5, 1, 2, 0)(numpy.dot(self.weights[40:45], n[2]))
-        n[3][2] = activation_functions.logistic(2.5, 1, 2, 0)(numpy.dot(self.weights[45:50], n[2]))
+        n[3][0] = activation_functions.tanh(2.5, 0.5, float(2) / 2.5, 0.5)(numpy.dot(self.weights[35:40], n[2]))
+        n[3][1] = activation_functions.tanh(2.5, 0.5, float(2) / 2.5, 0.5)(numpy.dot(self.weights[40:45], n[2]))
+        n[3][2] = activation_functions.tanh(2.5, 0.5, float(2) / 2.5, 0.5)(numpy.dot(self.weights[45:50], n[2]))
 
         # Max
         return numpy.argmax(n[3])

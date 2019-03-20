@@ -5,19 +5,25 @@ import math
 import numpy
 import pickle
 import os
+import activation_functions
 
 class CMAPlayerSpace:
-    def __init__(self, taskmaster, name, player_class, num_dimensions, num_instances, initial_sd, num_games, num_rounds, timeout):
+    def __init__(self, taskmaster, name, player_class, num_instances, weight_ranges, initial_sd, num_games, num_rounds, timeout):
         self.name = name
         self.taskmaster = taskmaster
         self.player_class = player_class
-        self.num_dimensions = num_dimensions
         self.num_instances = num_instances
+        self.activations = [
+                activation_functions.tanh(
+                    0, 
+                    (float(r[1]) - float(r[0])) / 2, 
+                    2, 
+                    (float(r[0]) + float(r[1])) / 2) 
+                for r in weight_ranges]
         self.initial_sd = initial_sd
         self.num_games = num_games
         self.num_rounds = num_rounds
         self.timeout = timeout
-        self.generation = 0
 
         if os.path.isfile('cma_state_' + self.name + '.txt'):
             print('Loading state from file...')
@@ -30,19 +36,16 @@ class CMAPlayerSpace:
             cma_options.set('verbose', -9)
             cma_options.set('verb_disp', -1)
             cma_options.set('verb_log', 0)
-            for mean in [[random.uniform(0, 1) for _ in xrange(num_dimensions)] for _ in xrange(num_instances)]:
+            for mean in [[random.uniform(-1, 1) for _ in xrange(len(self.activations))] for _ in xrange(num_instances)]:
                 self.instances += [cma.CMAEvolutionStrategy(mean, initial_sd, cma_options)]
-
-        with open('cma_log_' + self.name + '.txt', 'w') as _:
-            None
 
         self.begin()
 
     def begin(self):
         print('Logging...')
         with open('cma_log_' + self.name + '.txt', 'a') as log_file:
-            log_file.write('Generation = ' + str(self.generation) + '\n')
             for (i, instance) in enumerate(self.instances):
+                log_file.write('(' + str(i).zfill(2) + ') Weights = ' + ' '.join(str(self.activations[j](x)) for (j, x) in enumerate(instance.result[5])) + '\n')
                 log_file.write('(' + str(i).zfill(2) + ') Mean = ' + ' '.join(str(x) for x in instance.result[5]) + '\n')
                 log_file.write('(' + str(i).zfill(2) + ') SD =   ' + ' '.join(str(x) for x in instance.result[6]) + '\n')
                 log_file.write('(' + str(i).zfill(2) + ') Norm(SD) = ' + str(numpy.linalg.norm(instance.result[6], ord=2)) + '\n')
@@ -62,7 +65,10 @@ class CMAPlayerSpace:
                         continue
                     other_mean = other_instance.result[5]
                     jobs += [[
-                        ((self.player_class, particle), (self.player_class, other_mean)), 
+                        (
+                            (self.player_class, [self.activations[l](x) for (l, x) in enumerate(particle)]), 
+                            (self.player_class, [self.activations[l](x) for (l, x) in enumerate(other_mean)])
+                        ), 
                         (self.num_games, self.num_rounds), 
                         (i, j, k)]]
 
@@ -83,5 +89,4 @@ class CMAPlayerSpace:
         for (i, po) in enumerate(particle_outcomes):
             self.instances[i].tell(particles[i], [-float(v) / (self.num_instances - 1) for v in po])
 
-        self.generation += 1
         self.begin()
