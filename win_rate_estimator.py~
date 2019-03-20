@@ -6,7 +6,7 @@ from datetime import datetime
 start = datetime.now()
 
 def estimate(hole_cards):                        
-    return estimate_hole_card_win_rate(100000, 2, [Card.from_id(i) for i in hole_cards], [])
+    return estimate_hole_card_win_rate(1000, 2, [Card.from_id(i) for i in hole_cards], [])
 
 jobs = []
 for h1 in xrange(1, 53):
@@ -19,7 +19,7 @@ def job((h1, h2)):
     print(h1, h2, win_rate)
     return win_rate
 
-p = multiprocessing.Pool(23)
+p = multiprocessing.Pool(20)
 results = p.map(job, jobs)
 win_rates = [[0] * 52 for _ in xrange(0, 52)]
 
