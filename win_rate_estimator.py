@@ -24,5 +24,5 @@ for (i, result) in enumerate(results):
     win_rates[jobs[i][0] - 1][jobs[i][1] - 1] = result
     win_rates[jobs[i][1] - 1][jobs[i][0] - 1] = result
 
-print(win_rates[30][30])
+print(win_rates)
 
