@@ -83,7 +83,8 @@ class WisePlayer(BasePokerPlayer):
                     action = act["action"]
                     return action  # action returned here is sent to the poker engine
 
-        elif confidence > self.call_threshold:
+        # If unable to raise, this is checked
+        if confidence > self.call_threshold:
             for act in valid_actions:
                 if act["action"] == "call":
                     action = act["action"]
