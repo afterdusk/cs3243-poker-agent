@@ -16,7 +16,7 @@ class WisePlayer(BasePokerPlayer):
     number_of_weights = 11
 
     def __init__(self, weights):
-        print("INITALIZING WisePlayer")
+        #print("INITALIZING WisePlayer")
         self.STREET_DICT = {'preflop':0, 'flop':0, 'river':0, 'turn':0 }
 
         if len(weights) == self.number_of_weights:
@@ -27,7 +27,7 @@ class WisePlayer(BasePokerPlayer):
         self.old_street = ""
         self.current_street = ""
         self.curr_card_wr = 0
-        print("WisePlayer Created")
+        #print("WisePlayer Created")
 
     def initWeights(self, data):
         # Decision thresholds
