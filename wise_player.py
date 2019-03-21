@@ -38,8 +38,10 @@ class WisePlayer(BasePokerPlayer):
         self.pot_weight = (data[3])
 
         # Weight for current round
-        for i in range(4,4+len(self.STREET_DICT)):
-            self.street_weight = data[i]
+        i = 4
+        for street in STREET_DICT:
+            self.STREET_DICT[street] = data[i]
+            i += 1
 
         # Weight for move history
         self.opp_raise_w = data[8]
