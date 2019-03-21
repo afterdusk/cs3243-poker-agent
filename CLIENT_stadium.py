@@ -61,7 +61,7 @@ PLAYER_LIBRARY['DavidPlayer'] = lambda w: DavidPlayer(w)
 PLAYER_LIBRARY['WeightedPlayer'] = lambda w: WeightedPlayer(w)
 PLAYER_LIBRARY['NeuralPlayer'] = lambda w: NeuralPlayer(w)
 PLAYER_LIBRARY['WisePlayer'] = lambda w: WisePlayer(w)
-PLAYER_LIBRARY('SmartWarrior'] = lambda w: SmartWarrior(w)
+PLAYER_LIBRARY['SmartWarrior'] = lambda w: SmartWarrior(w)
 
 # A job is {{bot1,bot2}, {training_regime}, {...extra info...}}
 # Each bot is in a tuple of {bot_type, weights}
