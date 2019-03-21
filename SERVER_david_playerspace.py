@@ -136,7 +136,7 @@ def init(taskmaster):
     def arrangeMatch(agentOneName, agentTwoName):
         botOne = composeBot(agentOneName)
         botTwo = composeBot(agentTwoName)
-        num_games = 7
+        num_games = 9
         num_rounds = 101
         training_regime = (num_games,num_rounds)
         # ((b1,b2), (ng,nr), (name1,name2))

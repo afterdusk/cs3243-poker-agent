@@ -3,8 +3,8 @@ import random
 import os
 import activation_functions
 #import win_rate_estimator
-from pypokerengine.utils.fast_card_utils import estimate_hole_card_win_rate
-# from fast_monte_carlo import estimate_hole_card_win_rate
+#from pypokerengine.utils.fast_card_utils import estimate_win_rate
+from fast_monte_carlo import estimate_win_rate
 from pypokerengine.engine.card import Card
 from pypokerengine.players import BasePokerPlayer
 from time import sleep
@@ -65,10 +65,10 @@ class WisePlayer(BasePokerPlayer):
             NUM_SIMULATIONS = 100
 
             if len(common_cards) == 0:
-                self.curr_card_wr = estimate_hole_card_win_rate(NUM_SIMULATIONS, hole)
+                self.curr_card_wr = estimate_win_rate(NUM_SIMULATIONS, hole)
                 #return win_rate_estimator.estimates[properHoleCards[0] - 1][properHoleCards[1] - 1] COMMENT CUZ SLOW
             else:
-                self.curr_card_wr = estimate_hole_card_win_rate(NUM_SIMULATIONS, hole, community)
+                self.curr_card_wr = estimate_win_rate(NUM_SIMULATIONS, hole, community)
 
         return self.curr_card_wr
 
