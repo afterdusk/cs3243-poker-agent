@@ -2,6 +2,7 @@ from pypokerengine.api.game import setup_config, start_poker
 from david_player import DavidPlayer
 from weighted_player import WeightedPlayer
 from neural_player import NeuralPlayer
+from wise_player import WisePlayer
 
 # CLIENT SIDE
 # This will be run on each thread aka each core processor.
@@ -58,6 +59,8 @@ PLAYER_LIBRARY = {}
 PLAYER_LIBRARY['DavidPlayer'] = lambda w: DavidPlayer(w)
 PLAYER_LIBRARY['WeightedPlayer'] = lambda w: WeightedPlayer(w)
 PLAYER_LIBRARY['NeuralPlayer'] = lambda w: NeuralPlayer(w)
+PLAYER_LIBRARY['WisePlayer'] = lambda w: WisePlayer(w)
+
 
 # A job is {{bot1,bot2}, {training_regime}, {...extra info...}}
 # Each bot is in a tuple of {bot_type, weights}

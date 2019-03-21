@@ -4,7 +4,7 @@ import os
 import activation_functions
 #import win_rate_estimator
 #from pypokerengine.utils.card_utils import estimate_hole_card_win_rate
-from pypokerengine.utils.fast_card_utils import estimate_hole_card_win_rate
+from fast_monte_carlo import estimate_hole_card_win_rate
 from pypokerengine.engine.card import Card
 from pypokerengine.players import BasePokerPlayer
 from time import sleep
@@ -22,26 +22,24 @@ class WisePlayer(BasePokerPlayer):
         self.old_street = ""
         self.current_street = ""
         self.curr_card_wr = 0
-
-    def initWeights(self, data):
         self.STREET_DICT = {'preflop':0, 'flop':0, 'river':0, 'turn':0 }
 
+    def initWeights(self, data):
         # The higher these value, the more conservative the play
-        self.raise_threshold = activation_functions.logistic(0, 1, 4, 0)(data[0])
-        self.call_threshold = activation_functions.logistic(0, 1, 4, 0)(data[1])
+        self.raise_threshold = (data[0])
+        self.call_threshold = (data[1])
 
         # Weights for card value
-        self.card_weight = activation_functions.logistic(0, 2, 4, -1)(data[2])
-        self.card_bias = activation_functions.logistic(0, 2, 4, -1)(data[3])
+        self.card_weight = (data[2])
+        self.card_bias = (data[3])
 
         # Weights for pot size
-        self.pot_weight = activation_functions.logistic(0, 2, 4, -1)(data[4])
-        self.pot_bias = activation_functions.logistic(0, 2, 4, -1)(data[5])
+        self.pot_weight = (data[4])
+        self.pot_bias = (data[5])
 
         # Weight for current round
         for i in range(6,6+len(self.STREET_DICT)):
-            print(i, data[i])
-            self.street_weight = activation_functions.logistic(0, 2, 4, -1)(data[i])
+            self.street_weight = data[i]
 
         # Weight for move history
         self.opp_raise_w = data[10]
@@ -52,9 +50,8 @@ class WisePlayer(BasePokerPlayer):
     def calculateHandValue(self, hole_cards, common_cards):
         hole = [Card.from_str(c).to_id() for c in hole_cards]
         community = [Card.from_str(c).to_id() for c in common_cards]
-        print(self.old_street, self.current_street)
+        # print(self.old_street, self.current_street)
         if not self.old_street == self.current_street:
-
             # If value is not cached...
             self.old_street = self.current_street
             NUM_SIMULATIONS = 100

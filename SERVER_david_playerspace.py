@@ -2,7 +2,8 @@ import csv
 import os
 import random
 from collections import deque
-from david_player import DavidPlayer
+#from david_player import DavidPlayer
+from wise_player import WisePlayer
 from CLIENT_stadium import train_bots
 from SERVER_incubator import incubate, generateLeaderboard
 from david_file_utils import *
@@ -14,11 +15,11 @@ LEADERBOARD = {}
 
 def init(taskmaster):
     # CONFIGURATIONS
-    AGENT_CLASS = DavidPlayer
-    LEADERBOARD_FILENAME = ["Player_Board"]
-    LEAGUE_MIN_SIZE = 64
-    GENERATIONS_PER_CYCLE = 100 # Limit on number of generations per training
-    SHRINK_RATE = 0.5 # League shrink per generation
+    AGENT_CLASS = WisePlayer
+    LEADERBOARD_FILENAME = ["WisePlayer_Board"]
+    LEAGUE_MIN_SIZE = 80
+    GENERATIONS_PER_CYCLE = 120 # Limit on number of generations per training
+    SHRINK_RATE = 0.4 # League shrink per generation
 
     global LEADERBOARD
     TASKMASTER = taskmaster
