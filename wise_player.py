@@ -21,6 +21,9 @@ class WisePlayer(BasePokerPlayer):
 
         if len(weights) == self.number_of_weights:
             self.initWeights(weights)
+        else:
+            print("Bad number of weights. Expected " +str(self.number_of_weights) + " weights but got: " + str(weights))
+
         self.old_street = ""
         self.current_street = ""
         self.curr_card_wr = 0
@@ -39,7 +42,7 @@ class WisePlayer(BasePokerPlayer):
 
         # Weight for current round
         i = 4
-        for street in STREET_DICT:
+        for street in self.STREET_DICT:
             self.STREET_DICT[street] = data[i]
             i += 1
 

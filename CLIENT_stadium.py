@@ -1,7 +1,7 @@
 from pypokerengine.api.game import setup_config, start_poker
-from david_player import DavidPlayer
-from weighted_player import WeightedPlayer
-from neural_player import NeuralPlayer
+# from david_player import DavidPlayer
+# from weighted_player import WeightedPlayer
+# from neural_player import NeuralPlayer
 from wise_player import WisePlayer
 
 # CLIENT SIDE
@@ -72,10 +72,10 @@ def train_bots(matchup_job):
 
     # Initialization of players happens here
     p1_name = "Player 1"
-    if first_bot[0] == 'DavidPlayer':
+    if first_bot[0] == 'DavidPlayer' or first_bot[0] == 'WisePlayer':
         p1_name = extra[0]
     p2_name = "Player 2"
-    if first_bot[0] == 'DavidPlayer':
+    if second_bot[0] == 'DavidPlayer' or second_bot[0] == 'WisePlayer':
         p2_name = extra[1]
     agent_one = [p1_name, PLAYER_LIBRARY[first_bot[0]](first_bot[1])]
     agent_two = [p2_name, PLAYER_LIBRARY[second_bot[0]](second_bot[1])]

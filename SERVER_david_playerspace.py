@@ -18,8 +18,8 @@ def init(taskmaster):
     AGENT_CLASS = WisePlayer
     LEADERBOARD_FILENAME = ["WisePlayer_Board"]
     LEAGUE_MIN_SIZE = 80
-    GENERATIONS_PER_CYCLE = 120 # Limit on number of generations per training
-    SHRINK_RATE = 0.4 # League shrink per generation
+    GENERATIONS_PER_CYCLE = 200 # Limit on number of generations per training
+    SHRINK_RATE = 0.2 # League shrink per generation
 
     global LEADERBOARD
     TASKMASTER = taskmaster
