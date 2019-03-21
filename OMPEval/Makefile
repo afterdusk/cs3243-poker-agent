@@ -1,4 +1,4 @@
-CXXFLAGS += -O3 -std=c++11 -Wall -Wpedantic
+CXX=g++
 
 ifdef SYSTEMROOT
     CXXFLAGS += -lpthread
@@ -11,15 +11,15 @@ ifeq ($(SSE4),1)
 endif
 
 SRCS := $(wildcard omp/*.cpp)
-OBJS := ${SRCS:.cpp=.o}
+SRCS += $(wildcard omp/*.c)
 
-all: lib/ompeval.a
+all: lib/ompeval.so
 
 lib:
 	mkdir lib
 
-lib/ompeval.a: $(OBJS) | lib
-	ar rcs $@ $^
+lib/ompeval.so: $(SRCS) | lib
+	$(CXX) -Wall -shared -o $@ -O3 -fPIC $^
 
 clean:
-	$(RM) lib/ompeval.a $(OBJS)
+	$(RM) lib/ompeval.so
