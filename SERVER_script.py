@@ -11,7 +11,8 @@ def createPlayerSpaces(taskmaster):
     # Init player spaces here
     david_playerspace.init(taskmaster)
     return [
-        CMAPlayerSpace(taskmaster, 'neural_player_test_1', 'NeuralPlayer', 30, [[0, 1] for _ in xrange(50)], 0.1, 4, 101, 60 * 5)
+        CMAPlayerSpace(taskmaster, 'smart_warrior_test_1', 'SmartWarrior', 30, [[-1, 1] for _ in xrange(4)], 0.1, 4, 100, 60 * 2)
+        #CMAPlayerSpace(taskmaster, 'neural_player_test_1', 'NeuralPlayer', 30, [[0, 1] for _ in xrange(50)], 0.1, 4, 101, 60 * 5)
     ]
 
 

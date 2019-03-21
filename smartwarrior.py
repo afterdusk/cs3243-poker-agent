@@ -74,7 +74,8 @@ class SmartWarrior(BasePokerPlayer):
 
         tree = MinimaxTree(self, max_player, min_player, game)
         decision, payoff = tree.minimax_decision()
-        print "Decision made: ", decision
+        if DEBUG:
+            print "Decision made: ", decision
         return decision  # action returned here is sent to the poker engine
 
     def receive_game_start_message(self, game_info):
@@ -242,8 +243,9 @@ class MinimaxTree:
             results.append((action, utility))
         if True:
             for (action, utility) in results:
-                print "(action: {}, payoff: {})".format(
-                    constant_to_string(action), utility)
+                if DEBUG:
+                    print "(action: {}, payoff: {})".format(
+                        constant_to_string(action), utility)
         return best_action, best_utility
 
 
@@ -433,7 +435,8 @@ def main():
 
     tree = MinimaxTree(SmartWarrior(), max_player, min_player, game)
     decision, payoff = tree.minimax_decision()
-    print "Decision made: ", decision
+    if DEBUG:
+        print "Decision made: ", decision
 
 if __name__ == '__main__':
     main()
