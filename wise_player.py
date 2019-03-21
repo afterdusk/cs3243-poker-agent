@@ -27,7 +27,7 @@ class WisePlayer(BasePokerPlayer):
         print("WisePlayer Created")
 
     def initWeights(self, data):
-        # The higher these value, the more conservative the play
+        # Decision thresholds
         self.raise_threshold = (data[0])
         self.call_threshold = (data[1])
 
@@ -45,8 +45,8 @@ class WisePlayer(BasePokerPlayer):
         self.opp_raise_w = data[8]
         self.self_raise_w = data[9]
 
+        # Overall
         self.overall_bias = data[10]
-
 
         return self
 
@@ -69,11 +69,11 @@ class WisePlayer(BasePokerPlayer):
 
 
     def decide(self, holeValue, raiseCounts,  pot_amount):
-        card_o = self.card_weight*(holeValue+self.card_bias)
-        pot_o = self.pot_weight*(pot_amount/320+self.pot_bias)
+        card_o = self.card_weight*(holeValue)
+        pot_o = self.pot_weight*(pot_amount/320)
         turn_o = self.STREET_DICT[self.current_street]
         history_o = self.self_raise_w*raiseCounts[0] + self.opp_raise_w*raiseCounts[1]
-        return card_o + pot_o + turn_o + history_o
+        return card_o + pot_o + turn_o + history_o + self.overall_bias
 
     def decideOnAction(self, valid_actions, cardValue, movesHistory, pot_amount):
         confidence = self.decide(cardValue, movesHistory, pot_amount)
