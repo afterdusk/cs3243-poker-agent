@@ -4,6 +4,8 @@ from pypokerengine.engine.poker_constants import PokerConstants
 from pypokerengine.engine.action_checker import *
 from pypokerengine.engine.card import Card
 from pypokerengine.utils import card_utils as ceval
+from pypokerengine.utils.fast_card_utils import estimate_hole_card_win_rate
+from pypokerengine.engine.hand_evaluator import HandEvaluator
 from time import sleep
 import pprint
 import time
@@ -17,10 +19,12 @@ MAX_POT_AMOUNT = 320
 
 
 class SmartWarrior(BasePokerPlayer):
+    hand_strengths = {}
 
     def __init__(self, weights):
        # weights = [0.5, 0.5, 0.5, 0.5]
        self.init_weights(weights)
+       self.current_hand_strength = 0
 
     def init_weights(self, weights):
        self.overall_bias = weights[0]
@@ -42,6 +46,9 @@ class SmartWarrior(BasePokerPlayer):
         
         # remove fold from enemy moves
         if "fold" in enemy_moves: enemy_moves.remove("fold")
+
+        # calculate hand strength
+        self.current_hand_strength = self.get_hand_strength(hole_card, round_state['community_card'])
 
         max_player = PlayerState(
             my_state['stack'], 
@@ -117,6 +124,30 @@ class SmartWarrior(BasePokerPlayer):
             return ["call", "fold"]
         return ["raise", "call", "fold"]
 
+    @staticmethod
+    def get_hand_strength(hole_cards, community_cards):
+        # hand strength via fast_card_utils monte carlo
+        hole = [Card.from_str(c).to_id() for c in hole_cards]
+        community = [Card.from_str(c).to_id() for c in community_cards]
+        hand_strength = estimate_hole_card_win_rate(200, hole, community)
+        
+        # hand value via HandEvaluator 
+        hole_cards = [Card.from_str(c) for c in hole_cards]
+        community_cards = [Card.from_str(c) for c in community_cards]
+        hand = HandEvaluator.eval_hand(hole_cards, community_cards)
+        
+        # grab existing dict of hand strengths 
+        hand_strengths = SmartWarrior.hand_strengths
+        if hand in hand_strengths:
+            # augment calculated value with previously calculated values
+            num_prev_sims = hand_strengths[hand][1]
+            final_strength = (hand_strengths[hand][0] * num_prev_sims + hand_strength) / (num_prev_sims + 1)
+            hand_strengths[hand] = (final_strength, num_prev_sims + 1)
+            return final_strength
+        else:
+            hand_strengths[hand] = (hand_strength, 1)
+            return hand_strength
+
 class MinimaxTree:
     @staticmethod
     def max_value(node, alpha, beta):
@@ -162,15 +193,13 @@ class MinimaxTree:
 
     @staticmethod
     def eval(agent, hole_cards, community_cards, pot_amount, raises_made):
-        hole_cards_translated = []
-        community_cards_translated = []
-        action_score = 0
-        for card in hole_cards:
-            hole_cards_translated.append(Card.from_str(card))
-        for card in community_cards:
-            community_cards_translated.append(Card.from_str(card))
-        hand_strength = ceval.estimate_hole_card_win_rate(200, 2, hole_cards_translated, community_cards_translated)
-        payoff = agent.card_weight * hand_strength +\
+        # hole_cards_translated = []
+        # community_cards_translated = []
+        # for card in hole_cards:
+        #    hole_cards_translated.append(Card.from_str(card))
+        # for card in community_cards:
+        #    community_cards_translated.append(Card.from_str(card))
+        payoff = agent.card_weight * agent.current_hand_strength +\
             agent.pot_weight * pot_amount/MAX_POT_AMOUNT +\
             agent.confidence_weight * raises_made/MAX_RAISES +\
             agent.overall_bias
