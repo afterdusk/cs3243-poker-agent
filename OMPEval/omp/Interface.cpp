@@ -18,8 +18,8 @@ extern "C" unsigned long long evaluate(
 {
   omp::HandEvaluator evaluator;
 
-  std::vector<int> unused;
-  for (unsigned long long i = 0; i < 51; i++)
+  std::vector<unsigned char> unused;
+  for (unsigned char i = 0; i < 51; i++)
   {
     if (i == h1) continue;
     if (i == h2) continue;
@@ -33,7 +33,7 @@ extern "C" unsigned long long evaluate(
   
   int win_count = 0;
   std::default_random_engine rng(std::chrono::system_clock::now().time_since_epoch().count());
-  for (int i = 0; i < samples; i++)
+  for (unsigned long long i = 0; i < samples; i++)
   {
     std::shuffle(unused.begin(), unused.end(), rng);
 
