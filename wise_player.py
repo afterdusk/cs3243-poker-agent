@@ -3,8 +3,8 @@ import random
 import os
 import activation_functions
 #import win_rate_estimator
-#from pypokerengine.utils.card_utils import estimate_hole_card_win_rate
-from fast_monte_carlo import estimate_hole_card_win_rate
+from pypokerengine.utils.fast_card_utils import estimate_hole_card_win_rate
+# from fast_monte_carlo import estimate_hole_card_win_rate
 from pypokerengine.engine.card import Card
 from pypokerengine.players import BasePokerPlayer
 from time import sleep
@@ -13,16 +13,18 @@ from time import sleep
 class WisePlayer(BasePokerPlayer):
 
     # Static variable
-    number_of_weights = 12
+    number_of_weights = 11
 
     def __init__(self, weights):
-        print("INITALIZING")
+        print("INITALIZING WisePlayer")
+        self.STREET_DICT = {'preflop':0, 'flop':0, 'river':0, 'turn':0 }
+
         if len(weights) == self.number_of_weights:
             self.initWeights(weights)
         self.old_street = ""
         self.current_street = ""
         self.curr_card_wr = 0
-        self.STREET_DICT = {'preflop':0, 'flop':0, 'river':0, 'turn':0 }
+        print("WisePlayer Created")
 
     def initWeights(self, data):
         # The higher these value, the more conservative the play
@@ -31,19 +33,20 @@ class WisePlayer(BasePokerPlayer):
 
         # Weights for card value
         self.card_weight = (data[2])
-        self.card_bias = (data[3])
 
         # Weights for pot size
-        self.pot_weight = (data[4])
-        self.pot_bias = (data[5])
+        self.pot_weight = (data[3])
 
         # Weight for current round
-        for i in range(6,6+len(self.STREET_DICT)):
+        for i in range(4,4+len(self.STREET_DICT)):
             self.street_weight = data[i]
 
         # Weight for move history
-        self.opp_raise_w = data[10]
-        self.self_raise_w = data[11]
+        self.opp_raise_w = data[8]
+        self.self_raise_w = data[9]
+
+        self.overall_bias = data[10]
+
 
         return self
 
@@ -74,22 +77,14 @@ class WisePlayer(BasePokerPlayer):
 
     def decideOnAction(self, valid_actions, cardValue, movesHistory, pot_amount):
         confidence = self.decide(cardValue, movesHistory, pot_amount)
-        if confidence > self.raise_threshold:
-            for act in valid_actions:
-                if act["action"] == "raise":
-                    action = act["action"]
-                    return action  # action returned here is sent to the poker engine
+        valid_action_strings = list(map(lambda a: a['action'],valid_actions))
+        if confidence > self.raise_threshold and "raise" in valid_action_strings:
+            return "raise"
 
-        # If unable to raise, this is checked
-        if confidence > self.call_threshold:
-            for act in valid_actions:
-                if act["action"] == "call":
-                    action = act["action"]
-                    return action  # action returned here is sent to the poker engine
+        if confidence > self.call_threshold and "call" in valid_action_strings:
+            return "call"
 
-        # Else fold
-        action = valid_actions[1]["action"] #Fold
-        return action # action returned here is sent to the poker engine
+        return "fold"
 
     def declare_action(self, valid_actions, hole_card, round_state):
         self.current_street = round_state['street']
