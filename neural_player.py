@@ -1,7 +1,7 @@
 from pypokerengine.players import BasePokerPlayer
 from pypokerengine.engine.hand_evaluator import HandEvaluator
 from pypokerengine.engine.card import Card
-from pypokerengine.utils.fast_card_utils import estimate_hole_card_win_rate
+import fast_monte_carlo
 from time import sleep
 import math
 import pprint
@@ -25,7 +25,7 @@ class NeuralPlayer(BasePokerPlayer):
         if len(community) == 0:
             return win_rate_estimates.estimates[hole[0] - 1][hole[1] - 1]
        
-        return estimate_hole_card_win_rate(100, hole, community)
+        return fast_monte_carlo.estimate_win_rate(100, hole, community)
 
     def evaluate_network(self, data):
         # Network:
