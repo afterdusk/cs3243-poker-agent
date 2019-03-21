@@ -10,7 +10,8 @@ from math import floor
 from cluster_specs import all_node_hostnames, node_name_to_hostname
 
 blacklist_node_names = [
-    "xcna1",
+    "xcna1",  # Manually manage the server's server
+    "xcnd32",  # Si Jie's group is training here
 ]
 
 blacklist = [node_name_to_hostname(n) for n in blacklist_node_names]
