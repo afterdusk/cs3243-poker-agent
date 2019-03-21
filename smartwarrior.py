@@ -126,15 +126,16 @@ class SmartWarrior(BasePokerPlayer):
 
     @staticmethod
     def get_hand_strength(hole_cards, community_cards):
-        # hand strength via fast_card_utils monte carlo
-        hole = [Card.from_str(c).to_id() for c in hole_cards]
-        community = [Card.from_str(c).to_id() for c in community_cards]
-        hand_strength = estimate_hole_card_win_rate(200, hole, community)
-        
         # hand value via HandEvaluator 
         hole_cards = [Card.from_str(c) for c in hole_cards]
         community_cards = [Card.from_str(c) for c in community_cards]
         hand = HandEvaluator.eval_hand(hole_cards, community_cards)
+        
+        # hand strength via fast_card_utils monte carlo
+        hole_cards = [c.to_id() for c in hole_cards]
+        community_cards = [c.to_id() for c in community_cards]
+        hand_strength = estimate_hole_card_win_rate(200, hole_cards, community_cards)
+        
         
         # grab existing dict of hand strengths 
         hand_strengths = SmartWarrior.hand_strengths
