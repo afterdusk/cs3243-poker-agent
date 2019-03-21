@@ -4,7 +4,7 @@ from pypokerengine.engine.poker_constants import PokerConstants
 from pypokerengine.engine.action_checker import *
 from pypokerengine.engine.card import Card
 from pypokerengine.utils import card_utils as ceval
-from pypokerengine.utils.fast_card_utils import estimate_hole_card_win_rate
+from fast_monte_carlo import estimate_win_rate
 from pypokerengine.engine.hand_evaluator import HandEvaluator
 from time import sleep
 import pprint
@@ -134,8 +134,7 @@ class SmartWarrior(BasePokerPlayer):
         # hand strength via fast_card_utils monte carlo
         hole_cards = [c.to_id() for c in hole_cards]
         community_cards = [c.to_id() for c in community_cards]
-        hand_strength = estimate_hole_card_win_rate(200, hole_cards, community_cards)
-        
+        hand_strength = estimate_win_rate(200, hole_cards, community_cards)
         
         # grab existing dict of hand strengths 
         hand_strengths = SmartWarrior.hand_strengths
