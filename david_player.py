@@ -2,9 +2,10 @@ import csv
 import random
 import os
 import activation_functions
+import win_rate_estimator
+from fast_card_utils import estimate_hole_card_win_rate
 from pypokerengine.engine.card import Card
 from pypokerengine.players import BasePokerPlayer
-from pypokerengine.utils.card_utils import estimate_hole_card_win_rate
 from time import sleep
 
 # A wrapper class for players
@@ -35,14 +36,18 @@ class DavidPlayer(BasePokerPlayer):
         properHoleCards = []
         for c in hole_cards:
             properHoleCards.append(Card.from_str(c))
-        properCommunityCards = []
-        for c in common_cards:
-            properCommunityCards.append(Card.from_str(c))
 
-        NUM_SIMULATIONS = 100
-        NUM_PLAYERS = 2
-        monte_carlo_value = estimate_hole_card_win_rate(NUM_SIMULATIONS, NUM_PLAYERS, properHoleCards, properCommunityCards)
-        return monte_carlo_value
+        if len(common_cards) == 0:
+            return win_rate_estimator.estimates[properHoleCards[0] - 1][properHoleCards[1] - 1]
+
+        else:
+            properCommunityCards = []
+            for c in common_cards:
+                properCommunityCards.append(Card.from_str(c))
+
+            NUM_SIMULATIONS = 100
+            NUM_PLAYERS = 2
+            return estimate_hole_card_win_rate(NUM_SIMULATIONS, NUM_PLAYERS, properHoleCards, properCommunityCards)
 
     def decide(self, holeValue, movesHistory,  pot_amount):
         return self.card_weight*(holeValue+self.card_bias) + self.pot_weight*(pot_amount/320+self.pot_bias)
