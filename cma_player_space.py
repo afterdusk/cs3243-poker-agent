@@ -24,10 +24,16 @@ class CMAPlayerSpace:
         self.num_games = num_games
         self.num_rounds = num_rounds
         self.timeout = timeout
+        self.output_dir = './cma_logs/' + self.name + '/'
+        self.output_state_path = self.output_dir + 'state.txt'
+        self.output_log_path = self.output_dir + 'log.txt'
 
-        if os.path.isfile('cma_state_' + self.name + '.txt'):
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
+
+        if os.path.isfile(self.output_state_path):
             print('Loading state from file...')
-            with open('cma_state_' + self.name + '.txt', 'rb') as state_file:
+            with open(self.output_state_path) as state_file:
                 self.instances = pickle.load(state_file)
         else:
             print('Generating new state...')
@@ -43,14 +49,14 @@ class CMAPlayerSpace:
 
     def begin(self):
         print('Logging...')
-        with open('cma_log_' + self.name + '.txt', 'a') as log_file:
+        with open(self.output_log_path, 'a') as log_file:
             for (i, instance) in enumerate(self.instances):
                 log_file.write('(' + str(i).zfill(2) + ') Weights = ' + ' '.join(str(self.activations[j](x)) for (j, x) in enumerate(instance.result[5])) + '\n')
                 log_file.write('(' + str(i).zfill(2) + ') Mean = ' + ' '.join(str(x) for x in instance.result[5]) + '\n')
                 log_file.write('(' + str(i).zfill(2) + ') SD =   ' + ' '.join(str(x) for x in instance.result[6]) + '\n')
                 log_file.write('(' + str(i).zfill(2) + ') Norm(SD) = ' + str(numpy.linalg.norm(instance.result[6], ord=2)) + '\n')
             log_file.write('\n')
-        with open('cma_state_' + self.name + '.txt', 'wb') as state_file:
+        with open(self.output_state_path, 'wb') as state_file:
             pickle.dump(self.instances, state_file)
 
         print('Generating jobs...')
