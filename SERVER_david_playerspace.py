@@ -1,6 +1,7 @@
 import csv
 import os
 import random
+import time
 from collections import deque
 #from david_player import DavidPlayer
 from wise_player import WisePlayer
@@ -16,7 +17,7 @@ LEADERBOARD = {}
 def init(taskmaster):
     # CONFIGURATIONS
     AGENT_CLASS = WisePlayer
-    LEADERBOARD_FILENAME = ["WisePlayer_Board"]
+    LEADERBOARD_FILENAME = [str(time.time())[:8]+"Player_Board"]
     LEAGUE_MIN_SIZE = 100
     GENERATIONS_PER_CYCLE = 300 # Limit on number of generations per training
     SHRINK_RATE = 0.2 # League shrink per generation
