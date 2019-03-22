@@ -9,6 +9,7 @@ from profile_player_space import ProfilePlayerSpace
 
 def createPlayerSpaces(taskmaster):
     # Init player spaces here
+    david_playerspace.init(taskmaster)
     return [
         CMAPlayerSpace(
             taskmaster,
