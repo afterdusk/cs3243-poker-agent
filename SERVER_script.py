@@ -9,7 +9,7 @@ from cma_single_player_space import CMASinglePlayerSpace
 
 def createPlayerSpaces(taskmaster):
     # Init player spaces here
-    # david_playerspace.init(taskmaster)
+    david_playerspace.init(taskmaster)
     return [
         CMASinglePlayerSpace(
             taskmaster, # taskmaster
