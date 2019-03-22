@@ -20,7 +20,7 @@ def cacheBLboard(boardFileName):
         name = row[2]
         botClass = row[1]
         stats = (0,0,0) # win, loss, perf
-        weights = list(map(lambda e: float(e), row[7:]))
+        weights = list(map(lambda e: float(e), row[6:]))
         remark = row[0]
         leaderboard[name] = [stats, weights, botClass, remark]
     return leaderboard
