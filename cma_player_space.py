@@ -42,7 +42,7 @@ class CMAPlayerSpace:
             cma_options.set('verb_disp', -1)
             cma_options.set('verb_log', 0)
             self.instance = cma.CMAEvolutionStrategy(
-                    self.sample(), 
+                    [0] * self.dimensions,
                     initial_sd, 
                     cma_options)
 

@@ -16,7 +16,7 @@ def createPlayerSpaces(taskmaster):
             'neural_player_test_3',
             'NeuralPlayer',
             [[0, 1]] * 50, # weight ranges
-            0.1, # initial sd
+            0.3, # initial sd
             2500, # samples per evaluation
             4,
             101,
