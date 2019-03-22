@@ -59,7 +59,7 @@ class CMAPlayerSpace:
         particles = [instance.ask() for instance in self.instances]
 
         for (i, instance) in enumerate(self.instances):
-            for (j, particle) in enumerate(instance.ask()):
+            for (j, particle) in enumerate(particles[i]):
                 for (k, other_instance) in enumerate(self.instances):
                     if i == k:
                         continue

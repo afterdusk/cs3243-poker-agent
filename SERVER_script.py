@@ -11,7 +11,7 @@ def createPlayerSpaces(taskmaster):
     # Init player spaces here
     # david_playerspace.init(taskmaster)
     return [
-        CMAPlayerSpace(taskmaster, 'wise_player_test_1', 'WisePlayer', 30, 
+        CMAPlayerSpace(taskmaster, 'wise_player_test_2', 'WisePlayer', 30, 
             [
                 [0, 1], 
                 [-1, 0],
