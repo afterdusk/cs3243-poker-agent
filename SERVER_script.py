@@ -4,7 +4,7 @@ import config
 
 # Import player spaces here
 import SERVER_david_playerspace as david_playerspace
-from cma_player_space import CMAPlayerSpace
+#from cma_player_space import CMAPlayerSpace
 
 
 def createPlayerSpaces(taskmaster):
