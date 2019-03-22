@@ -24,7 +24,7 @@ class CMAPlayerSpace:
         self.num_games = num_games
         self.num_rounds = num_rounds
         self.timeout = timeout
-        self.output_dir = './cma_logs/' + self.name + '/'
+        self.output_dir = './cma_output/' + self.name + '/'
         self.output_state_path = self.output_dir + 'state.txt'
         self.output_log_path = self.output_dir + 'log.txt'
 
