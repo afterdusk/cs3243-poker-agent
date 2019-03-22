@@ -38,12 +38,12 @@ def createPlayerSpaces(taskmaster):
 
 
 class TrainerServer:
-    def __init__(self):
+    def __init__(self, client_id=None):
         self.taskmaster = Taskmaster()
 
         self.playerSpaces = createPlayerSpaces(self.taskmaster)
 
-        self.client = Client()
+        self.client = Client(client_id)
         self.client.on_connect = self.on_connect
         self.client.register_callback(config.mqttTopicJobReq, self.on_request)
         self.client.register_callback(config.mqttTopicJobOutcome, self.on_outcome)

@@ -9,7 +9,7 @@ import config
 
 
 class TrainerClient:
-    def __init__(self, client_id):
+    def __init__(self, client_id=None):
         self.client = Client(client_id)
         self.client.on_connect = self.on_connect
         self.client.register_callback(config.mqttTopicJobRes, self.on_job)
