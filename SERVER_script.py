@@ -9,30 +9,17 @@ from cma_single_player_space import CMASinglePlayerSpace
 
 def createPlayerSpaces(taskmaster):
     # Init player spaces here
-    david_playerspace.init(taskmaster)
     return [
         CMASinglePlayerSpace(
             taskmaster, # taskmaster
-            'wise_player_test_single_1', # name
-            'WisePlayer', # class
+            'neural_player_test_single_1', # name
+            'NeuralPlayer', # class
             100, # num particles
             1000, # num eval particles
-            [ # weight ranges
-                [0, 1], 
-                [-1, 0],
-                [-1, 1],
-                [-1, 0],
-                [-1, 1],
-                [-1, 1],
-                [-1, 1],
-                [-1, 1],
-                [-1, 1],
-                [-1, 1],
-                [-1, 1]
-            ],
+            [[0, 1]] * 50, # weight ranges
             4, # num games
             101,  # num rounds
-            60) # timeout
+            60 * 2) # timeout
     ]
 
 
