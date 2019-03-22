@@ -1,13 +1,16 @@
 from time import sleep
+from os import getpid
+from socket import gethostname
 from syncengine.client import Client
 from syncengine.taskmaster import wrapped_outcome
+import sys
 import CLIENT_stadium as stadium
 import config
 
 
 class TrainerClient:
-    def __init__(self):
-        self.client = Client()
+    def __init__(self, client_id):
+        self.client = Client(client_id)
         self.client.on_connect = self.on_connect
         self.client.register_callback(config.mqttTopicJobRes, self.on_job)
 
@@ -41,7 +44,8 @@ class TrainerClient:
 
 
 if __name__ == "__main__":
-    trainer = TrainerClient()
+    client_id = gethostname() + '.' + str(getpid())
+    trainer = TrainerClient(client_id)
     while True:
         trainer.client.connect()
         trainer.client.mqttc.loop_forever()

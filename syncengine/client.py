@@ -5,12 +5,12 @@ import config
 
 
 class Client:
-    def __init__(self):
+    def __init__(self, client_id):
         self.mqttc = mqtt.Client()
         self.mqttc.on_message = self.handle_message
         self.mqttc.on_connect = self.handle_connect
         self.mqttc.on_disconnect = self.on_disconnect
-        self.id = str(uuid4())
+        self.id = client_id or str(uuid4())
         self.callbacks = {}
 
         self.on_connect = None
