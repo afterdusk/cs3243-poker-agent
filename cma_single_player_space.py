@@ -44,7 +44,7 @@ class CMASinglePlayerSpace:
             cma_options.set('popsize', self.num_particles)
             self.instance = cma.CMAEvolutionStrategy(
                     [[0] * len(self.activations)], # Origin centered
-                    1.0 / 2, # 2SD = 1.0 -> 95% within [-1, 1]
+                    0.1, 
                     cma_options)
 
         self.begin()
@@ -52,6 +52,7 @@ class CMASinglePlayerSpace:
     def begin(self):
         print('Logging...')
         with open(self.output_log_path, 'a') as log_file:
+            log_file.write('Weights = ' + ' '.join(str(self.activations[i](x)) for (i, x) in enumerate(self.instance.result[5])) + '\n')
             log_file.write('Mean = ' + ' '.join(str(x) for x in self.instance.result[5]) + '\n')
             log_file.write('SD =   ' + ' '.join(str(x) for x in self.instance.result[6]) + '\n')
             log_file.write('Norm(SD) = ' + str(numpy.linalg.norm(self.instance.result[6], ord=2)) + '\n')
