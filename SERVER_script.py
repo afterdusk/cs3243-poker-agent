@@ -15,8 +15,8 @@ def createPlayerSpaces(taskmaster):
             taskmaster, # taskmaster
             'neural_player_test_single_1', # name
             'NeuralPlayer', # class
-            100, # num particles
-            1000, # num eval particles
+            10, # num particles
+            2000, # num eval particles
             [[0, 1]] * 50, # weight ranges
             4, # num games
             101,  # num rounds
