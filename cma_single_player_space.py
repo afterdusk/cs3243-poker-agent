@@ -44,7 +44,7 @@ class CMASinglePlayerSpace:
             cma_options.set('popsize', self.num_particles)
             self.instance = cma.CMAEvolutionStrategy(
                     [[0] * len(self.activations)], # Origin centered
-                    math.sqrt(len(self.activations)) / 2, # Unit cube inscribed in 95% volume
+                    1.0 / 2, # 2SD = 1.0 -> 95% within [-1, 1]
                     cma_options)
 
         self.begin()
