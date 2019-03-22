@@ -5,35 +5,31 @@ import config
 # Import player spaces here
 import SERVER_david_playerspace as david_playerspace
 from cma_player_space import CMAPlayerSpace
-from cma_single_player_space import CMASinglePlayerSpace
 from profile_player_space import ProfilePlayerSpace
 
 def createPlayerSpaces(taskmaster):
     # Init player spaces here
-    david_playerspace.init(taskmaster)
     return [
-        ProfilePlayerSpace(
+        CMAPlayerSpace(
             taskmaster,
-            'neural_player_profile_1',
+            'neural_player_test_3',
             'NeuralPlayer',
-            [[0, 1]] * 50,
-            20,
-            2000,
+            [[0, 1]] * 50, # weight ranges
+            0.1, # initial sd
+            2500, # samples per evaluation
             4,
             101,
             60 * 2)
-       # '''
-       # CMASinglePlayerSpace(
-       #     taskmaster, # taskmaster
-       #     'neural_player_test_single_1', # name
-       #     'NeuralPlayer', # class
-       #     10, # num particles
-       #     2000, # num eval particles
-       #     [[0, 1]] * 50, # weight ranges
-       #     4, # num games
-       #     101,  # num rounds
-       #     60 * 2) # timeout
-       # '''
+        #ProfilePlayerSpace(
+        #    taskmaster,
+        #    'neural_player_profile_1',
+        #    'NeuralPlayer',
+        #    [[0, 1]] * 50,
+        #    20,
+        #    2000,
+        #    4,
+        #    101,
+        #    60 * 2)
     ]
 
 
