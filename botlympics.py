@@ -8,6 +8,8 @@ from CLIENT_stadium import train_bots
 from david_file_utils import *
 
 # WELCOME TO THE BOT-LYMPICS!
+# A playerspace to have bots of different Classes fight it out!
+# Add your bot to agentboards/Botlympics.csv!
 
 LEADERBOARD = {}
 
@@ -16,7 +18,6 @@ def cacheBLboard(boardFileName):
     leaderboard = {}
     for row in rawLeaderboard[1:]:
         name = row[2]
-        print(name)
         botClass = row[1]
         stats = (0,0,0) # win, loss, perf
         weights = list(map(lambda e: float(e), row[7:]))
@@ -39,10 +40,10 @@ def writeToBLboardFile(leaderboard, boardFilename):
         writer = csv.writer(writeFile)
         writer.writerows(fileContent)
     writeFile.close()
+
 def init(taskmaster):
     # CONFIGURATIONS
     LEADERBOARD_FILENAME = ["Botlympics"]
-
     global LEADERBOARD
     TASKMASTER = taskmaster
 
@@ -89,7 +90,6 @@ def init(taskmaster):
         botlist = list(LEADERBOARD)
         line = 0
         for bot in botlist:
-            print(bot)
             trainNamedBot(bot, botlist)
 
     #************================================************
@@ -106,7 +106,7 @@ def init(taskmaster):
         UPDATE_BOARD_FREQUENCY = boardLength
         INCUBATE_FREQUENCY = queuedMatches[0] + 1
 
-        print("\n============Training progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
+        print("\n============BOTLYMPIC GAMES progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
 
         winnerName = sentJob[2][1-outcome]
         loserName = sentJob[2][outcome]
@@ -134,7 +134,7 @@ def init(taskmaster):
     # Composes the bots based on bot names
     queuedMatches = [0]
 
-    # 100 games of 1000 rounds each
+    # 50 games of 500 rounds each
     def arrangeLongMatch(agentOneName, agentTwoName):
         botOne = composeBot(agentOneName)
         botTwo = composeBot(agentTwoName)
