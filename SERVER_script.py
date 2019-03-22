@@ -5,14 +5,19 @@ import config
 # Import player spaces here
 import SERVER_david_playerspace as david_playerspace
 from cma_player_space import CMAPlayerSpace
-
+from cma_single_player_space import CMASinglePlayerSpace
 
 def createPlayerSpaces(taskmaster):
     # Init player spaces here
     # david_playerspace.init(taskmaster)
     return [
-        CMAPlayerSpace(taskmaster, 'wise_player_test_2', 'WisePlayer', 30, 
-            [
+        CMASinglePlayerSpace(
+            taskmaster, # taskmaster
+            'wise_player_test_single_1', # name
+            'WisePlayer', # class
+            100, # num particles
+            1000, # num eval particles
+            [ # weight ranges
                 [0, 1], 
                 [-1, 0],
                 [-1, 1],
@@ -24,9 +29,10 @@ def createPlayerSpaces(taskmaster):
                 [-1, 1],
                 [-1, 1],
                 [-1, 1]
-            ], 0.1, 4, 101, 60)
-        #CMAPlayerSpace(taskmaster, 'smart_warrior_test_1', 'SmartWarrior', 2, [[-1, 1] for _ in xrange(4)], 0.1, 4, 101, 60 * 2)
-        #CMAPlayerSpace(taskmaster, 'neural_player_test_1', 'NeuralPlayer', 30, [[0, 1] for _ in xrange(50)], 0.1, 4, 101, 60 * 5)
+            ],
+            4, # num games
+            101,  # num rounds
+            60) # timeout
     ]
 
 
