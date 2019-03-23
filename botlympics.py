@@ -92,9 +92,9 @@ def init(taskmaster):
 
     def blRoundRobinTraining():
         print("EXTENDED ROUND ROBIN TRAINING")
-        MULTIPLIER = 5
+        MULTIPLIER = 10
         queuedMatches[0] = 0
-        for i in range(MULTIPLIER):
+        for i in range(0,MULTIPLIER):
             roundRobinTraining()
         print("Scheduled " + str(queuedMatches[0]) + " matches")
 

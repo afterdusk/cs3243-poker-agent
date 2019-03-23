@@ -87,7 +87,7 @@ def init(taskmaster):
     # Message contains a tuple of (winner_name,loser_name)
     def handleOutcome(sentJob, outcome):
         global LEADERBOARD
-        PLATEAU_BUFFER = 10 # Number of generations before checking for Plateau
+        PLATEAU_BUFFER = 30 # Number of generations before checking for Plateau
         boardLength = len(LEADERBOARD)
         UPDATE_BOARD_FREQUENCY = boardLength
         INCUBATE_FREQUENCY = queuedMatches[0] + 1
