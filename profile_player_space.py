@@ -100,7 +100,7 @@ class ProfilePlayerSpace:
 
         transitivity_jobs = [j for j in completed_jobs if j[0][2][0] == 'Transitivity']
         pass_count = 0
-        for i in xrange(transitivity_checks):
+        for i in xrange(self.transitivity_checks):
             case_jobs = [j for j in transitivity_jobs if j[0][2][1] == i]
             case_jobs = sorted(case_jobs, key=lambda j: j[0][2][2])
             if case_jobs[0][1] == case_jobs[1][1] and case_jobs[1][1] == case_jobs[2][1]:
