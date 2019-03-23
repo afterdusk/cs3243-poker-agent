@@ -108,6 +108,8 @@ def init(taskmaster):
         UPDATE_BOARD_FREQUENCY = boardLength
         INCUBATE_FREQUENCY = queuedMatches[0] + 1
 
+        print(str(winnerName) + " WONS AGAINST " + str(loserName))
+
         print("\n============BOTLYMPIC GAMES progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
 
         winnerName = sentJob[2][1-outcome]
@@ -125,7 +127,6 @@ def init(taskmaster):
     # Sends a message to the clients in the form of a tuple
     # matchup_job = ((bot_1, bot_2), training_configuration, (b1Name, b2Name))
     def sendMatchup(matchup_job):
-        print(str(matchup_job[2][0]) + " VERSUS " + str(matchup_job[2][1]))
         TASKMASTER.schedule_job(matchup_job, 120, jobDone)
 
     def composeBot(agentName):
@@ -158,10 +159,11 @@ def init(taskmaster):
         exit()
     finally:
         roundRobinTraining()
+        print("THE BOTLYMPICS BEGINS!")
+
 
     # MAIN
 if __name__ == "__main__":
-    print("THE BOTLYMPICS BEGINS!")
     class localCall():
         @staticmethod
         def schedule_job(match, timeout, callback):
