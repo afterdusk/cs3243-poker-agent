@@ -2,18 +2,17 @@ import csv
 import random
 import os
 import activation_functions
-#import win_rate_estimator
-#from pypokerengine.utils.fast_card_utils import estimate_win_rate
+import win_rate_estimates
 from fast_monte_carlo import estimate_win_rate
 from pypokerengine.engine.card import Card
 from pypokerengine.players import BasePokerPlayer
 from time import sleep
 
 # Wise
-class WisePlayer(BasePokerPlayer):
+class ZairPlayer(BasePokerPlayer):
 
     # Static variable
-    number_of_weights = 11
+    number_of_weights = 10
 
     def __init__(self, weights):
         #print("INITALIZING WisePlayer")
@@ -34,39 +33,36 @@ class WisePlayer(BasePokerPlayer):
         self.raise_threshold = (data[0])
         self.call_threshold = (data[1])
 
-        # Weights for card value
-        self.card_weight = (data[2])
+        # Weights for card + pot value
+        self.payout_w = (data[2])
 
-        # Weights for pot size
-        self.pot_weight = (data[3])
-
-        # Weight for current round
-        i = 4
+        # Weight for current round. Each round has 1 weight
+        i = 3
         for street in self.STREET_DICT:
             self.STREET_DICT[street] = data[i]
             i += 1
 
         # Weight for move history
-        self.opp_raise_w = data[8]
-        self.self_raise_w = data[9]
+        self.opp_raise_w = data[7]
+        self.self_raise_w = data[8]
 
         # Overall
-        self.overall_bias = data[10]
+        self.overall_bias = data[9]
 
         return self
 
     def calculateHandValue(self, hole_cards, common_cards):
-        hole = [Card.from_str(c).to_id() for c in hole_cards]
-        community = [Card.from_str(c).to_id() for c in common_cards]
         # print(self.old_street, self.current_street)
         if not self.old_street == self.current_street:
             # If value is not cached...
             self.old_street = self.current_street
-            NUM_SIMULATIONS = 100
 
+            hole = [Card.from_str(c).to_id() for c in hole_cards]
+            community = [Card.from_str(c).to_id() for c in common_cards]
+
+            NUM_SIMULATIONS = 100
             if len(common_cards) == 0:
-                self.curr_card_wr = estimate_win_rate(NUM_SIMULATIONS, hole)
-                #return win_rate_estimator.estimates[properHoleCards[0] - 1][properHoleCards[1] - 1] COMMENT CUZ SLOW
+                self.curr_card_wr = win_rate_estimates.estimates[hole[0] - 1][hole[1] - 1]
             else:
                 self.curr_card_wr = estimate_win_rate(NUM_SIMULATIONS, hole, community)
 
@@ -74,15 +70,16 @@ class WisePlayer(BasePokerPlayer):
 
 
     def decide(self, holeValue, raiseCounts,  pot_amount):
-        card_o = self.card_weight*(holeValue)
-        pot_o = self.pot_weight*(pot_amount/320)
+        # Payout as a function of hole value and pot amount
+        payout_o = self.payout_w*(holeValue)*(pot_amount/320)
         turn_o = self.STREET_DICT[self.current_street]
-        history_o = self.self_raise_w*raiseCounts[0] + self.opp_raise_w*raiseCounts[1]
-        return card_o + pot_o + turn_o + history_o + self.overall_bias
+        history_o = (self.self_raise_w*raiseCounts[0]/4) + (self.opp_raise_w*raiseCounts[1]/4)
+        return payout_o + turn_o + history_o + self.overall_bias
 
     def decideOnAction(self, valid_actions, cardValue, movesHistory, pot_amount):
         confidence = self.decide(cardValue, movesHistory, pot_amount)
         valid_action_strings = list(map(lambda a: a['action'],valid_actions))
+
         if confidence > self.raise_threshold and "raise" in valid_action_strings:
             return "raise"
 

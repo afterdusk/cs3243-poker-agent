@@ -1,8 +1,7 @@
 from pypokerengine.api.game import setup_config, start_poker
-# from david_player import DavidPlayer
-# from weighted_player import WeightedPlayer
-# from neural_player import NeuralPlayer
+from neural_player import NeuralPlayer
 from wise_player import WisePlayer
+from smartwarrior import SmartWarrior
 
 # CLIENT SIDE
 # This will be run on each thread aka each core processor.
@@ -60,7 +59,7 @@ PLAYER_LIBRARY['DavidPlayer'] = lambda w: DavidPlayer(w)
 PLAYER_LIBRARY['WeightedPlayer'] = lambda w: WeightedPlayer(w)
 PLAYER_LIBRARY['NeuralPlayer'] = lambda w: NeuralPlayer(w)
 PLAYER_LIBRARY['WisePlayer'] = lambda w: WisePlayer(w)
-
+PLAYER_LIBRARY['SmartWarrior'] = lambda w: SmartWarrior(w)
 
 # A job is {{bot1,bot2}, {training_regime}, {...extra info...}}
 # Each bot is in a tuple of {bot_type, weights}
@@ -72,14 +71,13 @@ def train_bots(matchup_job):
 
     # Initialization of players happens here
     p1_name = "Player 1"
-    if first_bot[0] == 'DavidPlayer' or first_bot[0] == 'WisePlayer':
-        p1_name = extra[0]
+    # if first_bot[0] == 'DavidPlayer' or first_bot[0] == 'WisePlayer':
+    #    p1_name = extra[0]
     p2_name = "Player 2"
-    if second_bot[0] == 'DavidPlayer' or second_bot[0] == 'WisePlayer':
-        p2_name = extra[1]
+    # if second_bot[0] == 'DavidPlayer' or second_bot[0] == 'WisePlayer':
+    #     p2_name = extra[1]
     agent_one = [p1_name, PLAYER_LIBRARY[first_bot[0]](first_bot[1])]
     agent_two = [p2_name, PLAYER_LIBRARY[second_bot[0]](second_bot[1])]
-
 
     print("Currently Training: <" + p1_name + "> vs <" + p2_name + ">")
 

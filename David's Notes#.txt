@@ -21,3 +21,16 @@ Then I added the weights for pot_value, pot_bias and combined_bias. The previous
 I let the round robin training run for the night and 28 agents became 81.
 
 Children of 2?
+
+
+
+22/3 
+
+Reading Opponenet Modelling in Poker:
+Eval should have:
+Payout = pot_amt*hole_value*payout_w
+Preflop hole_value calculation should be a bit different
+Card str = chance_to_combo * combo_strength ?
+
+
+

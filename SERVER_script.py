@@ -4,24 +4,45 @@ import config
 
 # Import player spaces here
 import SERVER_david_playerspace as david_playerspace
+import botlympics as botlympics
 from cma_player_space import CMAPlayerSpace
-
+from profile_player_space import ProfilePlayerSpace
 
 def createPlayerSpaces(taskmaster):
     # Init player spaces here
     david_playerspace.init(taskmaster)
+    botlympics.init(taskmaster)
     return [
-        CMAPlayerSpace(taskmaster, 'neural_player_test_1', 'NeuralPlayer', 30, [[0, 1] for _ in xrange(50)], 0.1, 4, 101, 60 * 5)
+        CMAPlayerSpace(
+            taskmaster,
+            'neural_player_test_4',
+            'NeuralPlayer',
+            [[0, 1]] * 50, # weight ranges
+            0.15, # initial sd
+            2500, # samples per evaluation
+            4,
+            101,
+            60 * 2)
+        #ProfilePlayerSpace(
+        #    taskmaster,
+        #    'neural_player_profile_1',
+        #    'NeuralPlayer',
+        #    [[0, 1]] * 50,
+        #    20,
+        #    2000,
+        #    4,
+        #    101,
+        #    60 * 2)
     ]
 
 
 class TrainerServer:
-    def __init__(self):
+    def __init__(self, client_id=None):
         self.taskmaster = Taskmaster()
 
         self.playerSpaces = createPlayerSpaces(self.taskmaster)
 
-        self.client = Client()
+        self.client = Client(client_id)
         self.client.on_connect = self.on_connect
         self.client.register_callback(config.mqttTopicJobReq, self.on_request)
         self.client.register_callback(config.mqttTopicJobOutcome, self.on_outcome)

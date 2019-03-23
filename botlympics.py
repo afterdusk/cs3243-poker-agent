@@ -1,27 +1,51 @@
 import csv
 import os
 import random
-import time
 from collections import deque
 #from david_player import DavidPlayer
 from wise_player import WisePlayer
 from CLIENT_stadium import train_bots
-from SERVER_incubator import incubate, generateLeaderboard
 from david_file_utils import *
 
-# SERVER SIDE david_player trainer
-# SERVER_script will call this
+# WELCOME TO THE BOT-LYMPICS!
+# A playerspace to have bots of different Classes fight it out!
+# Add your bot to agentboards/Botlympics.csv!
 
 LEADERBOARD = {}
 
+def cacheBLboard(boardFileName):
+    rawLeaderboard = getLeaderboard(boardFileName)
+    leaderboard = {}
+    for row in rawLeaderboard[1:]:
+        if not row[1] == "":
+            name = row[2]
+            botClass = row[1]
+            stats = (0,0,0) # win, loss, perf
+            rawWeights = row[6:]
+            weights = list(map(lambda e: float(e), filter(lambda w: not w == '', rawWeights)))
+            remark = row[0]
+            leaderboard[name] = [stats, weights, botClass, remark]
+    return leaderboard
+
+def writeToBLboardFile(leaderboard, boardFilename):
+    HEADER = ('Remarks', 'Bot Class', 'Bot Name','Wins', 'Losses')
+    fileContent = [HEADER]
+    for agentName in leaderboard:
+        stats = leaderboard[agentName][0]
+        weights = leaderboard[agentName][1]
+        botClass = leaderboard[agentName][2]
+        remark = leaderboard[agentName][3]
+        row = (remark, botClass, agentName, stats[0], stats[1], "Weights:") + tuple(weights)
+        fileContent.append(row)
+
+    with open(folderize(boardFilename), mode='w') as writeFile:
+        writer = csv.writer(writeFile)
+        writer.writerows(fileContent)
+    writeFile.close()
+
 def init(taskmaster):
     # CONFIGURATIONS
-    AGENT_CLASS = WisePlayer
-    LEADERBOARD_FILENAME = [str(time.time())[:8]+"Player_Board"]
-    LEAGUE_MIN_SIZE = 100
-    GENERATIONS_PER_CYCLE = 300 # Limit on number of generations per training
-    SHRINK_RATE = 0.2 # League shrink per generation
-
+    LEADERBOARD_FILENAME = ["Botlympics"]
     global LEADERBOARD
     TASKMASTER = taskmaster
 
@@ -59,23 +83,20 @@ def init(taskmaster):
         for opponent in botlist:
             if opponent == botName:
                 continue
-            arrangeMatch(botName,opponent)
+            arrangeLongMatch(botName,opponent)
 
     def roundRobinTraining():
-        wipeWinLoss()
-        print("ROUND ROBIN TRAINING")
-        queuedMatches[0] = 0
         botlist = list(LEADERBOARD)
-        line = 0
         for bot in botlist:
             trainNamedBot(bot, botlist)
 
-    def callIncubator():
-        global LEADERBOARD
-        reducedLeague = LEAGUE_MIN_SIZE - int(SHRINK_RATE * gens[0])
-        LEADERBOARD, plateauBool = incubate(LEADERBOARD, AGENT_CLASS.number_of_weights, reducedLeague)
-        writeToLeaderboardFile(LEADERBOARD, gens[0], LEADERBOARD_FILENAME[0])
-        return plateauBool
+    def blRoundRobinTraining():
+        print("EXTENDED ROUND ROBIN TRAINING")
+        MULTIPLIER = 10
+        queuedMatches[0] = 0
+        for i in range(0,MULTIPLIER):
+            roundRobinTraining()
+        print("Scheduled " + str(queuedMatches[0]) + " matches")
 
     #************================================************
     #         Server-Client communication functions
@@ -87,36 +108,23 @@ def init(taskmaster):
     # Message contains a tuple of (winner_name,loser_name)
     def handleOutcome(sentJob, outcome):
         global LEADERBOARD
-        PLATEAU_BUFFER = 30 # Number of generations before checking for Plateau
         boardLength = len(LEADERBOARD)
         UPDATE_BOARD_FREQUENCY = boardLength
         INCUBATE_FREQUENCY = queuedMatches[0] + 1
 
-        print("\n============Training progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
-
         winnerName = sentJob[2][1-outcome]
         loserName = sentJob[2][outcome]
+
+        print(str(winnerName) + " WINS AGAINST " + str(loserName))
+
+        print("\n============BOTLYMPIC GAMES progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
+
         updateAgentsLeaderboardStats(winnerName,loserName)
 
         if matchCountArr[0] >= UPDATE_BOARD_FREQUENCY and matchCountArr[0] % UPDATE_BOARD_FREQUENCY == 0:
-            writeToLeaderboardFile(LEADERBOARD,gens[0],LEADERBOARD_FILENAME[0])
+            writeToBLboardFile(LEADERBOARD,LEADERBOARD_FILENAME[0])
 
         matchCountArr[0] = matchCountArr[0] + 1
-
-        if matchCountArr[0] >= INCUBATE_FREQUENCY:
-            matchCountArr[0] = 1
-            gens[0] = gens[0] + 1
-
-            plateauBool = callIncubator()
-            plateauBool = plateauBool and (gens[0] > PLATEAU_BUFFER)
-
-            if gens[0] > GENERATIONS_PER_CYCLE or plateauBool:
-                gens[0] = 1
-                LEADERBOARD_FILENAME[0] = LEADERBOARD_FILENAME[0] + "I"
-                LEADERBOARD = generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE, AGENT_CLASS.number_of_weights)
-
-            print("%%%%%%%%%%%%%%%%%%%%%% Beginning Generation "+ str(gens[0])+ "%%%%%%%%%%%%%%%%%%%%%%")
-            roundRobinTraining()
 
     def jobDone(returnedJob,outcome):
         handleOutcome(returnedJob, outcome)
@@ -124,38 +132,47 @@ def init(taskmaster):
     # Sends a message to the clients in the form of a tuple
     # matchup_job = ((bot_1, bot_2), training_configuration, (b1Name, b2Name))
     def sendMatchup(matchup_job):
-        TASKMASTER.schedule_job(matchup_job, 120, jobDone)
+        TASKMASTER.schedule_job(matchup_job, 300, jobDone)
 
     def composeBot(agentName):
         agentWeights = getWeights(agentName,LEADERBOARD)
-        agentClassName = AGENT_CLASS.__name__
+        agentClassName = LEADERBOARD[agentName][2]
         return (agentClassName, agentWeights)
 
     # Composes the bots based on bot names
     queuedMatches = [0]
 
-    def arrangeMatch(agentOneName, agentTwoName):
+    # 50 games of 500 rounds each
+    def arrangeLongMatch(agentOneName, agentTwoName):
         botOne = composeBot(agentOneName)
         botTwo = composeBot(agentTwoName)
-        num_games = 9
-        num_rounds = 101
+        num_games = 50
+        num_rounds = 500
         training_regime = (num_games,num_rounds)
         # ((b1,b2), (ng,nr), (name1,name2))
         matchup_job = ((botOne, botTwo),training_regime,(agentOneName,agentTwoName))
-
-        sendMatchup(matchup_job)
         queuedMatches[0] = queuedMatches[0] + 1
+        sendMatchup(matchup_job)
 
     # This is the main stuff
+    # LEADERBOARD = cacheBLboard(LEADERBOARD_FILENAME[0])
+
     try:
-        LEADERBOARD = cacheLeaderboard(LEADERBOARD_FILENAME[0])
+        LEADERBOARD = cacheBLboard(LEADERBOARD_FILENAME[0])
     except:
-        LEADERBOARD = generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE, AGENT_CLASS.number_of_weights)
-        LEADERBOARD = cacheLeaderboard(LEADERBOARD_FILENAME[0])
+        print("ERROR " + LEADERBOARD_FILENAME[0] + ".csv not found!")
+        exit()
     finally:
-        roundRobinTraining()
+        blRoundRobinTraining()
+        print("THE BOTLYMPICS BEGINS!")
+
 
     # MAIN
 if __name__ == "__main__":
-    print("YOOOO")
-    init("some")
+    class localCall():
+        @staticmethod
+        def schedule_job(match, timeout, callback):
+            outcome = train_bots(match)
+            callback(match, outcome)
+            return
+    init(localCall())

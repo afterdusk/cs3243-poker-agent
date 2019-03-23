@@ -4,11 +4,18 @@ import random
 import string
 import math
 from david_file_utils import *
+from argparse import ArgumentParser
+
 # Handles the reinforcement learning. Creation of children and culling of weak agents
 
-CHILD_THRESHOLD = 2
-KILL_THRESHOLD = -2 #This will be flipped negative
+# Supports cloning of top 5%.
+# Reproduction of top 10%
+# Reward top 20%
+# Penalize bottom 60%
+# Kill bottom 40%
 
+CHILD_THRESHOLD = 2
+KILL_THRESHOLD = -2
 
 def getMean(args):
     return sum(args) / len(args)
@@ -19,21 +26,27 @@ def getStdDev(args):
     return math.sqrt(var)
 
 def addAgent(agentName, weights, leaderboard):
-    # Initialize win/loss/performace to 0,0,0
+    # Table entry addition
     #print("ADDING " + agentName)
+    # Initialize win/loss/performace to 0,0,0
     leaderboard[agentName] = [(0,0,0),weights]
 
 #Removes the agent from the table
 def removeAgent(agentName, leaderboard):
-    #print("Removing " + agentName)
     #Table entry removal
+    #print("Removing " + agentName)
     leaderboard.pop(agentName)
 
 def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
     #print(goodOnes, badOnes)
-
     #updates the Agent_Leaderboard for PERFORMANCE
     totalPlayers = len(leaderboard)
+
+    # CLone top 5%
+    top = goodOnes[:totalPlayers//20]
+    for bot in top:
+        makeClone(bot, leaderboard)
+
     gl = int(totalPlayers//10) #Extra reward for top 10%
     for bot in goodOnes:
         stats = getStats(bot,leaderboard)
@@ -52,7 +65,6 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
 
     #Extra penalty. Instant die
     bl = int(len(leaderboard)//2.5) #40%
-    print(bl, len(badOnes))
 
     toRemove = []
     for bot in badOnes:
@@ -82,6 +94,13 @@ def mutateWeights(data, maxMutation):
         newData.append(newWeight)
     #print(data,newData)
     return newData
+
+
+def makeClone(pName, board):
+    parentW = getWeights(pName,board)
+    childW = mutateWeights(parentW,0.1)
+    childName = pName + "^" + str(random.randint(0,9))
+    addAgent(childName, childW, board)
 
 def makeChildFromParents(botAName, botBName, leaderboard):
     parentAWeights = getWeights(botAName,leaderboard)
@@ -116,7 +135,8 @@ def generateRandomWeights(n):
     return mutateWeights(w,0.9)
 
 def spawnRandomChildren(num, leaderboard, numWeights):
-    def id_generator(size=4, chars=string.ascii_uppercase):
+    NAME_LENGTH = 4
+    def id_generator(size=NAME_LENGTH, chars=string.ascii_uppercase):
         return ''.join(random.choice(chars) for _ in range(size))
     i = 0
     while i < num:
@@ -134,10 +154,7 @@ def evaluatePlayer(row):
     final = ratio * (wins+losses) + (wins-losses)
     return final
 
-def applyToAll(bots, fun):
-    for bot in bots:
-        fun(bot)
-
+# Gets the Mean and StdDev of the weights on a board
 def evaluateBoard(board):
     weights = []
     for name in board:
@@ -150,25 +167,25 @@ def evaluateBoard(board):
         i += 1
     return eval
 
-def checkPlateau(old, new, numWeights):
-    oldStats = evaluateBoard(old)
-    newStats = evaluateBoard(new)
+def checkPlateau(board, numWeights):
+    # average Standard deviation
+    PLATEAU_THRESHOLD = 0.05
+
+    boardStats = evaluateBoard(board)
+    stdDevSum = 0
     i = 0
-    meanDiffs = 0
-    stdDevDiffs = 0
     while i < numWeights:
-        meanDiffs += abs(oldStats[i][0] - newStats[i][0])
-        stdDevDiffs += abs(oldStats[i][1] - newStats[i][1])
+        stdDevSum += abs(boardStats[i][1])
         i += 1
-    print("Evaluating: ", meanDiffs, stdDevDiffs/numWeights)
-    return meanDiffs < 0.1 and (stdDevDiffs/numWeights < 0.02)
+    avgStdDev = stdDevSum/numWeights
+
+    print("Evaluating: ", avgStdDev)
+    return avgStdDev < PLATEAU_THRESHOLD
 
 def incubate(leaderboard, numWeights, minBots):
     print("..........INCUBATING..........")
-    gpThreshold = len(leaderboard)//3 # Top 33.33%
-    bpThreshold = len(leaderboard)//2 # Bottom 50%
-
-    oldBoard = leaderboard.copy()
+    gpThreshold = int(len(leaderboard)//4) # Top 25%
+    bpThreshold = int(len(leaderboard)//1.667) # Bottom 60%
 
     valueBoard = []
     for name in leaderboard:
@@ -178,26 +195,24 @@ def incubate(leaderboard, numWeights, minBots):
 
     valueBoard.sort(key=lambda tup: tup[0], reverse=True)
     goodPerformers = list(map(lambda t: t[1], valueBoard[:gpThreshold]))
-
     valueBoard.sort(key=lambda tup: tup[0])
     badPerformers = list(map(lambda t: t[1], valueBoard[:bpThreshold]))
 
-    # Constant addition of 5 randoms
-    leaderboard = spawnRandomChildren(3,leaderboard, numWeights)
-
-    # Top up to meet minimum
-    if len(leaderboard) < minBots:
-        leaderboard = spawnRandomChildren(minBots - len(leaderboard),leaderboard, numWeights)
-
-
     updatedBoard = updateAgentsLeaderboardPerf(goodPerformers,badPerformers, leaderboard)
+    plateauBool = checkPlateau(updatedBoard, numWeights)
 
-    plateauBool = checkPlateau(oldBoard, updatedBoard, numWeights)
+    if plateauBool:
+        print("Plateau detected!!")
+    else:
+        # Constant addition of 8% board size of randoms
+        updatedBoard = spawnRandomChildren(minBots//12.5,updatedBoard, numWeights)
 
-    print("Plateau detected?",plateauBool)
+        # Top up to meet minimum
+        if len(leaderboard) < minBots:
+            updatedBoard = spawnRandomChildren(minBots - len(leaderboard),updatedBoard, numWeights)
 
     # Update the leaderboard
-    print("..........FINISHED..........")
+    print("..........FINISHED INCUBATION..........")
     return updatedBoard, plateauBool
 
 def generateLeaderboard(boardFileName, numPlayers, numWeights):
@@ -207,9 +222,14 @@ def generateLeaderboard(boardFileName, numPlayers, numWeights):
     return leaderboard
 
 if __name__ == "__main__":
-    bn = "incubateboard"
-    leaderboard = generateLeaderboard(bn, 50, 6)
+    def parse():
+        parser = ArgumentParser()
+        parser.add_argument('-n', '--boardname', help="Name of board", default="evalboard", type=str)
+        args = parser.parse_args()
+        return args.boardname
+    bn = parse()
+    #leaderboard = generateLeaderboard(bn, 90, 11)
     leaderboard = cacheLeaderboard(bn)
-    newBoard, plateauBool = incubate(leaderboard, 6, 48)
+    newBoard, plateauBool = incubate(leaderboard, 11, 48)
     print(plateauBool)
-    writeToLeaderboardFile(newBoard, 0, bn)
+    #writeToLeaderboardFile(newBoard, 0, bn)

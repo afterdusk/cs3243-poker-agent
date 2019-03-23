@@ -6,6 +6,7 @@ from pypokerengine.engine.card import Card
 from pypokerengine.utils import card_utils as ceval
 from fast_monte_carlo import estimate_win_rate
 from pypokerengine.engine.hand_evaluator import HandEvaluator
+import win_rate_estimates
 from time import sleep
 import pprint
 import time
@@ -85,7 +86,8 @@ class SmartWarrior(BasePokerPlayer):
 
         tree = MinimaxTree(self, max_player, min_player, game)
         decision, payoff = tree.minimax_decision()
-        print "Decision made: ", decision
+        if DEBUG:
+            print "Decision made: ", decision
         return decision  # action returned here is sent to the poker engine
 
     def receive_game_start_message(self, game_info):
@@ -144,7 +146,11 @@ class SmartWarrior(BasePokerPlayer):
         # hand strength via fast_card_utils monte carlo
         hole_cards = [c.to_id() for c in hole_cards]
         community_cards = [c.to_id() for c in community_cards]
-        hand_strength = estimate_win_rate(200, hole_cards, community_cards)
+
+        if len(community_cards) == 0:
+            hand_strength = win_rate_estimates.estimates[hole_cards[0] - 1][hole_cards[1] - 1]
+        else:
+            hand_strength = estimate_win_rate(200, hole_cards, community_cards)
         
         # grab existing dict of hand strengths 
         hand_strengths = SmartWarrior.hand_strengths
@@ -246,8 +252,9 @@ class MinimaxTree:
             results.append((action, utility))
         if True:
             for (action, utility) in results:
-                print "(action: {}, payoff: {})".format(
-                    constant_to_string(action), utility)
+                if DEBUG:
+                    print "(action: {}, payoff: {})".format(
+                        constant_to_string(action), utility)
         return best_action, best_utility
 
 
@@ -448,7 +455,8 @@ def main():
 
     tree = MinimaxTree(SmartWarrior(), max_player, min_player, game)
     decision, payoff = tree.minimax_decision()
-    print "Decision made: ", decision
+    if DEBUG:
+        print "Decision made: ", decision
 
 if __name__ == '__main__':
     main()
