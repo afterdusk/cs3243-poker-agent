@@ -225,11 +225,11 @@ class MinimaxTree:
         n = [data, [0] * 5, [0] * 5, [0] * 1]
         
         # First layer
-        n[1][0] = activation_functions.tanh(1.5, 0.5, 2 / 1.5, 0.5)(numpy.dot(agent.weights[0:4], n[0]))
-        n[1][1] = activation_functions.tanh(1.5, 0.5, 2 / 1.5, 0.5)(numpy.dot(agent.weights[4:8], n[0]))
-        n[1][2] = activation_functions.tanh(1.5, 0.5, 2 / 1.5, 0.5)(numpy.dot(agent.weights[8:12], n[0]))
-        n[1][3] = activation_functions.tanh(1.5, 0.5, 2 / 1.5, 0.5)(numpy.dot(agent.weights[12:16], n[0]))
-        n[1][4] = activation_functions.tanh(1.5, 0.5, 2 / 1.5, 0.5)(numpy.dot(agent.weights[16:20], n[0]))
+        n[1][0] = activation_functions.tanh(2, 0.5, 2 / 2, 0.5)(numpy.dot(agent.weights[0:4], n[0]))
+        n[1][1] = activation_functions.tanh(2, 0.5, 2 / 2, 0.5)(numpy.dot(agent.weights[4:8], n[0]))
+        n[1][2] = activation_functions.tanh(2, 0.5, 2 / 2, 0.5)(numpy.dot(agent.weights[8:12], n[0]))
+        n[1][3] = activation_functions.tanh(2, 0.5, 2 / 2, 0.5)(numpy.dot(agent.weights[12:16], n[0]))
+        n[1][4] = activation_functions.tanh(2, 0.5, 2 / 2, 0.5)(numpy.dot(agent.weights[16:20], n[0]))
 
         # Second layer
         n[2][0] = activation_functions.tanh(2.5, 0.5, 2 / 2.5, 0.5)(numpy.dot(agent.weights[20:25], n[1]))
@@ -239,7 +239,7 @@ class MinimaxTree:
         n[2][4] = activation_functions.tanh(2.5, 0.5, 2 / 2.5, 0.5)(numpy.dot(agent.weights[40:45], n[1]))
 
         # Third layer
-        n[3][0] = activation_functions.tanh(2.5, 0.5, 2 / 2.5, 0.5)(numpy.dot(agent.weights[45:50], n[2]))
+        n[3][0] = activation_functions.tanh(2.5, 1, 2 / 2.5, 0)(numpy.dot(agent.weights[45:50], n[2]))
 
         # Max
         return n[3]
