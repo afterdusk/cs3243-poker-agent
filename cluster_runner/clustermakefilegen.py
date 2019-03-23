@@ -26,14 +26,14 @@ def num_jobs_for_node(node_hostname):
 
     # If server has too few cores, don't allocate jobs to it
     num_jobs = 0
-    if num_free_cores < 10:
+    if num_free_cores < 6:
         num_jobs = 0
     # If server is basically idle, commandeer
-    elif num_free_cores > num_cores - 5:
-        num_jobs = num_free_cores - 2
-    # Otherwise only allocate 70% of cores, up to a limit
+    elif num_free_cores > num_cores - 4:
+        num_jobs = num_free_cores
+    # Otherwise only allocate 80% of cores, up to a limit
     else:
-        num_jobs = min(floor(num_cores * 0.7), num_free_cores - 5)
+        num_jobs = min(floor(num_cores * 0.8), num_free_cores - 4)
     return (num_jobs, num_free_cores, num_cores)
 
 
