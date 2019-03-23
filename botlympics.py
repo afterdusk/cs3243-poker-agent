@@ -86,13 +86,17 @@ def init(taskmaster):
             arrangeLongMatch(botName,opponent)
 
     def roundRobinTraining():
-        wipeWinLoss()
-        print("ROUND ROBIN TRAINING")
-        queuedMatches[0] = 0
         botlist = list(LEADERBOARD)
-        line = 0
         for bot in botlist:
             trainNamedBot(bot, botlist)
+
+    def blRoundRobinTraining():
+        print("EXTENDED ROUND ROBIN TRAINING")
+        MULTIPLIER = 5
+        queuedMatches[0] = 0
+        for i in range(MULTIPLIER):
+            roundRobinTraining()
+        print("Scheduled " + str(queuedMatches[0]) + " matches")
 
     #************================================************
     #         Server-Client communication functions
@@ -159,7 +163,7 @@ def init(taskmaster):
         print("ERROR " + LEADERBOARD_FILENAME[0] + ".csv not found!")
         exit()
     finally:
-        roundRobinTraining()
+        blRoundRobinTraining()
         print("THE BOTLYMPICS BEGINS!")
 
 
