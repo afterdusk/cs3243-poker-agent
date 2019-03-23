@@ -4,6 +4,8 @@ import random
 import string
 import math
 from david_file_utils import *
+from argparse import ArgumentParser
+
 # Handles the reinforcement learning. Creation of children and culling of weak agents
 
 CHILD_THRESHOLD = 2
@@ -149,7 +151,7 @@ def evaluateBoard(board):
     return eval
 
 def checkPlateau(board, numWeights):
-    PLATEAU_THRESHOLD = 0.155
+    PLATEAU_THRESHOLD = 0.07
 
     boardStats = evaluateBoard(board)
     stdDevSum = 0
@@ -201,7 +203,12 @@ def generateLeaderboard(boardFileName, numPlayers, numWeights):
     return leaderboard
 
 if __name__ == "__main__":
-    bn = "evalboard"
+    def parse():
+        parser = ArgumentParser()
+        parser.add_argument('-n', '--boardname', help="Name of board", default="evalboard", type=str)
+        args = parser.parse_args()
+        return args.boardname
+    bn = parse()
     #leaderboard = generateLeaderboard(bn, 90, 11)
     leaderboard = cacheLeaderboard(bn)
     newBoard, plateauBool = incubate(leaderboard, 11, 48)
