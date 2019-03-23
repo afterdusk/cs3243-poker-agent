@@ -88,7 +88,7 @@ class SmartWarrior(BasePokerPlayer):
 
         tree = MinimaxTree(self, max_player, min_player, game)
         decision, payoff = tree.minimax_decision()
-        if 1:
+        if DEBUG:
             print "Decision made: ", decision
         return decision  # action returned here is sent to the poker engine
 
