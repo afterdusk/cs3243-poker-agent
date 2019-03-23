@@ -38,20 +38,24 @@ class DeltaPlayer(BasePokerPlayer):
         # self.call_threshold = (data[1])
 
         # Weights for card + pot value
-        self.payout_w = (data[2])
+        self.payout_w = (data[0])
 
         # Weight for current round. Each round has 1 weight
-        i = 3
+        i = 1
         for street in self.STREET_DICT:
             self.STREET_DICT[street] = data[i]
             i += 1
 
         # Weight for move history
-        self.opp_raise_w = data[7]
-        self.self_raise_w = data[8]
+        self.opp_raise_w = data[5]
+        self.self_raise_w = data[6]
 
         # Overall
-        self.overall_bias = data[9]
+        self.overall_bias = data[7]
+
+        # Thresholds
+        self.raise_threshold = data[8]
+        self.call_threshold = data[9]
 
         return self
 
@@ -64,7 +68,7 @@ class DeltaPlayer(BasePokerPlayer):
             hole = [Card.from_str(c).to_id() for c in hole_cards]
             community = [Card.from_str(c).to_id() for c in common_cards]
 
-            NUM_SIMULATIONS = 120
+            NUM_SIMULATIONS = 150
             if len(common_cards) == 0:
                 self.curr_card_wr = win_rate_estimates.estimates[hole[0] - 1][hole[1] - 1]
             else:
@@ -80,60 +84,66 @@ class DeltaPlayer(BasePokerPlayer):
         turn_o = self.STREET_DICT[self.current_street]
         history_o = (self.self_raise_w*self_raises/4) + (self.opp_raise_w*opp_raises/4)
         output =  payout_o + turn_o + history_o + self.overall_bias
+
+        # Activation bounds [-1, 1]
         return activation_functions.logistic(0, 2, 4, -1)(output)
 
-    # def make_move(self, valid_actions, cardValue, movesHistory, pot_amount):
-    #     confidence = self.decide(cardValue, movesHistory, pot_amount)
-    #     valid_action_strings = list(map(lambda a: a['action'],valid_actions))
-    #
-    #     if confidence > self.raise_threshold and "raise" in valid_action_strings:
-    #         return "raise"
-    #
-    #     if confidence > self.call_threshold and "call" in valid_action_strings:
-    #         return "call"
-    #
-    #     return "fold"
+    def make_move(self, valid_actions, hole, community, pot_amount, my_raise, opp_raise):
+        confidence = self.linear_eval(hole, community, pot_amount, my_raise, opp_raise)
+        valid_action_strings = list(map(lambda a: a['action'],valid_actions))
+
+        if confidence > self.raise_threshold and "raise" in valid_action_strings:
+            return "raise"
+
+        if confidence > self.call_threshold and "call" in valid_action_strings:
+            return "call"
+
+        return "fold"
 
     def declare_action(self, valid_actions, hole_card, round_state):
         self.current_street = round_state['street']
-        # community_cards = round_state['community_card']
-        # holeValue = self.calculateHandValue(hole_card, community_cards)
-        # history = self.parse_history(round_state)
-        # raiseCounts = (history[1],history[3]) # Gets number of times raised
-        # pot_amount = round_state['pot']['main']['amount']
+        # holeValue = self.calculateHandValue(hole_card, community_cards
+        community_cards = round_state['community_card']
+        pot_amount = round_state['pot']['main']['amount']
         my_index = round_state['next_player']
-        my_index = round_state['next_player']
-        my_state = round_state['seats'][my_index]
-        enemy_index = 1 - my_index
-        enemy_state = round_state['seats'][enemy_index]
-        my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises = self.parse_history(round_state['action_histories'], my_index == round_state['small_blind_pos'])
+        smallblind_index = round_state['small_blind_pos']
+        # my_state = round_state['seats'][my_index]
+        # enemy_index = 1 - my_index
+        # enemy_state = round_state['seats'][enemy_index]
+        hist = self.parse_history(round_state['action_histories'], my_index == smallblind_index)
+        my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises =  hist
 
-        my_moves = self.get_valid_moves(my_state['stack'],
-                                        my_num_raises,
-                                        round_state['street'],
-                                        round_state['pot']['main']['amount'])
+        decision = self.make_move(valid_actions,hole_card,community_cards, pot_amount, my_num_raises, enemy_num_raises)
 
-        enemy_moves = self.get_valid_moves(enemy_state['stack'],
-                                           enemy_num_raises,
-                                           round_state['street'],
-                                           round_state['pot']['main']['amount'])
+        # my_moves = self.get_valid_moves(my_state['stack'],
+        #                                 my_num_raises,
+        #                                 round_state['street'],
+        #                                 round_state['pot']['main']['amount'])
+        #
+        # enemy_moves = self.get_valid_moves(enemy_state['stack'],
+        #                                    enemy_num_raises,
+        #                                    round_state['street'],
+        #                                    round_state['pot']['main']['amount'])
+        #
+        # # remove fold from enemy moves
+        # if "fold" in enemy_moves: enemy_moves.remove("fold")
+        #
+        # max_player = PlayerState(my_state['stack'], my_amount_bet,
+        #     my_moves, my_num_raises, hole_card,False, False)
+        #
+        # min_player = PlayerState(enemy_state['stack'], enemy_amount_bet,
+        #     enemy_moves, enemy_num_raises, [],False, False)
+        #
+        # game = GameState(round_state['pot']['main']['amount'],
+        #     round_state['community_card'],
+        #     round_state['street'])
+        #
+        # tree = MinimaxTree(self, max_player, min_player, game)
+        # decision, payoff = tree.minimax_decision()
 
-        # remove fold from enemy moves
-        if "fold" in enemy_moves: enemy_moves.remove("fold")
 
-        max_player = PlayerState(my_state['stack'], my_amount_bet,
-            my_moves, my_num_raises, hole_card,False, False)
-
-        min_player = PlayerState(enemy_state['stack'], enemy_amount_bet,
-            enemy_moves, enemy_num_raises, [],False, False)
-
-        game = GameState(round_state['pot']['main']['amount'],
-            round_state['community_card'],
-            round_state['street'])
-
-        tree = MinimaxTree(self, max_player, min_player, game)
-        decision, payoff = tree.minimax_decision()
-        if 1:
+        if DEBUG:
+        #if True:
             print "Decision made: ", decision
         return decision  # action returned here is sent to the poker engine
 
@@ -189,7 +199,6 @@ class DeltaPlayer(BasePokerPlayer):
         return ["raise", "call", "fold"]
 
 # End of player class
-
 
 # Game rules
 SMALL_BLIND = 10
@@ -340,7 +349,6 @@ class MinimaxNode:
         return MinimaxNode(self.agent, not self.is_max, new_max_player_state, new_min_player_state, new_game_state)
 
 class PlayerState:
-
     def __init__(self, amount_left, amount_bet, valid_actions, raises_made, hole_cards, has_folded, has_played):
         self.amount_left = amount_left
         self.amount_bet = amount_bet

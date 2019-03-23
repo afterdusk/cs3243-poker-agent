@@ -32,9 +32,9 @@ def cacheLeaderboard(boardFileName):
     return leaderboard
 
 
-def writeToLeaderboardFile(leaderboard, generation, boardFilename):
+def writeToLeaderboardFile(leaderboard, boardFilename, generation = 1, plateauVal = 1):
     HEADER = ('Agent Name', 'Wins', 'Losses','Performance')
-    GENERATIONS = ('Generation:', generation)
+    GENERATIONS = ('Generation:', generation, 'PlatVal', plateauVal)
     fileContent = [HEADER,GENERATIONS]
     for agentName in leaderboard:
         stats = leaderboard[agentName][0]
