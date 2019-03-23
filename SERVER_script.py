@@ -10,19 +10,19 @@ from profile_player_space import ProfilePlayerSpace
 
 def createPlayerSpaces(taskmaster):
     # Init player spaces here
-    # david_playerspace.init(taskmaster)
+    david_playerspace.init(taskmaster)
     botlympics.init(taskmaster)
     return [
-        # CMAPlayerSpace(
-        #     taskmaster,
-        #     'neural_player_test_3',
-        #     'NeuralPlayer',
-        #     [[0, 1]] * 50, # weight ranges
-        #     0.3, # initial sd
-        #     2500, # samples per evaluation
-        #     4,
-        #     101,
-        #     60 * 2)
+        CMAPlayerSpace(
+            taskmaster,
+            'neural_player_test_4',
+            'NeuralPlayer',
+            [[0, 1]] * 50, # weight ranges
+            0.15, # initial sd
+            2500, # samples per evaluation
+            4,
+            101,
+            60 * 2)
         #ProfilePlayerSpace(
         #    taskmaster,
         #    'neural_player_profile_1',

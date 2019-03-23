@@ -111,7 +111,7 @@ def init(taskmaster):
         winnerName = sentJob[2][1-outcome]
         loserName = sentJob[2][outcome]
 
-        print(str(winnerName) + " WONS AGAINST " + str(loserName))
+        print(str(winnerName) + " WINS AGAINST " + str(loserName))
 
         print("\n============BOTLYMPIC GAMES progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
 
@@ -128,7 +128,7 @@ def init(taskmaster):
     # Sends a message to the clients in the form of a tuple
     # matchup_job = ((bot_1, bot_2), training_configuration, (b1Name, b2Name))
     def sendMatchup(matchup_job):
-        TASKMASTER.schedule_job(matchup_job, 120, jobDone)
+        TASKMASTER.schedule_job(matchup_job, 300, jobDone)
 
     def composeBot(agentName):
         agentWeights = getWeights(agentName,LEADERBOARD)

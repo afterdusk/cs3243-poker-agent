@@ -8,6 +8,12 @@ from argparse import ArgumentParser
 
 # Handles the reinforcement learning. Creation of children and culling of weak agents
 
+# Supports cloning of top 5%.
+# Reproduction of top 10%
+# Reward top 20%
+# Penalize bottom 60%
+# Kill bottom 40%
+
 CHILD_THRESHOLD = 2
 KILL_THRESHOLD = -2
 
@@ -33,11 +39,15 @@ def removeAgent(agentName, leaderboard):
 
 def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
     #print(goodOnes, badOnes)
-
     #updates the Agent_Leaderboard for PERFORMANCE
     totalPlayers = len(leaderboard)
-    gl = int(totalPlayers//10) #Extra reward for top 10%
 
+    # CLone top 5%
+    top = goodOnes[:totalPlayers//20]
+    for bot in top:
+        makeClone(bot, leaderboard)
+
+    gl = int(totalPlayers//10) #Extra reward for top 10%
     for bot in goodOnes:
         stats = getStats(bot,leaderboard)
         performace = float(stats[2]) + 1
@@ -84,6 +94,13 @@ def mutateWeights(data, maxMutation):
         newData.append(newWeight)
     #print(data,newData)
     return newData
+
+
+def makeClone(pName, board):
+    parentW = getWeights(pName,board)
+    childW = mutateWeights(parentW,0.1)
+    childName = pName + "^" + str(random.randint(0,9))
+    addAgent(childName, childW, board)
 
 def makeChildFromParents(botAName, botBName, leaderboard):
     parentAWeights = getWeights(botAName,leaderboard)
@@ -151,7 +168,8 @@ def evaluateBoard(board):
     return eval
 
 def checkPlateau(board, numWeights):
-    PLATEAU_THRESHOLD = 0.07
+    # average Standard deviation
+    PLATEAU_THRESHOLD = 0.05
 
     boardStats = evaluateBoard(board)
     stdDevSum = 0
@@ -160,13 +178,14 @@ def checkPlateau(board, numWeights):
         stdDevSum += abs(boardStats[i][1])
         i += 1
     avgStdDev = stdDevSum/numWeights
+
     print("Evaluating: ", avgStdDev)
     return avgStdDev < PLATEAU_THRESHOLD
 
 def incubate(leaderboard, numWeights, minBots):
     print("..........INCUBATING..........")
     gpThreshold = int(len(leaderboard)//4) # Top 25%
-    bpThreshold = int(len(leaderboard)//2) # Bottom 50%
+    bpThreshold = int(len(leaderboard)//1.667) # Bottom 60%
 
     valueBoard = []
     for name in leaderboard:
