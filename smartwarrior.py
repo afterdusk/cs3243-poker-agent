@@ -9,6 +9,7 @@ from pypokerengine.engine.hand_evaluator import HandEvaluator
 from time import sleep
 import pprint
 import time
+import random
 
 ############# Constants #############
 MAX_RAISES = 4
@@ -22,6 +23,7 @@ class SmartWarrior(BasePokerPlayer):
     hand_strengths = {}
 
     def __init__(self, weights):
+       # weights = [random.uniform(-1, 1) for i in range(0,4)]
        # weights = [0.5, 0.5, 0.5, 0.5]
        self.init_weights(weights)
        self.current_hand_strength = 0
@@ -42,7 +44,16 @@ class SmartWarrior(BasePokerPlayer):
         enemy_state = round_state['seats'][enemy_index]
         
         my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises = self.parse_history(round_state['action_histories'], my_index == round_state['small_blind_pos'])
-        enemy_moves = self.get_valid_moves(enemy_state['stack'], enemy_num_raises, round_state['street'], round_state['pot']['main']['amount'])
+       
+        my_moves = self.get_valid_moves(my_state['stack'],
+                                        my_num_raises,
+                                        round_state['street'],
+                                        round_state['pot']['main']['amount'])
+       
+        enemy_moves = self.get_valid_moves(enemy_state['stack'],
+                                           enemy_num_raises, 
+                                           round_state['street'], 
+                                           round_state['pot']['main']['amount'])
         
         # remove fold from enemy moves
         if "fold" in enemy_moves: enemy_moves.remove("fold")
@@ -53,7 +64,7 @@ class SmartWarrior(BasePokerPlayer):
         max_player = PlayerState(
             my_state['stack'], 
             my_amount_bet, 
-            map(lambda x: x.values()[0], valid_actions), 
+            my_moves, 
             my_num_raises, 
             hole_card,
             False,
@@ -96,7 +107,7 @@ class SmartWarrior(BasePokerPlayer):
     def parse_history(history, is_small_blind):
         my_turn = is_small_blind
         my_amount_bet = SMALL_BLIND if is_small_blind else 2 * SMALL_BLIND
-        enemy_amount_bet = SMALL_BLIND if is_small_blind else 2 * SMALL_BLIND
+        enemy_amount_bet = SMALL_BLIND if not is_small_blind else 2 * SMALL_BLIND
         my_num_raises = 0
         enemy_num_raises = 0
         flat_list = [i for street in history.values() for i in street]
@@ -116,11 +127,10 @@ class SmartWarrior(BasePokerPlayer):
     @staticmethod
     def get_valid_moves(amount_left, num_raises, street, pot_amount):
         raise_amount, raise_limit = ActionChecker.round_raise_amount(SMALL_BLIND, street_as_int(street))
-        if amount_left < raise_amount:
-            return []
         if (num_raises >= MAX_RAISES or 
             pot_amount >= raise_limit or  # TODO: check this condition
             amount_left < raise_amount * 2):
+            # raise_amount * 2 is generalisation, can still raise with less than that in reality
             return ["call", "fold"]
         return ["raise", "call", "fold"]
 
@@ -193,12 +203,6 @@ class MinimaxTree:
 
     @staticmethod
     def eval(agent, hole_cards, community_cards, pot_amount, raises_made):
-        # hole_cards_translated = []
-        # community_cards_translated = []
-        # for card in hole_cards:
-        #    hole_cards_translated.append(Card.from_str(card))
-        # for card in community_cards:
-        #    community_cards_translated.append(Card.from_str(card))
         payoff = agent.card_weight * agent.current_hand_strength +\
             agent.pot_weight * pot_amount/MAX_POT_AMOUNT +\
             agent.confidence_weight * raises_made/MAX_RAISES +\
@@ -321,7 +325,10 @@ class PlayerState:
         # unnecessary calls
         raise_amount, raise_limit = ActionChecker.round_raise_amount(SMALL_BLIND, street_as_int(game_state.street))
         call_amount = adversary_state.amount_bet - self.amount_bet
-
+        
+        # you can only call by the amount you have left
+        call_amount = min(call_amount, self.amount_left)
+        
         if action == "fold":
             # a fold ends the round
             self.valid_actions = []
@@ -329,33 +336,41 @@ class PlayerState:
             self.has_folded = True
             self.has_played = True
         elif action == "call":
-            assert (self.amount_left >= call_amount)
-            self.amount_left -= call_amount
-            self.amount_bet += call_amount
-            game_state.pot_amount += call_amount
+            # only need to put in money if opponent has more in pot than you
+            if call_amount > 0:
+                assert (self.amount_left >= call_amount)
+                self.amount_left -= call_amount
+                self.amount_bet += call_amount
+                game_state.pot_amount += call_amount
             self.has_played = True
             # a call ends the betting round if the opponent has played
             if (adversary_state.has_played):
                 self.valid_actions = []
                 adversary_state.valid_actions = []
         elif action == "raise":
-            assert(self.amount_left >= raise_amount + call_amount)
-            self.amount_left -= raise_amount + call_amount
-            self.amount_bet += raise_amount + call_amount
-            game_state.pot_amount += raise_amount + call_amount
+            if call_amount > 0:
+                assert(self.amount_left >= raise_amount + call_amount)
+                self.amount_left -= raise_amount + call_amount
+                self.amount_bet += raise_amount + call_amount
+                game_state.pot_amount += raise_amount + call_amount
+            else:
+                self.amount_left -= raise_amount
+                self.amount_bet += raise_amount
+                game_state.pot_amount += raise_amount
             self.raises_made += 1
             self.has_played = True
 
-        # remove raise if insufficient cash to raise later
+        # remove raise if insufficient cash to raise later or if opp cannot match raise
         if "raise" in self.valid_actions and (self.raises_made >= MAX_RAISES or
-                                                                  game_state.pot_amount >= raise_limit or  # TODO: check this condition
-                                                                  self.amount_left < raise_amount * 2):
+                                              game_state.pot_amount >= raise_limit or  # TODO: check this condition
+                                              self.amount_left < raise_amount * 2 or 
+                                              adversary_state.amount_left < raise_amount):
             self.valid_actions.remove("raise")
         # remove call if unable to match opponent raise
         if "call" in self.valid_actions and self.amount_left < raise_amount:
             self.valid_actions.remove("call")
         # remove fold if only move left is fold
-        if len(self.valid_actions) == 1 and self.valid_actions[0] == PokerConstants.Action.FOLD:
+        if len(self.valid_actions) == 1 and self.valid_actions[0] == "fold":
             self.valid_actions.remove("fold")
 
     def copy(self):
