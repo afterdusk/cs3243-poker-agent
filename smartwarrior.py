@@ -11,6 +11,8 @@ from time import sleep
 import pprint
 import time
 import random
+import activation_functions
+import numpy
 
 ############# Constants #############
 MAX_RAISES = 4
@@ -24,9 +26,9 @@ class SmartWarrior(BasePokerPlayer):
     hand_strengths = {}
 
     def __init__(self, weights):
-       # weights = [random.uniform(-1, 1) for i in range(0,4)]
-       # weights = [0.5, 0.5, 0.5, 0.5]
-       self.init_weights(weights)
+       self.weights = weights
+       # self.weights = [random.uniform(-1, 1) for i in range(0,50)]
+       # self.init_weights(weights)
        self.current_hand_strength = 0
 
     def init_weights(self, weights):
@@ -86,7 +88,7 @@ class SmartWarrior(BasePokerPlayer):
 
         tree = MinimaxTree(self, max_player, min_player, game)
         decision, payoff = tree.minimax_decision()
-        if DEBUG:
+        if 1:
             print "Decision made: ", decision
         return decision  # action returned here is sent to the poker engine
 
@@ -215,6 +217,33 @@ class MinimaxTree:
             agent.overall_bias
         if DEBUG: print "eval: {}".format(payoff)
         return payoff
+    
+    @staticmethod
+    def smart_eval(agent, hole_cards, community_cards, pot_amount, raises_made):
+        data = [1, agent.current_hand_strength, pot_amount/MAX_POT_AMOUNT, raises_made/MAX_RAISES]
+        
+        n = [data, [0] * 5, [0] * 5, [0] * 1]
+        
+        # First layer
+        n[1][0] = activation_functions.tanh(1.5, 0.5, 2 / 1.5, 0.5)(numpy.dot(agent.weights[0:4], n[0]))
+        n[1][1] = activation_functions.tanh(1.5, 0.5, 2 / 1.5, 0.5)(numpy.dot(agent.weights[4:8], n[0]))
+        n[1][2] = activation_functions.tanh(1.5, 0.5, 2 / 1.5, 0.5)(numpy.dot(agent.weights[8:12], n[0]))
+        n[1][3] = activation_functions.tanh(1.5, 0.5, 2 / 1.5, 0.5)(numpy.dot(agent.weights[12:16], n[0]))
+        n[1][4] = activation_functions.tanh(1.5, 0.5, 2 / 1.5, 0.5)(numpy.dot(agent.weights[16:20], n[0]))
+
+        # Second layer
+        n[2][0] = activation_functions.tanh(2.5, 0.5, 2 / 2.5, 0.5)(numpy.dot(agent.weights[20:25], n[1]))
+        n[2][1] = activation_functions.tanh(2.5, 0.5, 2 / 2.5, 0.5)(numpy.dot(agent.weights[25:30], n[1]))
+        n[2][2] = activation_functions.tanh(2.5, 0.5, 2 / 2.5, 0.5)(numpy.dot(agent.weights[30:35], n[1]))
+        n[2][3] = activation_functions.tanh(2.5, 0.5, 2 / 2.5, 0.5)(numpy.dot(agent.weights[35:40], n[1]))
+        n[2][4] = activation_functions.tanh(2.5, 0.5, 2 / 2.5, 0.5)(numpy.dot(agent.weights[40:45], n[1]))
+
+        # Third layer
+        n[3][0] = activation_functions.tanh(2.5, 0.5, 2 / 2.5, 0.5)(numpy.dot(agent.weights[45:50], n[2]))
+
+        # Max
+        return n[3]
+    
 
     @staticmethod
     def utility(node):
@@ -226,7 +255,7 @@ class MinimaxTree:
             if DEBUG: print "fold: {}".format((node.game_state.pot_amount - node.max_player_state.amount_bet) / MAX_POT_AMOUNT)
             return (node.game_state.pot_amount - node.max_player_state.amount_bet) / MAX_POT_AMOUNT
 
-        return MinimaxTree.eval(node.agent, 
+        return MinimaxTree.smart_eval(node.agent, 
                                 node.max_player_state.hole_cards, 
                                 node.game_state.community_cards, 
                                 node.game_state.pot_amount,
