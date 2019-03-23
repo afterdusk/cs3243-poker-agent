@@ -11,11 +11,10 @@ from argparse import ArgumentParser
 # Supports cloning of top 5%.
 # Reproduction of top 10%
 # Reward top 20%
-# Penalize bottom 60%
-# Kill bottom 40%
+# Kill all losers ~50%
 
 CHILD_THRESHOLD = 2
-KILL_THRESHOLD = -2
+KILL_THRESHOLD = -1
 
 def getMean(args):
     return sum(args) / len(args)
@@ -47,11 +46,15 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
     for bot in top:
         makeClone(bot, leaderboard)
 
-    gl = int(totalPlayers//10) #Extra reward for top 10%
+    #Extra reward for top 10% or 1/4 of good ones
+    extra = min(int(totalPlayers//10),int(len(goodOnes)//4))
+
     for bot in goodOnes:
         stats = getStats(bot,leaderboard)
         performace = float(stats[2]) + 1
-        if bot in goodOnes[:gl]:
+
+        # Extra reward
+        if bot in goodOnes[:extra]:
             performace += 1
 
         if performace >= CHILD_THRESHOLD:
@@ -63,18 +66,16 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
 
         writeStats(bot,leaderboard,perf=performace)
 
-    #Extra penalty. Instant die
-    bl = int(len(leaderboard)//2.5) #40%
+    #Extra penalty. DISALED
+    # bl = int(len(leaderboard)//2.5) #40%
 
     toRemove = []
     for bot in badOnes:
         stats = getStats(bot,leaderboard)
-        performace = float(stats[2]) - 1
-        if bot in badOnes[:bl]:
-            performace -= 1
+        performace = float(stats[2]) - 5 #Kill instantly
         if performace <= KILL_THRESHOLD:
             toRemove.append(bot)
-        else:
+        else: #In case I want to preserve bad bots
             writeStats(bot,leaderboard,perf=performace)
 
     for bot in toRemove:
@@ -85,12 +86,21 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
 # Mutates all data weights in steps of [-max to max] in either positive or negative direction
 # If max > 1 then it resets to a default of 0.2
 def mutateWeights(data, maxMutation):
+    def bound(w):
+        # Bounds between 1 and -1
+        if w > 1:
+            return 1
+        if w < -1:
+            return -1
+        return w
+
     newData = []
     if maxMutation > 1 or maxMutation < -1:
         maxMutation = 0.2
     mutationBoundary = maxMutation*1000
     for weight in data:
         newWeight = weight + (float(random.randint(-mutationBoundary,mutationBoundary))/1000)
+        newWeight = bound(newWeight)
         newData.append(newWeight)
     #print(data,newData)
     return newData
@@ -151,8 +161,8 @@ def evaluatePlayer(row):
     wins = float(row[0]) + 1
     losses = float(row[1]) + 1
     ratio = (wins/losses)
-    final = ratio * (wins+losses) + (wins-losses)
-    return final
+    rating = ratio * (wins+losses) + (wins-losses)
+    return (wins >= losses, rating)
 
 # Gets the Mean and StdDev of the weights on a board
 def evaluateBoard(board):
@@ -190,13 +200,11 @@ def incubate(leaderboard, numWeights, minBots):
     valueBoard = []
     for name in leaderboard:
         stats = getStats(name, leaderboard)
-        currValue = evaluatePlayer(stats)
-        valueBoard.append((currValue,name))
+        winlose, currValue = evaluatePlayer(stats)
+        valueBoard.append((winlose, currValue,name))
 
-    valueBoard.sort(key=lambda tup: tup[0], reverse=True)
-    goodPerformers = list(map(lambda t: t[1], valueBoard[:gpThreshold]))
-    valueBoard.sort(key=lambda tup: tup[0])
-    badPerformers = list(map(lambda t: t[1], valueBoard[:bpThreshold]))
+    badPerformers = list(filter(lambda tup: tup[0] == False, valueBoard))
+    goodPerformers = list(filter(lambda t: t[0] == True, valueBoard))
 
     updatedBoard = updateAgentsLeaderboardPerf(goodPerformers,badPerformers, leaderboard)
     plateauBool = checkPlateau(updatedBoard, numWeights)
