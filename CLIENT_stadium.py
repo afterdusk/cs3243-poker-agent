@@ -1,6 +1,4 @@
 from pypokerengine.api.game import setup_config, start_poker
-# from david_player import DavidPlayer
-# from weighted_player import WeightedPlayer
 from neural_player import NeuralPlayer
 from wise_player import WisePlayer
 from smartwarrior import SmartWarrior
