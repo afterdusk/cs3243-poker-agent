@@ -108,12 +108,13 @@ def init(taskmaster):
         UPDATE_BOARD_FREQUENCY = boardLength
         INCUBATE_FREQUENCY = queuedMatches[0] + 1
 
+        winnerName = sentJob[2][1-outcome]
+        loserName = sentJob[2][outcome]
+
         print(str(winnerName) + " WONS AGAINST " + str(loserName))
 
         print("\n============BOTLYMPIC GAMES progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
 
-        winnerName = sentJob[2][1-outcome]
-        loserName = sentJob[2][outcome]
         updateAgentsLeaderboardStats(winnerName,loserName)
 
         if matchCountArr[0] >= UPDATE_BOARD_FREQUENCY and matchCountArr[0] % UPDATE_BOARD_FREQUENCY == 0:
