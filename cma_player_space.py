@@ -105,6 +105,7 @@ class CMAPlayerSpace:
         print('Logging...')
         with open(self.output_log_path, 'a') as log_file:
             for (i, particle) in enumerate(particles):
+                log_file.write('(' + str(i).zfill(2) + ') Weights = ' + ' '.join(str(x) for x in self.get_weights(particle)) + '\n')
                 log_file.write('(' + str(i).zfill(2) + ') Particle = ' + ' '.join(str(x) for x in particle) + '\n')
                 log_file.write('(' + str(i).zfill(2) + ') Evaluation = ' + str(particle_evaluations[i]) + '\n')
             log_file.write('\n')
