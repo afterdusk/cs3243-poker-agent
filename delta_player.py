@@ -16,7 +16,7 @@ DEBUG = 0
 class DeltaPlayer(BasePokerPlayer):
 
     # Static variable
-    number_of_weights = 10
+    number_of_weights = 8
 
     def __init__(self, weights):
         #print("INITALIZING WisePlayer")
@@ -38,20 +38,20 @@ class DeltaPlayer(BasePokerPlayer):
         # self.call_threshold = (data[1])
 
         # Weights for card + pot value
-        self.payout_w = (data[2])
+        self.payout_w = (data[0])
 
         # Weight for current round. Each round has 1 weight
-        i = 3
+        i = 1
         for street in self.STREET_DICT:
             self.STREET_DICT[street] = data[i]
             i += 1
 
         # Weight for move history
-        self.opp_raise_w = data[7]
-        self.self_raise_w = data[8]
+        self.opp_raise_w = data[5]
+        self.self_raise_w = data[6]
 
         # Overall
-        self.overall_bias = data[9]
+        self.overall_bias = data[7]
 
         return self
 
@@ -64,7 +64,7 @@ class DeltaPlayer(BasePokerPlayer):
             hole = [Card.from_str(c).to_id() for c in hole_cards]
             community = [Card.from_str(c).to_id() for c in common_cards]
 
-            NUM_SIMULATIONS = 120
+            NUM_SIMULATIONS = 150
             if len(common_cards) == 0:
                 self.curr_card_wr = win_rate_estimates.estimates[hole[0] - 1][hole[1] - 1]
             else:

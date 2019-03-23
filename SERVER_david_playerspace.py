@@ -18,9 +18,9 @@ def init(taskmaster):
     # CONFIGURATIONS
     AGENT_CLASS = DeltaPlayer
     LEADERBOARD_FILENAME = [str(time.time())[:8]+"Delta_Board"]
-    LEAGUE_MIN_SIZE = 80
-    GENERATIONS_PER_CYCLE = 200 # Limit on number of generations per training
-    SHRINK_RATE = 0.2 # League shrink per generation
+    LEAGUE_MIN_SIZE = 64
+    GENERATIONS_PER_CYCLE = 100 # Limit on number of generations per training
+    SHRINK_RATE = 0.5 # League shrink per generation
 
     global LEADERBOARD
     TASKMASTER = taskmaster
@@ -137,7 +137,7 @@ def init(taskmaster):
     def arrangeMatch(agentOneName, agentTwoName):
         botOne = composeBot(agentOneName)
         botTwo = composeBot(agentTwoName)
-        num_games = 9
+        num_games = 5
         num_rounds = 101
         training_regime = (num_games,num_rounds)
         # ((b1,b2), (ng,nr), (name1,name2))
