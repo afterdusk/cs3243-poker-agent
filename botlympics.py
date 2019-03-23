@@ -17,12 +17,14 @@ def cacheBLboard(boardFileName):
     rawLeaderboard = getLeaderboard(boardFileName)
     leaderboard = {}
     for row in rawLeaderboard[1:]:
-        name = row[2]
-        botClass = row[1]
-        stats = (0,0,0) # win, loss, perf
-        weights = list(map(lambda e: float(e), row[6:]))
-        remark = row[0]
-        leaderboard[name] = [stats, weights, botClass, remark]
+        if not row[1] == "":
+            name = row[2]
+            botClass = row[1]
+            stats = (0,0,0) # win, loss, perf
+            rawWeights = row[6:]
+            weights = list(map(lambda e: float(e), filter(lambda w: not w == '', rawWeights)))
+            remark = row[0]
+            leaderboard[name] = [stats, weights, botClass, remark]
     return leaderboard
 
 def writeToBLboardFile(leaderboard, boardFilename):
@@ -147,6 +149,8 @@ def init(taskmaster):
         sendMatchup(matchup_job)
 
     # This is the main stuff
+    # LEADERBOARD = cacheBLboard(LEADERBOARD_FILENAME[0])
+
     try:
         LEADERBOARD = cacheBLboard(LEADERBOARD_FILENAME[0])
     except:
