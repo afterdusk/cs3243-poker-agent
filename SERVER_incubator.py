@@ -8,9 +8,9 @@ from argparse import ArgumentParser
 
 # Handles the reinforcement learning. Creation of children and culling of weak agents
 
-# Supports cloning of top 5%.
+# Cloning of top 10%.
 # Reproduction of top 10%
-# Reward top 20%
+# Reward all winners
 # Kill all losers ~50%
 
 CHILD_THRESHOLD = 2
@@ -35,53 +35,6 @@ def removeAgent(agentName, leaderboard):
     #Table entry removal
     #print("Removing " + agentName)
     leaderboard.pop(agentName)
-
-def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
-    #print(goodOnes, badOnes)
-    #updates the Agent_Leaderboard for PERFORMANCE
-    totalPlayers = len(leaderboard)
-
-    # CLone top 5%
-    top = goodOnes[:totalPlayers//20]
-    for bot in top:
-        makeClone(bot, leaderboard)
-
-    #Extra reward for top 10% or 1/4 of good ones
-    extra = min(int(totalPlayers//10),int(len(goodOnes)//4))
-
-    for bot in goodOnes:
-        stats = getStats(bot,leaderboard)
-        performace = float(stats[2]) + 1
-
-        # Extra reward
-        if bot in goodOnes[:extra]:
-            performace += 1
-
-        if performace >= CHILD_THRESHOLD:
-            partner = random.choice(goodOnes)
-            while partner == bot:
-                partner = random.choice(goodOnes)
-            makeChildFromParents(bot, partner, leaderboard)
-            performace = 0
-
-        writeStats(bot,leaderboard,perf=performace)
-
-    #Extra penalty. DISALED
-    # bl = int(len(leaderboard)//2.5) #40%
-
-    toRemove = []
-    for bot in badOnes:
-        stats = getStats(bot,leaderboard)
-        performace = float(stats[2]) - 5 #Kill instantly
-        if performace <= KILL_THRESHOLD:
-            toRemove.append(bot)
-        else: #In case I want to preserve bad bots
-            writeStats(bot,leaderboard,perf=performace)
-
-    for bot in toRemove:
-        removeAgent(bot, leaderboard)
-
-    return leaderboard
 
 # Mutates all data weights in steps of [-max to max] in either positive or negative direction
 # If max > 1 then it resets to a default of 0.2
@@ -108,7 +61,7 @@ def mutateWeights(data, maxMutation):
 
 def makeClone(pName, board):
     parentW = getWeights(pName,board)
-    childW = mutateWeights(parentW,0.1)
+    childW = mutateWeights(parentW,0.05)
     childName = pName + "^" + str(random.randint(0,9))
     addAgent(childName, childW, board)
 
@@ -162,7 +115,7 @@ def evaluatePlayer(row):
     losses = float(row[1]) + 1
     ratio = (wins/losses)
     rating = ratio * (wins+losses) + (wins-losses)
-    return (wins >= losses, rating)
+    return (wins > losses, rating)
 
 # Gets the Mean and StdDev of the weights on a board
 def evaluateBoard(board):
@@ -179,7 +132,7 @@ def evaluateBoard(board):
 
 def checkPlateau(board, numWeights):
     # average Standard deviation
-    PLATEAU_THRESHOLD = 0.05
+    PLATEAU_THRESHOLD = 0.007
 
     boardStats = evaluateBoard(board)
     stdDevSum = 0
@@ -190,43 +143,100 @@ def checkPlateau(board, numWeights):
     avgStdDev = stdDevSum/numWeights
 
     print("Evaluating: ", avgStdDev)
-    return avgStdDev < PLATEAU_THRESHOLD
+    return avgStdDev < PLATEAU_THRESHOLD, avgStdDev
 
+
+def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
+    #print(goodOnes, badOnes)
+    #updates the Agent_Leaderboard for PERFORMANCE
+    totalPlayers = len(leaderboard)
+
+    # CLone top 10%
+    top = goodOnes[:totalPlayers//10]
+    for bot in top:
+        makeClone(bot, leaderboard)
+
+    #Extra reward for 50% of good ones
+    extra = int(len(goodOnes)//2)
+
+    for bot in goodOnes:
+        stats = getStats(bot,leaderboard)
+        performace = float(stats[2]) + 1
+        # Extra reward
+        if bot in goodOnes[:extra]:
+            performace += 1
+
+        if performace >= CHILD_THRESHOLD:
+            partner = random.choice(goodOnes)
+            while partner == bot:
+                partner = random.choice(goodOnes)
+            makeChildFromParents(bot, partner, leaderboard)
+            performace = 0
+
+        writeStats(bot,leaderboard,perf=performace)
+
+    #Extra penalty. DISALED
+    # bl = int(len(leaderboard)//2.5) #40%
+
+    toRemove = []
+    for bot in badOnes:
+        stats = getStats(bot,leaderboard)
+        performace = float(stats[2]) - 5 #Kill instantly
+        if performace <= KILL_THRESHOLD:
+            toRemove.append(bot)
+        else: #In case I want to preserve bad bots
+            writeStats(bot,leaderboard,perf=performace)
+
+    for bot in toRemove:
+        removeAgent(bot, leaderboard)
+
+    return leaderboard
+
+# INCUBATE
 def incubate(leaderboard, numWeights, minBots):
     print("..........INCUBATING..........")
-    gpThreshold = int(len(leaderboard)//4) # Top 25%
-    bpThreshold = int(len(leaderboard)//1.667) # Bottom 60%
+    # gpThreshold = int(len(leaderboard)//4) # Top 25%
+    # bpThreshold = int(len(leaderboard)//1.667) # Bottom 60%
 
     valueBoard = []
     for name in leaderboard:
         stats = getStats(name, leaderboard)
         winlose, currValue = evaluatePlayer(stats)
-        valueBoard.append((winlose, currValue,name))
+        valueBoard.append((winlose, currValue, name))
 
+    # BAD: Win:loss = 1:1 or worse
     badPerformers = list(filter(lambda tup: tup[0] == False, valueBoard))
+    badPerformers.sort(key=lambda t:t[1])
+    badPerformers = map(lambda t: t[2], badPerformers)
+
     goodPerformers = list(filter(lambda t: t[0] == True, valueBoard))
+    goodPerformers.sort(key=lambda t:t[1], reverse=True)
+    goodPerformers = map(lambda t: t[2], goodPerformers)
 
     updatedBoard = updateAgentsLeaderboardPerf(goodPerformers,badPerformers, leaderboard)
-    plateauBool = checkPlateau(updatedBoard, numWeights)
+    plateauBool, plateauVal = checkPlateau(updatedBoard, numWeights)
 
     if plateauBool:
         print("Plateau detected!!")
     else:
-        # Constant addition of 8% board size of randoms
-        updatedBoard = spawnRandomChildren(minBots//12.5,updatedBoard, numWeights)
+        # Constant addition of 10% board size of randoms
+        print("CURRENT BOARD LENGTH " + str(len(updatedBoard)))
+        updatedBoard = spawnRandomChildren(minBots//10, updatedBoard, numWeights)
+        print("Random bots spawned " + str(minBots//10))
 
         # Top up to meet minimum
-        if len(leaderboard) < minBots:
-            updatedBoard = spawnRandomChildren(minBots - len(leaderboard),updatedBoard, numWeights)
+        if len(updatedBoard) < minBots:
+            print("TOP UP "+ str(minBots - len(updatedBoard)))
+            updatedBoard = spawnRandomChildren(minBots - len(updatedBoard), updatedBoard, numWeights)
 
     # Update the leaderboard
     print("..........FINISHED INCUBATION..........")
-    return updatedBoard, plateauBool
+    return updatedBoard, plateauBool, plateauVal
 
 def generateLeaderboard(boardFileName, numPlayers, numWeights):
     leaderboard = {}
     spawnRandomChildren(numPlayers, leaderboard, numWeights)
-    writeToLeaderboardFile(leaderboard, 0, boardFileName)
+    writeToLeaderboardFile(leaderboard, boardFileName)
     return leaderboard
 
 if __name__ == "__main__":
@@ -240,4 +250,4 @@ if __name__ == "__main__":
     leaderboard = cacheLeaderboard(bn)
     newBoard, plateauBool = incubate(leaderboard, 11, 48)
     print(plateauBool)
-    #writeToLeaderboardFile(newBoard, 0, bn)
+    #writeToLeaderboardFile(newBoard, bn)

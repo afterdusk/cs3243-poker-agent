@@ -13,16 +13,26 @@ from david_file_utils import *
 # SERVER_script will call this
 
 LEADERBOARD = {}
-
+testing = 1
 def init(taskmaster):
     # CONFIGURATIONS
     AGENT_CLASS = DeltaPlayer
     LEADERBOARD_FILENAME = [str(time.time())[:8]+"Delta_Board"]
-    LEAGUE_MIN_SIZE = 64
+    LEAGUE_MIN_SIZE = 120
     GENERATIONS_PER_CYCLE = 100 # Limit on number of generations per training
-    SHRINK_RATE = 0.5 # League shrink per generation
+    SHRINK_RATE = 60 # League shrink per generation
+    SHRINK_MAG = 4 # factor of shrink eqn
+    NUM_GAMES = 5
+    NUM_ROUNDS = 101
+    PLATEAU_EVAL = [1]
+
+    if testing:
+        LEAGUE_MIN_SIZE = 90
+        NUM_GAMES = 1
+        NUM_ROUNDS = 1
 
     global LEADERBOARD
+    CURR_LEAGUE_SIZE = [LEAGUE_MIN_SIZE]
     TASKMASTER = taskmaster
 
     def updateAgentsLeaderboardStats(winAgentName, loseAgentName):
@@ -72,9 +82,11 @@ def init(taskmaster):
 
     def callIncubator():
         global LEADERBOARD
-        reducedLeague = LEAGUE_MIN_SIZE - int(SHRINK_RATE * gens[0])
-        LEADERBOARD, plateauBool = incubate(LEADERBOARD, AGENT_CLASS.number_of_weights, reducedLeague)
-        writeToLeaderboardFile(LEADERBOARD, gens[0], LEADERBOARD_FILENAME[0])
+        reduction = int((CURR_LEAGUE_SIZE[0]/SHRINK_RATE)**SHRINK_MAG)
+        CURR_LEAGUE_SIZE[0] = CURR_LEAGUE_SIZE[0] - reduction
+        LEADERBOARD, plateauBool, plateauVal = incubate(LEADERBOARD, AGENT_CLASS.number_of_weights, CURR_LEAGUE_SIZE[0])
+        PLATEAU_EVAL[0] = plateauVal
+        writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0],gens[0], PLATEAU_EVAL[0])
         return plateauBool
 
     #************================================************
@@ -82,7 +94,7 @@ def init(taskmaster):
     #************================================************
 
     matchCountArr = [1]
-    gens = [1]
+    gens = [0]
     # Processes outcomes received from remote clients
     # Message contains a tuple of (winner_name,loser_name)
     def handleOutcome(sentJob, outcome):
@@ -99,7 +111,7 @@ def init(taskmaster):
         updateAgentsLeaderboardStats(winnerName,loserName)
 
         if matchCountArr[0] >= UPDATE_BOARD_FREQUENCY and matchCountArr[0] % UPDATE_BOARD_FREQUENCY == 0:
-            writeToLeaderboardFile(LEADERBOARD,gens[0],LEADERBOARD_FILENAME[0])
+            writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0],gens[0], PLATEAU_EVAL[0])
 
         matchCountArr[0] = matchCountArr[0] + 1
 
@@ -137,9 +149,8 @@ def init(taskmaster):
     def arrangeMatch(agentOneName, agentTwoName):
         botOne = composeBot(agentOneName)
         botTwo = composeBot(agentTwoName)
-        num_games = 5
-        num_rounds = 101
-        training_regime = (num_games,num_rounds)
+
+        training_regime = (NUM_GAMES,NUM_ROUNDS)
         # ((b1,b2), (ng,nr), (name1,name2))
         matchup_job = ((botOne, botTwo),training_regime,(agentOneName,agentTwoName))
 
