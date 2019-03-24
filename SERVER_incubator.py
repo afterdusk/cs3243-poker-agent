@@ -185,8 +185,9 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
     # bl = int(len(leaderboard)//2.5) #40%
 
     # Gotta kill some goodOnes
-    cull = int(len(goodOnes)//4)
-    badOnes.extend(goodOnes[cull:])
+    if totalPlayers >= 1.5*minBots:
+        cull = int(len(goodOnes)//5)
+        badOnes.extend(goodOnes[cull:])
 
     toRemove = []
     for bot in badOnes:

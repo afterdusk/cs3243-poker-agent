@@ -18,10 +18,10 @@ def init(taskmaster):
     # CONFIGURATIONS
     AGENT_CLASS = DeltaPlayer
     LEADERBOARD_FILENAME = [str(time.time())[:8]+"Delta_Board"]
-    LEAGUE_MIN_SIZE = 120
-    GENERATIONS_PER_CYCLE = 100 # Limit on number of generations per training
+    LEAGUE_MIN_SIZE = 180
+    GENERATIONS_PER_CYCLE = 160 # Limit on number of generations per training
     SHRINK_RATE = 60 # League shrink per generation
-    SHRINK_MAG = 4 # factor of shrink eqn
+    SHRINK_MAG = 3 # factor of shrink eqn
     NUM_GAMES = 5
     NUM_ROUNDS = 101
     PLATEAU_EVAL = [1]
