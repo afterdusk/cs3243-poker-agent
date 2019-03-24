@@ -3,6 +3,7 @@ from neural_player import NeuralPlayer
 from wise_player import WisePlayer
 from smartwarrior import SmartWarrior
 from delta_player import DeltaPlayer
+from epsilon_player import EpsilonPlayer
 
 # CLIENT SIDE
 # This will be run on each thread aka each core processor.
@@ -60,6 +61,7 @@ PLAYER_LIBRARY['NeuralPlayer'] = lambda w: NeuralPlayer(w)
 PLAYER_LIBRARY['WisePlayer'] = lambda w: WisePlayer(w)
 PLAYER_LIBRARY['SmartWarrior'] = lambda w: SmartWarrior(w)
 PLAYER_LIBRARY['DeltaPlayer'] = lambda w: DeltaPlayer(w)
+PLAYER_LIBRARY['EpsilonPlayer'] = lambda w: EpsilonPlayer(w)
 
 # A job is {{bot1,bot2}, {training_regime}, {...extra info...}}
 # Each bot is in a tuple of {bot_type, weights}

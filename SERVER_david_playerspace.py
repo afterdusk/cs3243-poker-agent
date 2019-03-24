@@ -4,7 +4,7 @@ import random
 import time
 from collections import deque
 #from wise_player import WisePlayer
-from delta_player import DeltaPlayer
+from epsilon_player import EpsilonPlayer
 from CLIENT_stadium import train_bots
 from SERVER_incubator import incubate, generateLeaderboard
 from david_file_utils import *
@@ -16,14 +16,14 @@ LEADERBOARD = {}
 testing = 0
 def init(taskmaster):
     # CONFIGURATIONS
-    AGENT_CLASS = DeltaPlayer
+    AGENT_CLASS = EpsilonPlayer
     LEADERBOARD_FILENAME = [str(time.time())[:8]+"Delta_Board"]
     LEAGUE_MIN_SIZE = 180
     GENERATIONS_PER_CYCLE = 300 # Limit on number of generations per training
     SHRINK_RATE = 70 # League shrink per generation
     SHRINK_MAG = 3 # factor of shrink eqn
     NUM_GAMES = 3
-    NUM_ROUNDS = 200
+    NUM_ROUNDS = 181
     PLATEAU_EVAL = [1]
 
     if testing:
@@ -99,7 +99,6 @@ def init(taskmaster):
     # Message contains a tuple of (winner_name,loser_name)
     def handleOutcome(sentJob, outcome):
         global LEADERBOARD
-        PLATEAU_BUFFER = 30 # Number of generations before checking for Plateau
         boardLength = len(LEADERBOARD)
         UPDATE_BOARD_FREQUENCY = boardLength
         INCUBATE_FREQUENCY = queuedMatches[0] + 1
@@ -119,10 +118,9 @@ def init(taskmaster):
             matchCountArr[0] = 1
             gens[0] = gens[0] + 1
 
-            plateauBool = callIncubator()
-            plateauBool = plateauBool and (gens[0] > PLATEAU_BUFFER)
+            stopTraining = gens[0] > GENERATIONS_PER_CYCLE or callIncubator()
 
-            if gens[0] > GENERATIONS_PER_CYCLE or plateauBool:
+            if stopTraining:
                 gens[0] = 1
                 LEADERBOARD_FILENAME[0] = LEADERBOARD_FILENAME[0] + "I"
                 LEADERBOARD = generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE, AGENT_CLASS.number_of_weights)

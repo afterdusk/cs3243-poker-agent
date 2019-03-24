@@ -115,7 +115,7 @@ def evaluatePlayer(row):
     losses = float(row[1]) + 1
     ratio = (wins/losses)
     rating = ratio * (wins+losses) + (wins-losses)
-    return (wins > losses, rating)
+    return (wins > losses, ratio)
 
 # Gets the Mean and StdDev of the weights on a board
 def evaluateBoard(board):
@@ -180,8 +180,6 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
 
             writeStats(bot,leaderboard,perf=performace)
 
-    #Extra penalty. DISALED
-    # bl = int(len(leaderboard)//2.5) #40%
 
     # Gotta kill some goodOnes
     if totalPlayers > 1.5*minBots:
@@ -189,7 +187,7 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
         badOnes.extend(goodOnes[cull:])
 
     toRemove = []
-    for bot in badOnes:
+    for bot in badOnes[:int(len(3*badOnes//4))]:
         stats = getStats(bot,leaderboard)
         performace = float(stats[2]) - 5 #Kill instantly
         if performace <= KILL_THRESHOLD:
