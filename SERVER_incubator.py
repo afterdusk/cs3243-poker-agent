@@ -58,7 +58,6 @@ def mutateWeights(data, maxMutation):
     #print(data,newData)
     return newData
 
-
 def makeClone(pName, board):
     parentW = getWeights(pName,board)
     childW = mutateWeights(parentW,0.05)
@@ -87,8 +86,8 @@ def makeChildWeightsFromParents(pAWeights, pBWeights):
         childWeights.append((pAWeights[i]+pBWeights[i])/2)
         i+=1
 
-    #Muatate the weights by +/- 0.1
-    mutateWeights(childWeights,0.1)
+    #Muatate the weights by +/- 0.05
+    mutateWeights(childWeights,0.05)
     return childWeights
 
 def generateRandomWeights(n):
@@ -109,6 +108,7 @@ def spawnRandomChildren(num, leaderboard, numWeights):
         i += 1
 
     return leaderboard
+
 # Evaluation function based on wins/loss ratio and multiplied by number of games played
 def evaluatePlayer(row):
     wins = float(row[0]) + 1
@@ -146,21 +146,20 @@ def checkPlateau(board, numWeights):
     print("Evaluating: ", avgStdDev)
     return avgStdDev < PLATEAU_THRESHOLD, avgStdDev
 
-
 def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
     #print(goodOnes, badOnes)
     #updates the Agent_Leaderboard for PERFORMANCE
     totalPlayers = len(leaderboard)
 
-    # CLone top 8%
-    top = goodOnes[:int(totalPlayers//(12.5))]
+    # CLone top 10%
+    top = goodOnes[:int(totalPlayers//(10))]
     for bot in top:
         makeClone(bot, leaderboard)
 
     # Stop having children growth
     if not totalPlayers > 1.5*minBots:
         # Limit
-        rewardLimit = int(max(minBots//4,len(goodOnes)//2))
+        rewardLimit = int(max(minBots//4, len(goodOnes)//2))
 
         #Extra Reward for 25% of good ones
         extra = int(len(goodOnes)//4)
@@ -185,7 +184,7 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
     # bl = int(len(leaderboard)//2.5) #40%
 
     # Gotta kill some goodOnes
-    if totalPlayers >= 1.5*minBots:
+    if totalPlayers > 1.5*minBots:
         cull = int(len(goodOnes)//5)
         badOnes.extend(goodOnes[cull:])
 
@@ -215,7 +214,7 @@ def incubate(leaderboard, numWeights, minBots):
         winlose, currValue = evaluatePlayer(stats)
         valueBoard.append((winlose, currValue, name))
 
-    # BAD: Win:loss = 1:1 or worse
+    # BAD = Win:loss = 1:1 or worse
     badPerformers = list(filter(lambda tup: tup[0] == False, valueBoard))
     badPerformers.sort(key=lambda t:t[1])
     badPerformers = map(lambda t: t[2], badPerformers)
@@ -230,16 +229,16 @@ def incubate(leaderboard, numWeights, minBots):
     if plateauBool:
         print("Plateau detected!!")
     else:
-        if not len(updatedBoard) > 1.5*minBots:
-            # Constant addition of 10% board size of randoms
-            print("CURRENT BOARD LENGTH " + str(len(updatedBoard)))
-            updatedBoard = spawnRandomChildren(minBots//10, updatedBoard, numWeights)
-            print("Random bots spawned " + str(minBots//10))
+        # Top up to meet minimum
+        if len(updatedBoard) < minBots:
+            print("TOP UP "+ str(minBots - len(updatedBoard)))
+            updatedBoard = spawnRandomChildren(minBots - len(updatedBoard), updatedBoard, numWeights)
 
-            # Top up to meet minimum
-            if len(updatedBoard) < minBots:
-                print("TOP UP "+ str(minBots - len(updatedBoard)))
-                updatedBoard = spawnRandomChildren(minBots - len(updatedBoard), updatedBoard, numWeights)
+        # if not len(updatedBoard) > 1.1*minBots:
+        #     # Constant addition of 5% board size of randoms
+        #     print("CURRENT BOARD LENGTH " + str(len(updatedBoard)))
+        #     updatedBoard = spawnRandomChildren(minBots//20, updatedBoard, numWeights)
+        #     print("Random bots spawned " + str(minBots//20))
 
     # Update the leaderboard
     print("..........FINISHED INCUBATION..........")
