@@ -135,6 +135,7 @@ def checkPlateau(board, numWeights):
     PLATEAU_THRESHOLD = 0.007
 
     boardStats = evaluateBoard(board)
+    print(boardStats)
     stdDevSum = 0
     i = 0
     while i < numWeights:
@@ -152,7 +153,7 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
     totalPlayers = len(leaderboard)
 
     # CLone top 8%
-    top = goodOnes[:totalPlayers//12.5]
+    top = goodOnes[:int(totalPlayers//(12.5))]
     for bot in top:
         makeClone(bot, leaderboard)
 
@@ -182,6 +183,10 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
 
     #Extra penalty. DISALED
     # bl = int(len(leaderboard)//2.5) #40%
+
+    # Gotta kill some goodOnes
+    cull = int(len(goodOnes)//4)
+    badOnes.extend(goodOnes[cull:])
 
     toRemove = []
     for bot in badOnes:
@@ -224,15 +229,16 @@ def incubate(leaderboard, numWeights, minBots):
     if plateauBool:
         print("Plateau detected!!")
     else:
-        # Constant addition of 10% board size of randoms
-        print("CURRENT BOARD LENGTH " + str(len(updatedBoard)))
-        updatedBoard = spawnRandomChildren(minBots//10, updatedBoard, numWeights)
-        print("Random bots spawned " + str(minBots//10))
+        if not len(updatedBoard) > 1.5*minBots:
+            # Constant addition of 10% board size of randoms
+            print("CURRENT BOARD LENGTH " + str(len(updatedBoard)))
+            updatedBoard = spawnRandomChildren(minBots//10, updatedBoard, numWeights)
+            print("Random bots spawned " + str(minBots//10))
 
-        # Top up to meet minimum
-        if len(updatedBoard) < minBots:
-            print("TOP UP "+ str(minBots - len(updatedBoard)))
-            updatedBoard = spawnRandomChildren(minBots - len(updatedBoard), updatedBoard, numWeights)
+            # Top up to meet minimum
+            if len(updatedBoard) < minBots:
+                print("TOP UP "+ str(minBots - len(updatedBoard)))
+                updatedBoard = spawnRandomChildren(minBots - len(updatedBoard), updatedBoard, numWeights)
 
     # Update the leaderboard
     print("..........FINISHED INCUBATION..........")
@@ -251,8 +257,10 @@ if __name__ == "__main__":
         args = parser.parse_args()
         return args.boardname
     bn = parse()
+    bn = "OOC_G23"
     #leaderboard = generateLeaderboard(bn, 90, 11)
     leaderboard = cacheLeaderboard(bn)
-    newBoard, plateauBool = incubate(leaderboard, 11, 48)
+    newBoard, plateauBool, platVal = incubate(leaderboard, 10, 120)
+    print("NEWBOARD LEN", len(newBoard))
     print(plateauBool)
-    #writeToLeaderboardFile(newBoard, bn)
+    writeToLeaderboardFile(newBoard, bn)
