@@ -146,34 +146,39 @@ def checkPlateau(board, numWeights):
     return avgStdDev < PLATEAU_THRESHOLD, avgStdDev
 
 
-def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard):
+def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
     #print(goodOnes, badOnes)
     #updates the Agent_Leaderboard for PERFORMANCE
     totalPlayers = len(leaderboard)
 
-    # CLone top 10%
-    top = goodOnes[:totalPlayers//10]
+    # CLone top 8%
+    top = goodOnes[:totalPlayers//12.5]
     for bot in top:
         makeClone(bot, leaderboard)
 
-    #Extra reward for 50% of good ones
-    extra = int(len(goodOnes)//2)
+    # Stop having children growth
+    if not totalPlayers > 1.5*minBots:
+        # Limit
+        rewardLimit = int(max(minBots//4,len(goodOnes)//2))
 
-    for bot in goodOnes:
-        stats = getStats(bot,leaderboard)
-        performace = float(stats[2]) + 1
-        # Extra reward
-        if bot in goodOnes[:extra]:
-            performace += 1
+        #Extra Reward for 25% of good ones
+        extra = int(len(goodOnes)//4)
 
-        if performace >= CHILD_THRESHOLD:
-            partner = random.choice(goodOnes)
-            while partner == bot:
+        for bot in goodOnes[:rewardLimit]:
+            stats = getStats(bot,leaderboard)
+            performace = float(stats[2]) + 1
+            # Extra reward
+            if bot in goodOnes[:extra]:
+                performace += 1
+
+            if performace >= CHILD_THRESHOLD:
                 partner = random.choice(goodOnes)
-            makeChildFromParents(bot, partner, leaderboard)
-            performace = 0
+                while partner == bot:
+                    partner = random.choice(goodOnes)
+                makeChildFromParents(bot, partner, leaderboard)
+                performace = 0
 
-        writeStats(bot,leaderboard,perf=performace)
+            writeStats(bot,leaderboard,perf=performace)
 
     #Extra penalty. DISALED
     # bl = int(len(leaderboard)//2.5) #40%
@@ -213,7 +218,7 @@ def incubate(leaderboard, numWeights, minBots):
     goodPerformers.sort(key=lambda t:t[1], reverse=True)
     goodPerformers = map(lambda t: t[2], goodPerformers)
 
-    updatedBoard = updateAgentsLeaderboardPerf(goodPerformers,badPerformers, leaderboard)
+    updatedBoard = updateAgentsLeaderboardPerf(goodPerformers,badPerformers, leaderboard, minBots)
     plateauBool, plateauVal = checkPlateau(updatedBoard, numWeights)
 
     if plateauBool:
