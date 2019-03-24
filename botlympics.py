@@ -12,6 +12,7 @@ from david_file_utils import *
 # Add your bot to agentboards/Botlympics.csv!
 
 LEADERBOARD = {}
+QUICK = 0
 
 def cacheBLboard(boardFileName):
     rawLeaderboard = getLeaderboard(boardFileName)
@@ -92,7 +93,7 @@ def init(taskmaster):
 
     def blRoundRobinTraining():
         print("EXTENDED ROUND ROBIN TRAINING")
-        MULTIPLIER = 10
+        MULTIPLIER = 5
         queuedMatches[0] = 0
         for i in range(0,MULTIPLIER):
             roundRobinTraining()
@@ -146,8 +147,10 @@ def init(taskmaster):
     def arrangeLongMatch(agentOneName, agentTwoName):
         botOne = composeBot(agentOneName)
         botTwo = composeBot(agentTwoName)
-        num_games = 50
-        num_rounds = 500
+        num_games = 21
+        num_rounds = 1500
+        if QUICK:
+            num_games = 1
         training_regime = (num_games,num_rounds)
         # ((b1,b2), (ng,nr), (name1,name2))
         matchup_job = ((botOne, botTwo),training_regime,(agentOneName,agentTwoName))
