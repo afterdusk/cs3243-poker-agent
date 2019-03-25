@@ -10,55 +10,67 @@ from profile_player_space import ProfilePlayerSpace
 
 def createPlayerSpaces(taskmaster):
     # Init player spaces here
-    david_playerspace.init(taskmaster)
+    # david_playerspace.init(taskmaster)
     # botlympics.init(taskmaster)
-    return [
-        #CMAPlayerSpace(
-        #    taskmaster,
-        #    'smart_warrior_train_1',
-        #    'SmartWarrior',
-        #    [[0, 1]] * 50, # weight ranges
-        #    0.3, # initial sd
-        #    2500, # samples per evaluation
-        #    4,
-        #    101,
-        #    60 * 2)
+    
+    #CMAPlayerSpace(
+    #    taskmaster,
+    #    'smart_warrior_train_1',
+    #    'SmartWarrior',
+    #    [[0, 1]] * 50, # weight ranges
+    #    0.3, # initial sd
+    #    2500, # samples per evaluation
+    #    4,
+    #    101,
+    #    60 * 2)
 
-        ProfilePlayerSpace(
-            taskmaster,
-            'smart_warrior_profile_20190325_1230',
-            'SmartWarrior',
-            [[0, 1]] * 50,
-            20,
-            2000,
-            1000,
-            4,
-            101,
-            60 * 2)
+    #ProfilePlayerSpace(
+    #    taskmaster,
+    #    'smart_warrior_profile_20190325_1230',
+    #    'SmartWarrior',
+    #    [[0, 1]] * 50,
+    #    20,
+    #    2000,
+    #    1000,
+    #    4,
+    #    101,
+    #    60 * 2)
 
-        #CMAPlayerSpace(
-        #    taskmaster,
-        #    'neural_player_test_4',
-        #    'NeuralPlayer',
-        #    [[0, 1]] * 50, # weight ranges
-        #    0.3, # initial sd
-        #    2500, # samples per evaluation
-        #    4,
-        #    101,
-        #    60 * 2)
+    #CMAPlayerSpace(
+    #    taskmaster,
+    #    'neural_player_test_4',
+    #    'NeuralPlayer',
+    #    [[0, 1]] * 50, # weight ranges
+    #    0.3, # initial sd
+    #    2500, # samples per evaluation
+    #    4,
+    #    101,
+    #    60 * 2)
 
-        ProfilePlayerSpace(
-            taskmaster,
-            'neural_player_profile_20190325_1230',
-            'NeuralPlayer',
-            [[0, 1]] * 50,
-            20,
-            2000,
-            1000,
-            4,
-            101,
-            60 * 2)
-    ]
+    #ProfilePlayerSpace(
+    #    taskmaster,
+    #    'neural_player_profile_20190325_1230',
+    #    'NeuralPlayer',
+    #    [[0, 1]] * 50,
+    #    20,
+    #    2000,
+    #    1000,
+    #    4,
+    #    101,
+    #    60 * 2)
+    
+    ProfilePlayerSpace(
+        taskmaster,
+        'neural2_player_profile_20190325_1230',
+        'Neural2Player',
+        [[0, 1]] * 100,
+        20,
+        2000,
+        2000,
+        4,
+        101,
+        60 * 4)
+   
 
 
 class TrainerServer:
