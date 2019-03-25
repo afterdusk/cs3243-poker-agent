@@ -86,6 +86,6 @@ if __name__ == "__main__":
             else:
                 f.write(f"{node_hostname}:\n")
                 # Add 1 to num_jobs for broker
-                f.write(f"\t-ssh -oBatchMode=yes -oStrictHostKeyChecking=no {node_hostname} -t \"cd cs3243-poker-agent; bash -cl 'make -j{num_jobs+1} > /dev/null'\"\n")
-    
+                f.write(f"\t-ssh -oBatchMode=yes -oStrictHostKeyChecking=no {node_hostname} -t \"cd cs3243-poker-agent/cluster_runner; bash -cl './node_run.sh {num_jobs} > /dev/null'\"\n")
+
     print(f"Allocated {total_jobs} jobs on {total_free_cores}/{total_cores} free cores on {len(node_hostnames)} nodes.")
