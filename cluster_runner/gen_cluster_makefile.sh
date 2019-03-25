@@ -1,10 +1,7 @@
 #!/bin/bash
 
-# Make core counter makefile
-python3 gen_core_counter_makefile.py > MakefileCoreCounter
-
 # Count cores
-make -f MakefileCoreCounter -j300
+python3 cluster_specs.py hostnames | parallel -j300 -u "ssh -oBatchMode=yes -oStrictHostKeyChecking=no {} -t \"cd cs3243-poker-agent/cluster_runner; python3 free_cpu_counter.py\" > free_core_data/{}"
 
 # Make MakefileCluster from gathered data
 python3 clustermakefilegen.py

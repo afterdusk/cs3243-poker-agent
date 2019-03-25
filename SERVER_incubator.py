@@ -152,7 +152,7 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
     totalPlayers = len(leaderboard)
 
     # CLone top 10%
-    top = goodOnes[:int(totalPlayers//(10))]
+    top = goodOnes[:int(totalPlayers//10)]
     for bot in top:
         makeClone(bot, leaderboard)
 
@@ -187,7 +187,7 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
         badOnes.extend(goodOnes[cull:])
 
     toRemove = []
-    for bot in badOnes[:int(len(3*badOnes//4))]:
+    for bot in badOnes[:int(3*len(badOnes)//4)]:
         stats = getStats(bot,leaderboard)
         performace = float(stats[2]) - 5 #Kill instantly
         if performace <= KILL_THRESHOLD:

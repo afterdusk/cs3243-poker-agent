@@ -31,7 +31,8 @@ class TrainerClient:
         # Disconnect if no job
         if content is None:
             print("RETRENCHED", topic, content)
-            trainer.client.mqttc.disconnect()
+            sleep(10)  # Time to wait before reconnecting
+            self.get_new_job()
             return
 
         # Play game inform server, and request for job
@@ -46,10 +47,5 @@ class TrainerClient:
 if __name__ == "__main__":
     client_id = gethostname() + '.' + str(getpid())
     trainer = TrainerClient(client_id)
-    while True:
-        trainer.client.connect()
-        trainer.client.mqttc.loop_forever()
-        print("SLEEPING")
-        sleep(10)  # Time to wait before reconnecting
-        print("\n\nRECONNECTING")
-
+    trainer.client.connect()
+    trainer.client.mqttc.loop_forever()

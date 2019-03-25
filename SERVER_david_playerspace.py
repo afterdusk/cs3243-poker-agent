@@ -13,11 +13,11 @@ from david_file_utils import *
 # SERVER_script will call this
 
 LEADERBOARD = {}
-testing = 0
+testing = 1
 def init(taskmaster):
     # CONFIGURATIONS
     AGENT_CLASS = EpsilonPlayer
-    LEADERBOARD_FILENAME = [str(time.time())[:8]+"Delta_Board"]
+    LEADERBOARD_FILENAME = [str(time.time())[4:8]+"Ep_Board"]
     LEAGUE_MIN_SIZE = 180
     GENERATIONS_PER_CYCLE = 250 # Limit on number of generations per training
     SHRINK_RATE = 70 # League shrink per generation
@@ -27,7 +27,7 @@ def init(taskmaster):
     PLATEAU_EVAL = [1]
 
     if testing:
-        LEAGUE_MIN_SIZE = 20
+        LEAGUE_MIN_SIZE = 48
         NUM_GAMES = 1
         NUM_ROUNDS = 1
 
@@ -101,7 +101,7 @@ def init(taskmaster):
         global LEADERBOARD
         boardLength = len(LEADERBOARD)
         UPDATE_BOARD_FREQUENCY = boardLength
-        INCUBATE_FREQUENCY = queuedMatches[0] + 1
+        INCUBATE_FREQUENCY = queuedMatches[0]
 
         print("\n============Training progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
 
@@ -118,9 +118,9 @@ def init(taskmaster):
             matchCountArr[0] = 1
             gens[0] = gens[0] + 1
 
-            stopTraining = gens[0] > GENERATIONS_PER_CYCLE or callIncubator()
+            plateau = callIncubator()
 
-            if stopTraining:
+            if gens[0] > GENERATIONS_PER_CYCLE or plateau:
                 gens[0] = 1
                 LEADERBOARD_FILENAME[0] = LEADERBOARD_FILENAME[0] + "I"
                 LEADERBOARD = generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE, AGENT_CLASS.number_of_weights)

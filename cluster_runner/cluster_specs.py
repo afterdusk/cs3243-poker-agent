@@ -1,5 +1,7 @@
 # Requires Python >=3.6
 
+from sys import argv
+
 servers = {
     "xcna": 16,
     "xgpa": 5,
@@ -28,5 +30,10 @@ def all_node_hostnames():
 
 
 if __name__ == "__main__":
+    if len(argv) == 2:
+        if argv[-1] == 'hostnames':
+            for hostname in all_node_hostnames():
+                print(hostname)
+            exit()
     print(all_node_names())
     print(all_node_hostnames())
