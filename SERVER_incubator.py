@@ -159,16 +159,16 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
     # Stop having children growth
     if not totalPlayers > 1.5*minBots:
         # Limit
-        rewardLimit = int(max(minBots//4, len(goodOnes)//2))
+        rewardLimit = int(max(minBots//2, len(goodOnes)))
 
-        #Extra Reward for 25% of good ones
-        extra = int(len(goodOnes)//4)
+        #Extra Reward for 50% of good ones
+        extraReward = int(len(goodOnes)//2)
 
         for bot in goodOnes[:rewardLimit]:
             stats = getStats(bot,leaderboard)
             performace = float(stats[2]) + 1
             # Extra reward
-            if bot in goodOnes[:extra]:
+            if bot in goodOnes[:extraReward]:
                 performace += 1
 
             if performace >= CHILD_THRESHOLD:
