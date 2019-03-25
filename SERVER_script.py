@@ -24,16 +24,17 @@ def createPlayerSpaces(taskmaster):
         #    101,
         #    60 * 2)
 
-        #ProfilePlayerSpace(
-        #    taskmaster,
-        #    'smart_warrior_profile_1',
-        #    'SmartWarrior',
-        #    [[0, 1]] * 50,
-        #    20,
-        #    2000,
-        #    4,
-        #    101,
-        #    60 * 2)
+        ProfilePlayerSpace(
+            taskmaster,
+            'smart_warrior_profile_20190325_1230',
+            'SmartWarrior',
+            [[0, 1]] * 50,
+            20,
+            2000,
+            1000,
+            4,
+            101,
+            60 * 2)
 
         #CMAPlayerSpace(
         #    taskmaster,
@@ -46,17 +47,17 @@ def createPlayerSpaces(taskmaster):
         #    101,
         #    60 * 2)
 
-        # ProfilePlayerSpace(
-        #     taskmaster,
-        #     'neural_player_profile_1',
-        #     'NeuralPlayer',
-        #     [[0, 1]] * 50,
-        #     0,
-        #     2000,
-        #     100,
-        #     4,
-        #     101,
-        #     60 * 2)
+        ProfilePlayerSpace(
+            taskmaster,
+            'neural_player_profile_20190325_1230',
+            'NeuralPlayer',
+            [[0, 1]] * 50,
+            20,
+            2000,
+            1000,
+            4,
+            101,
+            60 * 2)
     ]
 
 
