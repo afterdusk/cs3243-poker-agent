@@ -29,10 +29,25 @@ def all_node_hostnames():
     return [node_name_to_hostname(n) for n in all_node_names()]
 
 
+blacklist_node_names = [
+    "xcna1",  # Manually manage the server's server
+    "xcnd32",  # Si Jie's group is training here
+]
+blacklist = [node_name_to_hostname(n) for n in blacklist_node_names]
+
+
+def all_whitelisted_node_hostnames():
+    return [h for h in all_node_hostnames() if h not in blacklist]
+
+
 if __name__ == "__main__":
     if len(argv) == 2:
         if argv[-1] == 'hostnames':
             for hostname in all_node_hostnames():
+                print(hostname)
+            exit()
+        if argv[-1] == 'whitelistedhostnames':
+            for hostname in all_whitelisted_node_hostnames():
                 print(hostname)
             exit()
     print(all_node_names())
