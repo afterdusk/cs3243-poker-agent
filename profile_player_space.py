@@ -114,5 +114,3 @@ class ProfilePlayerSpace:
             log_file.write('Evaluation = ' + ' '.join([str(x) for x in evaluations]) + '\n')
             log_file.write('Transitivity = ' + str(float(pass_count) / self.transitivity_checks) + '\n')
             log_file.write('\n')
-
-        self.begin()
