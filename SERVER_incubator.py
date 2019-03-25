@@ -227,6 +227,9 @@ def incubate(leaderboard, numWeights, minBots):
     if plateauBool:
         print("Plateau detected!!")
     else:
+
+        addStandardPlayers(updatedBoard)
+
         # Top up to meet minimum
         if len(updatedBoard) < minBots:
             print("TOP UP "+ str(minBots - len(updatedBoard)))
@@ -242,9 +245,25 @@ def incubate(leaderboard, numWeights, minBots):
     print("..........FINISHED INCUBATION..........")
     return updatedBoard, plateauBool, plateauVal
 
+# Add some consistent players
+def addStandardPlayers(board):
+    STANDARDPLAYERS = {}
+    # these weights only work for EpsilonPlayer
+
+    STANDARDPLAYERS['RaiseA'] = (0.5,0,0,0,0,0,0,0,-1,-1,-0.3,0)
+    STANDARDPLAYERS['RaiseB'] = (0.5,0,0,0,0,0,0,0,-1,-1,-0.3,0)
+    STANDARDPLAYERS['Caller'] = (0.5,0,0,0,0,0,0,0,1,-1,-0.3,0)
+    STANDARDPLAYERS['Greedy'] = (1,0,0,0,0,0,0,0,0.6,0.1,0,0.5)
+
+    for name in STANDARDPLAYERS:
+        if not name in board:
+            w = STANDARDPLAYERS[name]
+            addAgent(name,w, board)
+
 def generateLeaderboard(boardFileName, numPlayers, numWeights):
     leaderboard = {}
     spawnRandomChildren(numPlayers, leaderboard, numWeights)
+    addStandardPlayers(leaderboard)
     writeToLeaderboardFile(leaderboard, boardFileName)
     return leaderboard
 
@@ -255,10 +274,10 @@ if __name__ == "__main__":
         args = parser.parse_args()
         return args.boardname
     bn = parse()
-    bn = "OOC_G23"
-    #leaderboard = generateLeaderboard(bn, 90, 11)
+    #bn = "OOC_G23"
+    #leaderboard = generateLeaderboard(bn, 15, 12)
     leaderboard = cacheLeaderboard(bn)
-    newBoard, plateauBool, platVal = incubate(leaderboard, 10, 120)
+    newBoard, plateauBool, platVal = incubate(leaderboard, 12, 15)
     print("NEWBOARD LEN", len(newBoard))
     print(plateauBool)
     writeToLeaderboardFile(newBoard, bn)

@@ -13,15 +13,15 @@ from david_file_utils import *
 # SERVER_script will call this
 
 LEADERBOARD = {}
-testing = 1
+testing = 0
 def init(taskmaster):
     # CONFIGURATIONS
     AGENT_CLASS = EpsilonPlayer
     LEADERBOARD_FILENAME = [str(time.time())[4:8]+"Ep_Board"]
-    LEAGUE_MIN_SIZE = 180
-    GENERATIONS_PER_CYCLE = 250 # Limit on number of generations per training
-    SHRINK_RATE = 70 # League shrink per generation
-    SHRINK_MAG = 3 # factor of shrink eqn
+    LEAGUE_MIN_SIZE = 256
+    GENERATIONS_PER_CYCLE = 300 # Limit on number of generations per training
+    SHRINK_RATE = 75 # League shrink per generation
+    SHRINK_MAG = 2 # factor of shrink eqn
     NUM_GAMES = 3
     NUM_ROUNDS = 201
     PLATEAU_EVAL = [1]
