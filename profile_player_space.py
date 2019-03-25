@@ -55,7 +55,7 @@ class ProfilePlayerSpace:
                     (self.player_class, self.get_weights(other_particle))
                 ), 
                 (self.num_games, self.num_rounds), 
-                ('Evaluation')]]
+                ('Evaluation',)]]
 
         # Transitivity test
         for i in xrange(self.transitivity_checks):
@@ -95,6 +95,7 @@ class ProfilePlayerSpace:
 
         print('Calculating statistics...')
         evaluation_jobs = [j for j in completed_jobs if j[0][2][0] == 'Evaluation']
+        
         evaluation_outcomes = [j[1] for j in evaluation_jobs]
         evaluations = [float(sum(evaluation_outcomes[i * self.samples_per_evaluation : (i + 1) * self.samples_per_evaluation])) / self.samples_per_evaluation for i in xrange(self.evaluations_per_particle)]
 
