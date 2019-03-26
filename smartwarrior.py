@@ -114,9 +114,14 @@ class SmartWarrior(BasePokerPlayer):
         enemy_amount_bet = SMALL_BLIND if not is_small_blind else 2 * SMALL_BLIND
         my_num_raises = 0
         enemy_num_raises = 0
-        flat_list = [i for street in history.values() for i in street]
+        
+        flat_list = []
+        streets = ["preflop", "flop", "turn", "river"]
+        for street in streets:
+            if street in history:
+                flat_list.extend(history[street])
+        
         for i in flat_list:
-            if DEBUG: print i
             if i['action'] == "SMALLBLIND" or i['action'] == "BIGBLIND":
                 continue
             if my_turn:
