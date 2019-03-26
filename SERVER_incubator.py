@@ -26,7 +26,7 @@ def getStdDev(args):
 
 def addAgent(agentName, weights, leaderboard):
     # Table entry addition
-    #print("ADDING " + agentName)
+    # print("ADDING " + agentName)
     # Initialize win/loss/performace to 0,0,0
     leaderboard[agentName] = [(0,0,0),weights]
 
@@ -189,7 +189,7 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
         badOnes.extend(goodOnes[cull:])
 
     toRemove = []
-    for bot in badOnes[:int(4*len(badOnes)//5)]:
+    for bot in badOnes:
         stats = getStats(bot,leaderboard)
         performace = float(stats[2]) - 5 #Kill instantly
         if performace <= KILL_THRESHOLD:
@@ -207,7 +207,6 @@ def incubate(leaderboard, numWeights, minBots, champs):
     print("..........INCUBATING..........")
     # gpThreshold = int(len(leaderboard)//4) # Top 25%
     # bpThreshold = int(len(leaderboard)//1.667) # Bottom 60%
-
     valueBoard = []
     for name in leaderboard:
         stats = getStats(name, leaderboard)
@@ -258,6 +257,7 @@ def addStandardPlayers(board, champs):
         STANDARDPLAYERS['Ep_RNG'] = (0,-0.362,-0.699,0.535,0.022,-0.744,-0.767,0.79,0.895,-0.713,0.86,0.007)
         STANDARDPLAYERS['Ep_YRZX'] = (0,0.229223682,0.324028161,0.207622531,-0.532829859,-0.069627984,0.125704346,-0.083964584,0.595468388,-0.458556594,0.690242738,-0.018122754)
         STANDARDPLAYERS['E_Raiser'] = (0.438242914,0.004563298,-0.075314788,0.056284926,-0.06059732,-0.174429317,-0.086815867,0.015310329,0.160619342,-0.863199979,-0.350535249,0.181354672)
+        STANDARDPLAYERS['Gr33DY'] = (0.62731144,0.006782764,0.0354006,-0.017738708,-0.060943432,-0.202364151,-0.059767574,0.033646709,0.744256733,0.183438671,-0.43500795,0.721879707)
     else:
         STANDARDPLAYERS['Raise'] = (0.7,0,0,0,0,0,0,0,-0.7,-0.8,0.1,0.3)
         STANDARDPLAYERS['Caller'] = (0.5,0,0,0,0,0,0,0,0.7,-0.7,-0.3,0.3)
@@ -283,9 +283,9 @@ if __name__ == "__main__":
         return args.boardname
     bn = parse()
     #bn = "OOC_G23"
-    leaderboard = generateLeaderboard(bn, 15, 12)
+    #leaderboard = generateLeaderboard(bn, 55, 12)
     leaderboard = cacheLeaderboard(bn)
-    newBoard, plateauBool, platVal = incubate(leaderboard, 12, 15, 0)
-    print("NEWBOARD LEN", len(newBoard))
+    newBoard, plateauBool, platVal = incubate(leaderboard, 12, 55, True)
+    #print("NEWBOARD LEN", len(newBoard))
     print(plateauBool)
     writeToLeaderboardFile(newBoard, bn)

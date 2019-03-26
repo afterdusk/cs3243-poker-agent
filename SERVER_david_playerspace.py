@@ -24,7 +24,7 @@ def init(taskmaster):
     SHRINK_MAG = 2 # factor of shrink eqn
     NUM_GAMES = 3
     NUM_ROUNDS = 201
-    CHAMPION_BUFFER = 110
+    CHAMPION_BUFFER = 100
     PLATEAU_EVAL = [1]
 
     if testing:
