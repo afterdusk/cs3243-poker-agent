@@ -24,6 +24,7 @@ def init(taskmaster):
     SHRINK_MAG = 2 # factor of shrink eqn
     NUM_GAMES = 3
     NUM_ROUNDS = 201
+    CHAMPION_BUFFER = 90
     PLATEAU_EVAL = [1]
 
     if testing:
@@ -84,7 +85,11 @@ def init(taskmaster):
         global LEADERBOARD
         reduction = int((CURR_LEAGUE_SIZE[0]/SHRINK_RATE)**SHRINK_MAG)
         CURR_LEAGUE_SIZE[0] = CURR_LEAGUE_SIZE[0] - reduction
-        LEADERBOARD, plateauBool, plateauVal = incubate(LEADERBOARD, AGENT_CLASS.number_of_weights, CURR_LEAGUE_SIZE[0])
+        champBool = gens[0] > CHAMPION_BUFFER
+        if gens[0] == CHAMPION_BUFFER:
+            # Backup in case champions dominate
+            writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0] + " (backup)",gens[0], PLATEAU_EVAL[0])
+        LEADERBOARD, plateauBool, plateauVal = incubate(LEADERBOARD, AGENT_CLASS.number_of_weights, CURR_LEAGUE_SIZE[0], champBool])
         PLATEAU_EVAL[0] = plateauVal
         writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0],gens[0], PLATEAU_EVAL[0])
         return plateauBool

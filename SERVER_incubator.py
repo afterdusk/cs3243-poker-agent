@@ -50,9 +50,9 @@ def mutateWeights(data, maxMutation):
     newData = []
     if maxMutation > 1 or maxMutation < -1:
         maxMutation = 0.2
-    mutationBoundary = maxMutation*1000
+    mutationBoundary = maxMutation*100
     for weight in data:
-        newWeight = weight + (float(random.randint(-mutationBoundary,mutationBoundary))/1000)
+        newWeight = weight + (float(random.randint(-mutationBoundary,mutationBoundary))/100)
         newWeight = bound(newWeight)
         newData.append(newWeight)
     #print(data,newData)
@@ -132,7 +132,7 @@ def evaluateBoard(board):
 
 def checkPlateau(board, numWeights):
     # average Standard deviation
-    PLATEAU_THRESHOLD = 0.007
+    PLATEAU_THRESHOLD = 0.009
 
     boardStats = evaluateBoard(board)
     print(boardStats)
@@ -152,14 +152,14 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
     totalPlayers = len(leaderboard)
 
     # CLone top 10%
-    top = goodOnes[:int(totalPlayers//10)]
+    top = goodOnes[:int(minBots//10)]
     for bot in top:
         makeClone(bot, leaderboard)
 
     # Stop having children growth
     if not totalPlayers > 1.5*minBots:
         # Limit
-        rewardLimit = int(max(minBots//2, len(goodOnes)))
+        rewardLimit = int(max(minBots/3, len(goodOnes)))
 
         #Extra Reward for 50% of good ones
         extraReward = int(len(goodOnes)//2)
@@ -201,7 +201,7 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
     return leaderboard
 
 # INCUBATE
-def incubate(leaderboard, numWeights, minBots):
+def incubate(leaderboard, numWeights, minBots, champs):
     print("..........INCUBATING..........")
     # gpThreshold = int(len(leaderboard)//4) # Top 25%
     # bpThreshold = int(len(leaderboard)//1.667) # Bottom 60%
@@ -228,7 +228,7 @@ def incubate(leaderboard, numWeights, minBots):
         print("Plateau detected!!")
     else:
 
-        addStandardPlayers(updatedBoard)
+        addStandardPlayers(updatedBoard,champs)
 
         # Top up to meet minimum
         if len(updatedBoard) < minBots:
@@ -246,14 +246,20 @@ def incubate(leaderboard, numWeights, minBots):
     return updatedBoard, plateauBool, plateauVal
 
 # Add some consistent players
-def addStandardPlayers(board):
+def addStandardPlayers(board, champs):
+    STRONGPLAYERS = champs
     STANDARDPLAYERS = {}
     # these weights only work for EpsilonPlayer
 
-    STANDARDPLAYERS['RaiseA'] = (0.5,0,0,0,0,0,0,0,-1,-1,-0.3,0)
-    STANDARDPLAYERS['RaiseB'] = (0.5,0,0,0,0,0,0,0,-1,-1,-0.3,0)
-    STANDARDPLAYERS['Caller'] = (0.5,0,0,0,0,0,0,0,1,-1,-0.3,0)
-    STANDARDPLAYERS['Greedy'] = (1,0,0,0,0,0,0,0,0.6,0.1,0,0.5)
+    if STRONGPLAYERS:
+        STANDARDPLAYERS['Ep_ZWUP'] = (0,0.05337793,0.214027344,0.035454102,0.025410156,-0.04884668,0.072243164,0.215789063,0.547893555,-0.60075293,0.425702148,-0.061788086)
+        STANDARDPLAYERS['Ep_RNG'] = (0,-0.362,-0.699,0.535,0.022,-0.744,-0.767,0.79,0.895,-0.713,0.86,0.007)
+        STANDARDPLAYERS['Ep_YRZX'] = (0,0.229223682,0.324028161,0.207622531,-0.532829859,-0.069627984,0.125704346,-0.083964584,0.595468388,-0.458556594,0.690242738,-0.018122754)
+        STANDARDPLAYERS['E_Raiser'] = (0.438242914,0.004563298,-0.075314788,0.056284926,-0.06059732,-0.174429317,-0.086815867,0.015310329,0.160619342,-0.863199979,-0.350535249,0.181354672)
+    else:
+        STANDARDPLAYERS['Raise'] = (0.5,0,0,0,0,0,0,0,-1,-1,-0.3,0)
+        STANDARDPLAYERS['Caller'] = (0.5,0,0,0,0,0,0,0,1,-1,-0.3,0)
+        STANDARDPLAYERS['Greedy'] = (1,0,0,0,0,0,0,0,0.6,0.1,0,0.5)
 
     for name in STANDARDPLAYERS:
         if not name in board:
@@ -277,7 +283,7 @@ if __name__ == "__main__":
     #bn = "OOC_G23"
     #leaderboard = generateLeaderboard(bn, 15, 12)
     leaderboard = cacheLeaderboard(bn)
-    newBoard, plateauBool, platVal = incubate(leaderboard, 12, 15)
+    newBoard, plateauBool, platVal = incubate(leaderboard, 12, 15, 0)
     print("NEWBOARD LEN", len(newBoard))
     print(plateauBool)
     writeToLeaderboardFile(newBoard, bn)
