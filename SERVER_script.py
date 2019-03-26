@@ -12,7 +12,7 @@ def createPlayerSpaces(taskmaster):
     # Init player spaces here
     david_playerspace.init(taskmaster)
     # botlympics.init(taskmaster)
-    
+
     #CMAPlayerSpace(
     #    taskmaster,
     #    'smart_warrior_train_1',
@@ -82,6 +82,7 @@ def createPlayerSpaces(taskmaster):
         101,
         60 * 4)
    
+
 
 
 class TrainerServer:
