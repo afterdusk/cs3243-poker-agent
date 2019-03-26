@@ -16,18 +16,20 @@ good_player = WisePlayer(zwup)
 
 erw = (0.438242914,0.004563298,-0.075314788,0.056284926,-0.06059732,-0.174429317,-0.086815867,0.015310329,0.160619342,-0.863199979,-0.350535249,0.181354672)
 ERaise = EpsilonPlayer(erw)
+g = (0.62731144,0.006782764,0.0354006,-0.017738708,-0.060943432,-0.202364151,-0.059767574,0.033646709,0.744256733,0.183438671,-0.43500795,0.721879707)
+greed = EpsilonPlayer(g)
 
 NEURAL1W = (0.324591965,0.116853557,0.95764022,0.012027366,0.555069189,0.045179453,0.979426764,0.465743813,0.224603116,0.994112848,0.541695726,0.50800402,0.147543209,0.981098883,0.462406651,0.184512599,0.983589971,0.963924494,0.823646929,0.103798334,0.033531828,0.24722918,0.520595302,0.707991632,0.133658449,0.123737941,0.916372798,0.496648274,0.107323782,0.960525848,0.99767841,0.026340175,0.066576786,0.293650386,0.70985056,0.069822546,0.016017285,0.759767713,0.436462879,0.996274425,0.006816681,0.712753648,0.297351571,0.888931131,0.294428619,0.98731818,0.988812518,0.027874528,0.036252537,0.020522828
 )
 
 NEURAL = NeuralPlayer(NEURAL1W)
 
-
-config.register_player(name="E-Raise", algorithm=ERaise)
-#config.register_player(name="ZWUP", algorithm = good_player)
-config.register_player(name="YRZX", algorithm = yr)
-#config.register_player(name="Neural 1", algorithm = NEURAL)
-#config.register_player(name="FT2", algorithm=RaisedPlayer())
+# config.register_player(name="E-Raise", algorithm=ERaise)
+# config.register_player(name="Gr33dy", algorithm = greed)
+# config.register_player(name="ZWUP", algorithm = good_player)
+# config.register_player(name="YRZX", algorithm = yr)
+# config.register_player(name="Neural 1", algorithm = NEURAL)
+# config.register_player(name="FT2", algorithm=RaisedPlayer())
 
 
 print("HELLO!!")

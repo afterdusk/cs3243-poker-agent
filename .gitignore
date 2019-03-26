@@ -6,3 +6,5 @@ __pycache__/
 __pycache__/*
 *~
 .*.swp
+
+agentboards/evalboard\.csv
