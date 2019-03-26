@@ -28,9 +28,12 @@ def init(taskmaster):
     PLATEAU_EVAL = [1]
 
     if testing:
-        LEAGUE_MIN_SIZE = 48
+        LEAGUE_MIN_SIZE = 32
         NUM_GAMES = 1
         NUM_ROUNDS = 1
+        SHRINK_RATE = 16
+        SHRINK_MAG = 2
+        CHAMPION_BUFFER = 3
 
     global LEADERBOARD
     CURR_LEAGUE_SIZE = [LEAGUE_MIN_SIZE]
@@ -81,15 +84,19 @@ def init(taskmaster):
         for bot in botlist:
             trainNamedBot(bot, botlist)
 
-    def callIncubator():
-        global LEADERBOARD
+    def reduceLeagueSize():
+        # reduce the league size
         reduction = int((CURR_LEAGUE_SIZE[0]/SHRINK_RATE)**SHRINK_MAG)
         CURR_LEAGUE_SIZE[0] = CURR_LEAGUE_SIZE[0] - reduction
+
+    def callIncubator():
+        global LEADERBOARD
+
         champBool = gens[0] > CHAMPION_BUFFER
         if gens[0] == CHAMPION_BUFFER:
             # Backup in case champions dominate
             writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0] + " (backup)",gens[0], PLATEAU_EVAL[0])
-        LEADERBOARD, plateauBool, plateauVal = incubate(LEADERBOARD, AGENT_CLASS.number_of_weights, CURR_LEAGUE_SIZE[0], champBool])
+        LEADERBOARD, plateauBool, plateauVal = incubate(LEADERBOARD, AGENT_CLASS.number_of_weights, CURR_LEAGUE_SIZE[0], champBool)
         PLATEAU_EVAL[0] = plateauVal
         writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0],gens[0], PLATEAU_EVAL[0])
         return plateauBool

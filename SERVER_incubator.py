@@ -157,28 +157,30 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
         makeClone(bot, leaderboard)
 
     # Stop having children growth
-    if not totalPlayers > 1.5*minBots:
-        # Limit
-        rewardLimit = int(max(minBots/3, len(goodOnes)))
 
-        #Extra Reward for 50% of good ones
-        extraReward = int(len(goodOnes)//2)
+    # Limit
+    rewardLimit = int(max(minBots/3, len(goodOnes)))
 
-        for bot in goodOnes[:rewardLimit]:
-            stats = getStats(bot,leaderboard)
-            performace = float(stats[2]) + 1
-            # Extra reward
-            if bot in goodOnes[:extraReward]:
-                performace += 1
+    #Extra Reward for 50% of good ones
+    extraReward = int(len(goodOnes)//2)
 
-            if performace >= CHILD_THRESHOLD:
+    for bot in goodOnes[:rewardLimit]:
+        if len(leaderboard) > int(1.3*minBots):
+            break
+        stats = getStats(bot,leaderboard)
+        performace = float(stats[2]) + 1
+        # Extra reward
+        if bot in goodOnes[:extraReward]:
+            performace += 1
+
+        if performace >= CHILD_THRESHOLD:
+            partner = random.choice(goodOnes)
+            while partner == bot:
                 partner = random.choice(goodOnes)
-                while partner == bot:
-                    partner = random.choice(goodOnes)
-                makeChildFromParents(bot, partner, leaderboard)
-                performace = 0
+            makeChildFromParents(bot, partner, leaderboard)
+            performace = 0
 
-            writeStats(bot,leaderboard,perf=performace)
+        writeStats(bot,leaderboard,perf=performace)
 
 
     # Gotta kill some goodOnes
@@ -187,7 +189,7 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
         badOnes.extend(goodOnes[cull:])
 
     toRemove = []
-    for bot in badOnes[:int(3*len(badOnes)//4)]:
+    for bot in badOnes[:int(4*len(badOnes)//5)]:
         stats = getStats(bot,leaderboard)
         performace = float(stats[2]) - 5 #Kill instantly
         if performace <= KILL_THRESHOLD:
@@ -269,7 +271,7 @@ def addStandardPlayers(board, champs):
 def generateLeaderboard(boardFileName, numPlayers, numWeights):
     leaderboard = {}
     spawnRandomChildren(numPlayers, leaderboard, numWeights)
-    addStandardPlayers(leaderboard)
+    addStandardPlayers(leaderboard, False)
     writeToLeaderboardFile(leaderboard, boardFileName)
     return leaderboard
 
@@ -281,7 +283,7 @@ if __name__ == "__main__":
         return args.boardname
     bn = parse()
     #bn = "OOC_G23"
-    #leaderboard = generateLeaderboard(bn, 15, 12)
+    leaderboard = generateLeaderboard(bn, 15, 12)
     leaderboard = cacheLeaderboard(bn)
     newBoard, plateauBool, platVal = incubate(leaderboard, 12, 15, 0)
     print("NEWBOARD LEN", len(newBoard))

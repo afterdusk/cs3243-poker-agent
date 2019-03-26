@@ -39,11 +39,9 @@ class EpsilonPlayer(BasePokerPlayer):
 
     def initWeights(self, data):
         # Decision thresholds
-        # self.raise_threshold = (data[0])
-        # self.call_threshold = (data[1])
 
         # Weights for card + pot value
-        self.payout_w = data[0]
+        self.payout_w = activation_functions.logistic(0, 1, 2, 0)(data[0])
 
         # Weight for current round. Each round has 1 weight
         i = 1
