@@ -118,7 +118,7 @@ class WisePlayer(BasePokerPlayer):
 
     @staticmethod
     def parse_history(round_state):
-        print(round_state)
+        #print(round_state)
         SMALL_BLIND = 10
         history = round_state['action_histories']
         is_small_blind = round_state['next_player'] == round_state['small_blind_pos']
