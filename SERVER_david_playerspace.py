@@ -19,12 +19,12 @@ def init(taskmaster):
     AGENT_CLASS = EpsilonPlayer
     LEADERBOARD_FILENAME = [str(time.time())[4:8]+"Ep_Board"]
     LEAGUE_MIN_SIZE = 256
-    GENERATIONS_PER_CYCLE = 300 # Limit on number of generations per training
+    GENERATIONS_PER_CYCLE = 317 # Limit on number of generations per training
     SHRINK_RATE = 75 # League shrink per generation
     SHRINK_MAG = 2 # factor of shrink eqn
     NUM_GAMES = 3
     NUM_ROUNDS = 201
-    CHAMPION_BUFFER = 90
+    CHAMPION_BUFFER = 110
     PLATEAU_EVAL = [1]
 
     if testing:
