@@ -13,11 +13,7 @@ class ProfilePlayerSpace:
         self.taskmaster = taskmaster
         self.player_class = player_class
         self.activations = [
-                activation_functions.tanh(
-                    0, 
-                    (float(r[1]) - float(r[0])) / 2, 
-                    2, 
-                    (float(r[0]) + float(r[1])) / 2) 
+                lambda x: ((1 - x) * float(r[0]) + (1 + x) * float(r[1])) / 2
                 for r in weight_ranges]
         self.evaluations_per_particle = evaluations_per_particle
         self.samples_per_evaluation = samples_per_evaluation

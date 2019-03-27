@@ -8,17 +8,13 @@ import os
 import activation_functions
 
 class CMAPlayerSpace:
-    def __init__(self, taskmaster, name, player_class, weight_ranges, initial_sd, samples_per_evaluation, num_games, num_rounds, timeout):
+    def __init__(self, taskmaster, name, player_class, weight_ranges, samples_per_evaluation, num_games, num_rounds, timeout):
         self.name = name
         self.taskmaster = taskmaster
         self.player_class = player_class
         self.dimensions = len(weight_ranges)
         self.activations = [
-                activation_functions.tanh(
-                    0, 
-                    (float(r[1]) - float(r[0])) / 2, 
-                    2, 
-                    (float(r[0]) + float(r[1])) / 2) 
+                lambda x: ((1 - x) * float(r[0]) + (1 + x) * float(r[1])) / 2
                 for r in weight_ranges]
         self.samples_per_evaluation = samples_per_evaluation
         self.num_games = num_games
@@ -42,8 +38,8 @@ class CMAPlayerSpace:
             cma_options.set('verb_disp', -1)
             cma_options.set('verb_log', 0)
             self.instance = cma.CMAEvolutionStrategy(
-                    [0] * self.dimensions,
-                    initial_sd, 
+                    [0] * self.dimensions, # Origin centered
+                    0.34, # 3SD covering [-1, 1]
                     cma_options)
 
         self.begin()
@@ -56,12 +52,12 @@ class CMAPlayerSpace:
 
     def get_current_mean(self):
         return self.instance.result[5]
-
-    def get_current_sigma(self):
-        return self.instance.sigma
     
     def get_current_sd(self):
         return self.instance.result[6]
+
+    def get_current_sigma(self):
+        return self.instance.sigma
 
     def begin(self):
         print('Logging...')
@@ -69,15 +65,20 @@ class CMAPlayerSpace:
             log_file.write('Weights = ' + ' '.join(str(x) for x in self.get_weights(self.get_current_mean())) + '\n')
             log_file.write('Mean = ' + ' '.join(str(x) for x in self.get_current_mean()) + '\n')
             log_file.write('Sigma = ' + str(self.get_current_sigma()) + '\n')
-            log_file.write('SD =   ' + ' '.join(str(x) for x in self.get_current_sd()) + '\n')
-            log_file.write('NormMean(SD) = ' + str(numpy.linalg.norm(self.get_current_sd(), ord=2) / math.sqrt(self.dimensions)) + '\n')
         with open(self.output_state_path, 'wb') as state_file:
             pickle.dump(self.instance, state_file)
 
         print('Generating jobs...')
 
+        # Rejection sampling of particles.
+        particles = []
+        for _ in xrange(self.instance.popsize):
+            particle = self.instance.ask(1)[0]
+            while all(True if v >= -1 and v <= 1 else False for v in particle):
+                particle = self.instance.ask(1)[0]
+            particles += [particle]
+
         jobs = []    
-        particles = self.instance.ask()
         for (i, particle) in enumerate(particles):
             other_particles = [self.sample() for _ in xrange(self.samples_per_evaluation)]
             for (j, other_particle) in enumerate(other_particles):
@@ -104,7 +105,7 @@ class CMAPlayerSpace:
         for completed_job in completed_jobs:
             particle_evaluations[completed_job[0][2][0]] += completed_job[1]
         particle_evaluations = [-float(e) / self.samples_per_evaluation for e in particle_evaluations]
-        self.instance.tell(particles, particle_evaluations)
+        self.instance.tell(particles, particle_evaluations, check_points=False)
         
         print('Logging...')
         with open(self.output_log_path, 'a') as log_file:
