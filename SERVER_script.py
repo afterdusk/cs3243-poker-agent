@@ -61,7 +61,7 @@ def createPlayerSpaces(taskmaster):
     
     CMAPlayerSpace(
         taskmaster,
-        'neural2_player_train_apple',
+        'neural2_player_train_pear',
         'Neural2Player',
         [[0, 1]] * 101, # weight ranges
         0.34, # initial sd
@@ -72,11 +72,11 @@ def createPlayerSpaces(taskmaster):
     
     ProfilePlayerSpace(
         taskmaster,
-        'neural2_player_profile_apple',
+        'neural2_player_profile_pear',
         'Neural2Player',
         [[0, 1]] * 101,
         20,
-        2000,
+        2500,
         2000,
         4,
         101,
