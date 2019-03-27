@@ -16,6 +16,9 @@ from argparse import ArgumentParser
 CHILD_THRESHOLD = 2
 KILL_THRESHOLD = -1
 
+WEIGHT_BOUNDS = []
+INIT_WEIGHTBOUNDS = [0]
+
 def getMean(args):
     return sum(args) / len(args)
 
@@ -24,37 +27,61 @@ def getStdDev(args):
     var  = sum(pow(a-mean,2) for a in args) / len(args)  # variance
     return math.sqrt(var)
 
+# Table entry addition
 def addAgent(agentName, weights, leaderboard):
-    # Table entry addition
     # print("ADDING " + agentName)
-    # Initialize win/loss/performace to 0,0,0
-    leaderboard[agentName] = [(0,0,0),weights]
+    leaderboard[agentName] = [(0,0,0),weights]    # Initialize win/loss/performace to 0,0,0
 
 #Removes the agent from the table
 def removeAgent(agentName, leaderboard):
-    #Table entry removal
     #print("Removing " + agentName)
     leaderboard.pop(agentName)
+
+def initWeightBounds(nw):
+    for i in range(0,nw):
+        WEIGHT_BOUNDS.append([-1,1]) # Lower, Upper
+    INIT_WEIGHTBOUNDS[0] = 1
+
+# Tightens the bounds based on a bunch of very lousy bots
+def tightenWeightBounds(leaderboard, badBots):
+    positiveBoardStats = evaluateBoard(leaderboard)
+    for weightIndex in range(0,len(positiveBoardStats)):
+        w_mean, w_stdev = positiveBoardStats[weightIndex]
+        TIGHTEN_THRESHOLD = 2*w_stdev # CONFIGURE HERE
+        for name in badBots:
+            badWeight = badBots[name][weightIndex]
+            meanDiff = badWeight - w_mean
+            if meanDiff < 0 and badWeight > WEIGHT_BOUNDS[weightIndex][0]:
+                # If higher than lower bound
+                if abs(meanDiff) > TIGHTEN_THRESHOLD:
+                    print("Tightening Lower bound",weightIndex,WEIGHT_BOUNDS[weightIndex][0], badWeight)
+                    WEIGHT_BOUNDS[weightIndex][0] = badWeight
+
+            elif meanDiff > 0 and badWeight < WEIGHT_BOUNDS[weightIndex][1]:
+                # If lower than upper bound
+                if abs(meanDiff) > TIGHTEN_THRESHOLD:
+                    print("Tightening Upper bound",weightIndex,WEIGHT_BOUNDS[weightIndex][1], badWeight)
+                    WEIGHT_BOUNDS[weightIndex][1] = badWeight
 
 # Mutates all data weights in steps of [-max to max] in either positive or negative direction
 # If max > 1 then it resets to a default of 0.2
 def mutateWeights(data, maxMutation):
-    def bound(w):
-        # Bounds between 1 and -1
-        if w > 1:
-            return 1
-        if w < -1:
-            return -1
-        return w
+    multi = 1000
+    def bound(weight, mutation, i):
+        # Bounds for each weight
+        #print("BOUND: weight/mutation", weight, mutation)
+        high = min(mutation, WEIGHT_BOUNDS[i][1] - weight)
+        low = max(-mutation, WEIGHT_BOUNDS[i][0] - weight)
+        return int(multi*low), int(multi*high)
 
+    i = 0
     newData = []
-    if maxMutation > 1 or maxMutation < -1:
-        maxMutation = 0.2
-    mutationBoundary = maxMutation*100
     for weight in data:
-        newWeight = weight + (float(random.randint(-mutationBoundary,mutationBoundary))/100)
-        newWeight = bound(newWeight)
+        lowerBound, upperBound = bound(weight,maxMutation, i)
+        newWeight = float(random.randint(lowerBound,upperBound))/multi
+        #print(lowerBound, upperBound, newWeight)
         newData.append(newWeight)
+        i+=1
     #print(data,newData)
     return newData
 
@@ -67,24 +94,19 @@ def makeClone(pName, board):
 def makeChildFromParents(botAName, botBName, leaderboard):
     parentAWeights = getWeights(botAName,leaderboard)
     parentBWeights = getWeights(botBName,leaderboard)
-    #print(parentA,parentB)
-    parentAPartName = botAName[:9]
-    parentBPartName = botBName[:9]
-    child = parentAPartName + "-" + parentBPartName + "#" + str(random.randint(0,99))
+    childWeights = makeChildWeightsFromParents(parentAWeights,parentBWeights)
+    childName = botAName[:9] + "-" + botBName[:9] + "#" + str(random.randint(0,99))
 
     # Add child to board
-    childWeights = makeChildWeightsFromParents(parentAWeights,parentBWeights)
-    addAgent(child, childWeights, leaderboard)
+    addAgent(childName, childWeights, leaderboard)
     #print("Created child " + child)
 
 # Makes a child weight that takes the average of two parents and applies [+/-0.1] mutation
 def makeChildWeightsFromParents(pAWeights, pBWeights):
     childWeights = []
-    i = 0
-    while i < len(pAWeights):
+    for i in range(0,len(pAWeights)):
         # Takes the average of both parents
         childWeights.append((pAWeights[i]+pBWeights[i])/2)
-        i+=1
 
     #Muatate the weights by +/- 0.05
     mutateWeights(childWeights,0.05)
@@ -126,6 +148,7 @@ def evaluateBoard(board):
     eval = []
     while i < len(weights[0]):
         currWeight = list(map(lambda x: x[i], weights))
+        #print("Weight " + str(i),getMean(currWeight), getStdDev(currWeight))
         eval.append((getMean(currWeight), getStdDev(currWeight)))
         i += 1
     return eval
@@ -135,7 +158,6 @@ def checkPlateau(board, numWeights):
     PLATEAU_THRESHOLD = 0.009
 
     boardStats = evaluateBoard(board)
-    print(boardStats)
     stdDevSum = 0
     i = 0
     while i < numWeights:
@@ -143,29 +165,57 @@ def checkPlateau(board, numWeights):
         i += 1
     avgStdDev = stdDevSum/numWeights
 
-    print("Evaluating: ", avgStdDev)
+    print("Plateau evaluation: ", avgStdDev, "Threshold:", PLATEAU_THRESHOLD)
     return avgStdDev < PLATEAU_THRESHOLD, avgStdDev
 
+# DESTROY AND REPRODUCE
+# Also updates the Agent_Leaderboard for PERFORMANCE
 def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
     #print(goodOnes, badOnes)
-    #updates the Agent_Leaderboard for PERFORMANCE
+
     totalPlayers = len(leaderboard)
 
-    # CLone top 10%
-    top = goodOnes[:int(minBots//10)]
-    for bot in top:
-        makeClone(bot, leaderboard)
+    # &&&&&&&&&&&&&&&&&&&&&&&&&& Cull weak players &&&&&&&&&&&&&&&&&&&&&&&&&&
+    # If pop too high, gotta kill some goodOnes
+    if totalPlayers > 1.5*minBots:
+        cull = int(len(goodOnes)//5)
+        goodOnes = goodOnes[:cull] # Shorten goodOnes
+        badOnes.extend(goodOnes[cull:])
 
-    # Stop having children growth
+    toRemove = []
+    superBad = {}
+    for bot in badOnes:
+        stats = getStats(bot,leaderboard)
+        performace = float(stats[2]) - 5 #Kill instantly
+        if bot in badOnes[:int(len(badOnes)//3)]:
+            # Record for weight bound adjustment
+            superBad[bot] = getWeights(bot,leaderboard)
+        if performace <= KILL_THRESHOLD:
+            toRemove.append(bot)
+        else: #In case I want to preserve bad bots
+            writeStats(bot,leaderboard,perf=performace)
+
+    for bot in toRemove:
+        removeAgent(bot, leaderboard)
+
+    tightenWeightBounds(leaderboard, superBad)
+
+    # Update value of totalPlayers
+    totalPlayers = len(leaderboard)
+
+    # &&&&&&&&&&&&&&&&&&&&&&&&&& Reward good players &&&&&&&&&&&&&&&&&&&&&&&&&&
+    # CLone top 10%
+    for bot in goodOnes[:int(minBots//10)]:
+        makeClone(bot, leaderboard)
 
     # Limit
     rewardLimit = int(max(minBots/3, len(goodOnes)))
-
     #Extra Reward for 50% of good ones
     extraReward = int(len(goodOnes)//2)
 
     for bot in goodOnes[:rewardLimit]:
-        if len(leaderboard) > int(1.3*minBots):
+        if len(leaderboard) > int(minBots):
+            # Prevent overpopulation
             break
         stats = getStats(bot,leaderboard)
         performace = float(stats[2]) + 1
@@ -182,28 +232,12 @@ def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
 
         writeStats(bot,leaderboard,perf=performace)
 
-
-    # Gotta kill some goodOnes
-    if totalPlayers > 1.5*minBots:
-        cull = int(len(goodOnes)//5)
-        badOnes.extend(goodOnes[cull:])
-
-    toRemove = []
-    for bot in badOnes:
-        stats = getStats(bot,leaderboard)
-        performace = float(stats[2]) - 5 #Kill instantly
-        if performace <= KILL_THRESHOLD:
-            toRemove.append(bot)
-        else: #In case I want to preserve bad bots
-            writeStats(bot,leaderboard,perf=performace)
-
-    for bot in toRemove:
-        removeAgent(bot, leaderboard)
-
     return leaderboard
 
-# INCUBATE
+# INCUBATE!
 def incubate(leaderboard, numWeights, minBots, champs):
+    if INIT_WEIGHTBOUNDS[0] < 1:
+        initWeightBounds(numWeights)
     print("..........INCUBATING..........")
     # gpThreshold = int(len(leaderboard)//4) # Top 25%
     # bpThreshold = int(len(leaderboard)//1.667) # Bottom 60%
@@ -236,28 +270,21 @@ def incubate(leaderboard, numWeights, minBots, champs):
             print("TOP UP "+ str(minBots - len(updatedBoard)))
             updatedBoard = spawnRandomChildren(minBots - len(updatedBoard), updatedBoard, numWeights)
 
-        # if not len(updatedBoard) > 1.1*minBots:
-        #     # Constant addition of 5% board size of randoms
-        #     print("CURRENT BOARD LENGTH " + str(len(updatedBoard)))
-        #     updatedBoard = spawnRandomChildren(minBots//20, updatedBoard, numWeights)
-        #     print("Random bots spawned " + str(minBots//20))
-
     # Update the leaderboard
     print("..........FINISHED INCUBATION..........")
     return updatedBoard, plateauBool, plateauVal
 
 # Add some consistent players
+# these weights only work for EpsilonPlayer
 def addStandardPlayers(board, champs):
-    STRONGPLAYERS = champs
     STANDARDPLAYERS = {}
-    # these weights only work for EpsilonPlayer
 
-    if STRONGPLAYERS:
+    if champs:
         STANDARDPLAYERS['Ep_ZWUP'] = (0,0.05337793,0.214027344,0.035454102,0.025410156,-0.04884668,0.072243164,0.215789063,0.547893555,-0.60075293,0.425702148,-0.061788086)
-        STANDARDPLAYERS['Ep_RNG'] = (0,-0.362,-0.699,0.535,0.022,-0.744,-0.767,0.79,0.895,-0.713,0.86,0.007)
         STANDARDPLAYERS['Call999'] = (0.027780254,-0.006881324,-0.02755483,0.052425943,-0.247408722,-0.343405448,-0.092064001,-0.114631729,0.367807581,-0.466988527,-0.449206837,0.577756734)
         STANDARDPLAYERS['Razor'] = (0.438242914,0.004563298,-0.075314788,0.056284926,-0.06059732,-0.174429317,-0.086815867,0.015310329,0.160619342,-0.863199979,-0.350535249,0.181354672)
         STANDARDPLAYERS['Gr33Dy'] = (0.62731144,0.006782764,0.0354006,-0.017738708,-0.060943432,-0.202364151,-0.059767574,0.033646709,0.744256733,0.183438671,-0.43500795,0.721879707)
+        #STANDARDPLAYERS['Ep_RNG'] = (0,-0.362,-0.699,0.535,0.022,-0.744,-0.767,0.79,0.895,-0.713,0.86,0.007)
     else:
         STANDARDPLAYERS['Raise'] = (0.7,0,0,0,0,0,0,0,-0.7,-0.8,0.1,0.3)
         STANDARDPLAYERS['Call'] = (0.5,0,0,0,0,0,0,0,0.7,-0.7,-0.3,0.3)
@@ -285,7 +312,7 @@ if __name__ == "__main__":
     #bn = "OOC_G23"
     #leaderboard = generateLeaderboard(bn, 55, 12)
     leaderboard = cacheLeaderboard(bn)
-    newBoard, plateauBool, platVal = incubate(leaderboard, 12, 90, False)
+    newBoard, plateauBool, platVal = incubate(leaderboard, 12, 50, False)
     #print("NEWBOARD LEN", len(newBoard))
     print(plateauBool)
-    writeToLeaderboardFile(newBoard, bn)
+    writeToLeaderboardFile(newBoard, bn+"o")
