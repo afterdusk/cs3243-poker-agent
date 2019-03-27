@@ -13,6 +13,38 @@ from david_file_utils import *
 
 LEADERBOARD = {}
 QUICK = 0
+MATRIXBOARD = {}
+MATRIXBOARD_filename = "Botlympics Matrix"
+
+def makeMatrixBoard(leaderboard):
+    global MATRIXBOARD
+    MATRIXBOARD = {}
+    for name in leaderboard:
+        MATRIXBOARD[name] = {}
+        for opp in leaderboard:
+            MATRIXBOARD[name][opp] = [0,0]
+    writeToMatrixFile()
+
+def updateMatrixBoard(winner, loser):
+    global MATRIXBOARD
+    MATRIXBOARD[winner][loser][0] = MATRIXBOARD[winner][loser][0] + 1
+    MATRIXBOARD[loser][winner][1] = MATRIXBOARD[loser][winner][1] + 1
+
+def writeToMatrixFile():
+    mb_filename = MATRIXBOARD_filename
+    firstline = ["",] # First blanks
+    firstline.extend(tuple(MATRIXBOARD))
+    data = [firstline]
+    for name in MATRIXBOARD:
+        row = [name,]
+        for opp in MATRIXBOARD[name]:
+            row.append(str(MATRIXBOARD[name][opp]))
+        data.append(row)
+
+    with open(folderize(mb_filename), mode='w') as writeFile:
+        writer = csv.writer(writeFile)
+        writer.writerows(data)
+    writeFile.close()
 
 def cacheBLboard(boardFileName):
     rawLeaderboard = getLeaderboard(boardFileName)
@@ -54,6 +86,8 @@ def init(taskmaster):
         #updates the LEADERBOARD
         writeStats(winAgentName,LEADERBOARD, win=1)
         writeStats(loseAgentName,LEADERBOARD, lose=1)
+        updateMatrixBoard(winAgentName, loseAgentName)
+
 
     def wipeWinLoss():
         for name in LEADERBOARD:
@@ -124,6 +158,7 @@ def init(taskmaster):
 
         if matchCountArr[0] >= UPDATE_BOARD_FREQUENCY and matchCountArr[0] % UPDATE_BOARD_FREQUENCY == 0:
             writeToBLboardFile(LEADERBOARD,LEADERBOARD_FILENAME[0])
+            writeToMatrixFile()
 
         matchCountArr[0] = matchCountArr[0] + 1
 
@@ -148,9 +183,11 @@ def init(taskmaster):
         botOne = composeBot(agentOneName)
         botTwo = composeBot(agentTwoName)
         num_games = 21
-        num_rounds = 1500
+        num_rounds = 1200
         if QUICK:
             num_games = 1
+            num_rounds = 300
+
         training_regime = (num_games,num_rounds)
         # ((b1,b2), (ng,nr), (name1,name2))
         matchup_job = ((botOne, botTwo),training_regime,(agentOneName,agentTwoName))
@@ -166,6 +203,7 @@ def init(taskmaster):
         print("ERROR " + LEADERBOARD_FILENAME[0] + ".csv not found!")
         exit()
     finally:
+        makeMatrixBoard(LEADERBOARD)
         blRoundRobinTraining()
         print("THE BOTLYMPICS BEGINS!")
 
