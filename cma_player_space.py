@@ -57,6 +57,9 @@ class CMAPlayerSpace:
     def get_current_mean(self):
         return self.instance.result[5]
 
+    def get_current_sigma(self):
+        return self.instance.sigma
+    
     def get_current_sd(self):
         return self.instance.result[6]
 
@@ -65,6 +68,7 @@ class CMAPlayerSpace:
         with open(self.output_log_path, 'a') as log_file:
             log_file.write('Weights = ' + ' '.join(str(x) for x in self.get_weights(self.get_current_mean())) + '\n')
             log_file.write('Mean = ' + ' '.join(str(x) for x in self.get_current_mean()) + '\n')
+            log_file.write('Sigma = ' + str(self.get_current_sigma()) + '\n')
             log_file.write('SD =   ' + ' '.join(str(x) for x in self.get_current_sd()) + '\n')
             log_file.write('NormMean(SD) = ' + str(numpy.linalg.norm(self.get_current_sd(), ord=2) / math.sqrt(self.dimensions)) + '\n')
         with open(self.output_state_path, 'wb') as state_file:
