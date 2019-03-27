@@ -18,7 +18,7 @@ def createPlayerSpaces(taskmaster):
     #    'smart_warrior_train_1',
     #    'SmartWarrior',
     #    [[0, 1]] * 50, # weight ranges
-    #    0.3, # initial sd
+    #    0.34, # initial sd
     #    2500, # samples per evaluation
     #    4,
     #    101,
@@ -41,7 +41,7 @@ def createPlayerSpaces(taskmaster):
     #    'neural_player_test_4',
     #    'NeuralPlayer',
     #    [[0, 1]] * 50, # weight ranges
-    #    0.3, # initial sd
+    #    0.34, # initial sd
     #    2500, # samples per evaluation
     #    4,
     #    101,
@@ -64,7 +64,7 @@ def createPlayerSpaces(taskmaster):
         'neural2_player_train_apple',
         'Neural2Player',
         [[0, 1]] * 101, # weight ranges
-        0.3, # initial sd
+        0.34, # initial sd
         2500, # samples per evaluation
         4,
         101,
