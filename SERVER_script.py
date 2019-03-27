@@ -15,22 +15,22 @@ def createPlayerSpaces(taskmaster):
     
     CMAPlayerSpace(
         taskmaster,
-        'neural2_player_train_cherry',
-        'Neural2Player',
-        [[0, 1]] * 101, # weight ranges
-        1, # samples per evaluation
+        'neural3_player_train_apple',
+        'Neural3Player',
+        [[-1, 1]] * 99 + [[0, 1]] * 2,
+        2500,
         4,
         101,
         60 * 4)
     
     ProfilePlayerSpace(
         taskmaster,
-        'neural2_player_profile_cherry',
-        'Neural2Player',
-        [[0, 1]] * 101,
+        'neural3_player_profile_apple',
+        'Neural3Player',
+        [[-1, 1]] * 99 + [[0, 1]] * 2,
         20,
-        1,
-        1,
+        2500,
+        1000,
         4,
         101,
         60 * 4)
