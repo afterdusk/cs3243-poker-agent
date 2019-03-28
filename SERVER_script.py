@@ -27,6 +27,7 @@ def createPlayerSpaces(taskmaster):
         taskmaster,
         'neural3_player_profile_banana',
         'Neural3Player',
+        10,
         [[-1, 1]] * 10 + [[0, 1]] * 2,
         10,
         4000,
