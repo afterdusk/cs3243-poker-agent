@@ -1,6 +1,4 @@
 from pypokerengine.api.game import setup_config, start_poker
-from neural_player import NeuralPlayer
-from neural2_player import Neural2Player
 from neural3_player import Neural3Player
 from wise_player import WisePlayer
 from smartwarrior import SmartWarrior
@@ -59,8 +57,6 @@ def play_bots(agent_one, agent_two, n, rounds):
 
 # w is a tuple of weights
 PLAYER_LIBRARY = {}
-PLAYER_LIBRARY['NeuralPlayer'] = lambda w: NeuralPlayer(w)
-PLAYER_LIBRARY['Neural2Player'] = lambda w: Neural2Player(w)
 PLAYER_LIBRARY['Neural3Player'] = lambda w: Neural3Player(w)
 PLAYER_LIBRARY['WisePlayer'] = lambda w: WisePlayer(w)
 PLAYER_LIBRARY['SmartWarrior'] = lambda w: SmartWarrior(w)
