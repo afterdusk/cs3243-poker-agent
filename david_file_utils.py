@@ -24,17 +24,19 @@ def overwriteWeights(name, board, weights):
 def cacheLeaderboard(boardFileName):
     rawLeaderboard = getLeaderboard(boardFileName)
     leaderboard = {}
+    gens = rawLeaderboard[1][1]
+    minBots = rawLeaderboard[1][3]
     for row in rawLeaderboard[2:]:
         name = row[0]
         scores = tuple(map(lambda e: float(e), row[1:4])) #Last not inclusive
         weights = list(map(lambda e: float(e), row[5:]))
         leaderboard[name] = [scores, weights]
-    return leaderboard
+    return leaderboard, int(gens), int(minBots)
 
 
-def writeToLeaderboardFile(leaderboard, boardFilename, generation = 1, plateauVal = 1):
+def writeToLeaderboardFile(leaderboard, boardFilename, minBots, generation = 1, plateauVal = 1):
     HEADER = ('Agent Name', 'Wins', 'Losses','Performance')
-    GENERATIONS = ('Generation:', generation, 'PlatVal', plateauVal)
+    GENERATIONS = ('Generation:', generation, 'Num Of Bots', minBots, 'PlatVal', plateauVal)
     fileContent = [HEADER,GENERATIONS]
     for agentName in leaderboard:
         stats = leaderboard[agentName][0]
