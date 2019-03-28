@@ -10,8 +10,9 @@ from profile_player_space import ProfilePlayerSpace
 
 def createPlayerSpaces(taskmaster):
     # Init player spaces here
+    botlympics.init(taskmaster)
+
     david_playerspace.init(taskmaster, "G_2803_CBW_Board")
-    # botlympics.init(taskmaster)
     
     CMAPlayerSpace(
         taskmaster,
@@ -35,7 +36,6 @@ def createPlayerSpaces(taskmaster):
         4,
         101,
         60 * 4)
-   
 
     # CMAPlayerSpace(
     #     taskmaster,
