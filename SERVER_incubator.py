@@ -22,9 +22,10 @@ class Incubator():
     # Takes in a player class
     def __init__(self, pc):
         self.numWeights = pc.number_of_weights
-        self.initWeightBounds(self.numWeights)
+        self.initWeightBounds()
 
-    def initWeightBounds(self,nw):
+    def initWeightBounds(self):
+        nw = self.numWeights
         for i in range(0,nw):
             self.WEIGHT_BOUNDS.append([-1,1]) # Lower, Upper
 
@@ -53,17 +54,17 @@ class Incubator():
     # If max > 1 then it resets to a default of 0.2
     def mutateWeights(self, data, maxMutation):
         multi = 1000
-        def bound(weight, mutation, i):
+        def getBounds(weight, mutation, i):
             # Bounds for each weight
             #print("BOUND: weight/mutation", weight, mutation)
-            high = min(mutation, self.WEIGHT_BOUNDS[i][1] - weight)
-            low = max(-mutation, self.WEIGHT_BOUNDS[i][0] - weight)
+            high = min(weight+mutation, self.WEIGHT_BOUNDS[i][1])
+            low = max(weight-mutation, self.WEIGHT_BOUNDS[i][0])
             return int(multi*low), int(multi*high)
 
         i = 0
         newData = []
         for weight in data:
-            lowerBound, upperBound = bound(weight,maxMutation, i)
+            lowerBound, upperBound = getBounds(weight,maxMutation, i)
             newWeight = float(random.randint(lowerBound,upperBound))/multi
             #print(lowerBound, upperBound, newWeight)
             newData.append(newWeight)
@@ -124,7 +125,7 @@ class Incubator():
 
         # gpThreshold = int(len(leaderboard)//4) # Top 25%
         # bpThreshold = int(len(leaderboard)//1.667) # Bottom 60%
-        
+
         valueBoard = []
         for name in leaderboard:
             stats = getStats(name, leaderboard)
@@ -321,7 +322,7 @@ if __name__ == "__main__":
     bn = parse()
     # leaderboard = IB.generateLeaderboard(bn, 55, 12)
     leaderboard, gens, players = cacheLeaderboard(bn)
-    newBoard, plateauBool, platVal = IB.incubate(leaderboard, 12, 50, False)
+    newBoard, plateauBool, platVal = IB.incubate(leaderboard, 50, False)
     # print("NEWBOARD LEN", len(newBoard))
     # print(plateauBool)
     writeToLeaderboardFile(newBoard, bn+"o", players)
