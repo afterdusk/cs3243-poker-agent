@@ -13,7 +13,7 @@ from david_file_utils import *
 # SERVER_script will call this
 
 LEADERBOARD = {}
-testing = 1
+testing = 0
 def init(taskmaster, boardName):
     # CONFIGURATIONS
     AGENT_CLASS = EpsilonPlayer
@@ -22,7 +22,7 @@ def init(taskmaster, boardName):
     LEAGUE_MIN_SIZE = 256
     GENERATIONS_PER_CYCLE = 400 # Limit on number of generations per training
     SHRINK_RATE = 75 # League shrink per generation
-    SHRINK_MAG = 2.5 # factor of shrink eqn
+    SHRINK_MAG = 2 # factor of shrink eqn
     NUM_GAMES = 3
     NUM_ROUNDS = 201
     CHAMPION_BUFFER = 100
