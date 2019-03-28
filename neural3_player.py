@@ -56,9 +56,6 @@ class Neural3Player(BasePokerPlayer):
         n = [
             [0] * 9, 
             [0] * 6,
-            [0] * 7,
-            [0] * 5,
-            [0] * 3,
             [0] * 1]
 
         # Perception layer (9)
@@ -71,34 +68,13 @@ class Neural3Player(BasePokerPlayer):
         n[1][3] = data[6]
         n[1][4] = data[7]
         n[1][5] = data[8]
-
-        # Second layer (7)
-        n[2][0] = tanh(0, 1, float(2) / 6, 0)(numpy.dot(self.weights[4:10], n[1]))
-        n[2][1] = tanh(0, 1, float(2) / 6, 0)(numpy.dot(self.weights[10:16], n[1]))
-        n[2][2] = tanh(0, 1, float(2) / 6, 0)(numpy.dot(self.weights[16:22], n[1]))
-        n[2][3] = tanh(0, 1, float(2) / 6, 0)(numpy.dot(self.weights[22:28], n[1]))
-        n[2][4] = tanh(0, 1, float(2) / 6, 0)(numpy.dot(self.weights[28:34], n[1]))
-        n[2][5] = tanh(0, 1, float(2) / 6, 0)(numpy.dot(self.weights[34:40], n[1]))
-        n[2][6] = tanh(0, 1, float(2) / 6, 0)(numpy.dot(self.weights[40:46], n[1]))
-
-        # Third layer (5)
-        n[3][0] = tanh(0, 1, float(2) / 7, 0)(numpy.dot(self.weights[46:53], n[2]))
-        n[3][1] = tanh(0, 1, float(2) / 7, 0)(numpy.dot(self.weights[53:60], n[2]))
-        n[3][2] = tanh(0, 1, float(2) / 7, 0)(numpy.dot(self.weights[60:67], n[2]))
-        n[3][3] = tanh(0, 1, float(2) / 7, 0)(numpy.dot(self.weights[67:74], n[2]))
-        n[3][4] = tanh(0, 1, float(2) / 7, 0)(numpy.dot(self.weights[74:81], n[2]))
+    
+        # Second layer (1)
+        n[2][0] = numpy.dot(self.weights[4:10], n[1])
         
-        # Forth layer (3)
-        n[4][0] = tanh(0, 1, float(2) / 5, 0)(numpy.dot(self.weights[81:86], n[3]))
-        n[4][1] = tanh(0, 1, float(2) / 5, 0)(numpy.dot(self.weights[86:91], n[3]))
-        n[4][2] = tanh(0, 1, float(2) / 5, 0)(numpy.dot(self.weights[91:96], n[3]))
-        
-        # Fifth layer (1)
-        n[5][0] = tanh(0, 1, float(2) / 3, 0)(numpy.dot(self.weights[96:99], n[4]))
-        
-        if n[5][0] < -self.weights[99]:
+        if n[2][0] < -self.weights[10]:
             return 0 # Fold
-        elif n[5][0] > self.weights[100]:
+        elif n[2][0] > self.weights[11]:
             return 2 # Raise
         else:
             return 1 # Call
