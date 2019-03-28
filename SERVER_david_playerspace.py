@@ -30,12 +30,11 @@ def init(taskmaster, boardName):
     MY_INCUBATOR = Incubator(AGENT_CLASS)
 
     if testing:
-        LEAGUE_MIN_SIZE = 25
+        #LEAGUE_MIN_SIZE = 25
         NUM_GAMES = 1
         NUM_ROUNDS = 1
-        SHRINK_RATE = 16
-        SHRINK_MAG = 2
-        CHAMPION_BUFFER = 3
+        #SHRINK_RATE = 16
+        #CHAMPION_BUFFER = 3
 
     global LEADERBOARD
     CURR_LEAGUE_SIZE = [LEAGUE_MIN_SIZE]
@@ -126,7 +125,11 @@ def init(taskmaster, boardName):
         updateAgentsLeaderboardStats(winnerName,loserName)
 
         if matchCountArr[0] >= UPDATE_BOARD_FREQUENCY and matchCountArr[0] % UPDATE_BOARD_FREQUENCY == 0:
-            writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0], CURR_LEAGUE_SIZE[0],gens[0], PLATEAU_EVAL[0])
+            try:
+                writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0], CURR_LEAGUE_SIZE[0],gens[0], PLATEAU_EVAL[0])
+            except:
+                print("Could not write to LEADERBOARD at this time",LEADERBOARD_FILENAME[0])
+
 
         matchCountArr[0] = matchCountArr[0] + 1
 
@@ -180,7 +183,7 @@ def init(taskmaster, boardName):
         LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
         print("FOUND LEADERBOARD",LEADERBOARD_FILENAME[0])
     except:
-        LEADERBOARD_FILENAME[0] = "G_" + LEADERBOARD_FILENAME[0]
+        LEADERBOARD_FILENAME[0] = LEADERBOARD_FILENAME[0]
         print("GENERATING LEADERBOARD",LEADERBOARD_FILENAME[0])
         LEADERBOARD = MY_INCUBATOR.generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE)
         LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
