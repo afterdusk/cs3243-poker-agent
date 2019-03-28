@@ -12,9 +12,8 @@ class ProfilePlayerSpace:
         self.name = name
         self.taskmaster = taskmaster
         self.player_class = player_class
-        self.activations = [
-                lambda x: ((1 - x) * float(r[0]) + (1 + x) * float(r[1])) / 2
-                for r in weight_ranges]
+        self.dimensions = len(weight_ranges)
+        self.weight_ranges = weight_ranges
         self.evaluations_per_particle = evaluations_per_particle
         self.samples_per_evaluation = samples_per_evaluation
         self.transitivity_checks = transitivity_checks
@@ -29,12 +28,15 @@ class ProfilePlayerSpace:
             os.makedirs(self.output_dir)
 
         self.begin()
+    
+    def activation(self, i, x):
+        return float(self.weight_ranges[i][0]) + (float(self.weight_ranges[i][1] - self.weight_ranges[i][0])) * (float(x) - (-1)) / 2
 
     def sample(self):
-        return [random.uniform(-1, 1) for _ in xrange(len(self.activations))]
+        return [random.uniform(-1, 1) for _ in xrange(self.dimensions)]
     
     def get_weights(self, particle):
-        return [self.activations[i](x) for (i, x) in enumerate(particle)]
+        return [self.activation(i, x) for (i, x) in enumerate(particle)]
 
     def begin(self):
         jobs = [] 
