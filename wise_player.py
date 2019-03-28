@@ -141,4 +141,4 @@ class WisePlayer(BasePokerPlayer):
         return my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises
 
     def setup_ai():
-        return MyPlayer()
+        return WisePlayer()

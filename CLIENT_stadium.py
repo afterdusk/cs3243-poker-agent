@@ -90,8 +90,3 @@ def train_bots(matchup_job):
     games = training_regime[0]
     rounds = training_regime[1]
     return play_bots(agent_one, agent_two, games, rounds)
-
-# ============================ MAIN FUNCTION ============================
-if __name__ == "__main__":
-    current_match = recieve_matchup()
-    outcome = train_bots(current_match)

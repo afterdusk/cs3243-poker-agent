@@ -128,4 +128,4 @@ class Neural3Player(BasePokerPlayer):
         pass
 
     def setup_ai():
-        return NeuralPlayer()
+        return Neural3Player()

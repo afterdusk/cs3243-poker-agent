@@ -171,7 +171,7 @@ class EpsilonPlayer(BasePokerPlayer):
         pass
 
     def setup_ai():
-        return DeltaPlayer()
+        return EpsilonPlayer()
 
 # ====================== SMARTWARRIOR WORKINGS ====================== #
 
