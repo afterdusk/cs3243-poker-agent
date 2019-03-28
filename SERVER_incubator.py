@@ -120,8 +120,11 @@ class Incubator():
     def incubate(self,leaderboard, minBots, champs):
         numWeights = self.numWeights
         print("..........INCUBATING..........")
+        self.initWeightBounds() #RESTART THIS EVERY TIME
+
         # gpThreshold = int(len(leaderboard)//4) # Top 25%
         # bpThreshold = int(len(leaderboard)//1.667) # Bottom 60%
+        
         valueBoard = []
         for name in leaderboard:
             stats = getStats(name, leaderboard)
