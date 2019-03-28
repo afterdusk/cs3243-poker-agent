@@ -31,7 +31,7 @@ def cacheLeaderboard(boardFileName):
         scores = tuple(map(lambda e: float(e), row[1:4])) #Last not inclusive
         weights = list(map(lambda e: float(e), row[5:]))
         leaderboard[name] = [scores, weights]
-    return leaderboard, gens, minBots
+    return leaderboard, int(gens), int(minBots)
 
 
 def writeToLeaderboardFile(leaderboard, boardFilename, minBots, generation = 1, plateauVal = 1):

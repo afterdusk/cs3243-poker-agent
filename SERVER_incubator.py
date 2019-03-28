@@ -117,8 +117,8 @@ class Incubator():
         return leaderboard
 
     # INCUBATE!
-    def incubate(self,leaderboard, numWeights, minBots, champs):
-
+    def incubate(self,leaderboard, minBots, champs):
+        numWeights = self.numWeights
         print("..........INCUBATING..........")
         # gpThreshold = int(len(leaderboard)//4) # Top 25%
         # bpThreshold = int(len(leaderboard)//1.667) # Bottom 60%
@@ -161,7 +161,6 @@ class Incubator():
         self.spawnRandomChildren(numPlayers, leaderboard, numWeights)
         addStandardPlayers(leaderboard, False)
         writeToLeaderboardFile(leaderboard, boardFileName,numPlayers)
-        print(leaderboard)
         return leaderboard
 
 

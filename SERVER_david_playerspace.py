@@ -97,10 +97,11 @@ def init(taskmaster, boardName):
         champBool = gens[0] > CHAMPION_BUFFER
         if gens[0] == CHAMPION_BUFFER:
             # Backup in case champions dominate
-            writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0] + " (backup)",gens[0], PLATEAU_EVAL[0])
-        LEADERBOARD, plateauBool, plateauVal = MY_INCUBATOR.incubate(LEADERBOARD, AGENT_CLASS.number_of_weights, CURR_LEAGUE_SIZE[0], champBool)
+            writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0] + " (backup)", CURR_LEAGUE_SIZE[0], gens[0], PLATEAU_EVAL[0])
+
+        LEADERBOARD, plateauBool, plateauVal = MY_INCUBATOR.incubate(LEADERBOARD, CURR_LEAGUE_SIZE[0], champBool)
         PLATEAU_EVAL[0] = plateauVal
-        writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0],gens[0], PLATEAU_EVAL[0])
+        writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0], CURR_LEAGUE_SIZE[0], gens[0], PLATEAU_EVAL[0])
         return plateauBool
 
     #************================================************
@@ -116,7 +117,7 @@ def init(taskmaster, boardName):
         global MY_INCUBATOR
         boardLength = len(LEADERBOARD)
         UPDATE_BOARD_FREQUENCY = boardLength
-        INCUBATE_FREQUENCY = queuedMatches[0]
+        INCUBATE_FREQUENCY = queuedMatches[0] + 1
 
         print("\n============Training progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
 
@@ -125,7 +126,7 @@ def init(taskmaster, boardName):
         updateAgentsLeaderboardStats(winnerName,loserName)
 
         if matchCountArr[0] >= UPDATE_BOARD_FREQUENCY and matchCountArr[0] % UPDATE_BOARD_FREQUENCY == 0:
-            writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0],gens[0], PLATEAU_EVAL[0])
+            writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0], CURR_LEAGUE_SIZE[0],gens[0], PLATEAU_EVAL[0])
 
         matchCountArr[0] = matchCountArr[0] + 1
 
