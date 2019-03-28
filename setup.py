@@ -12,7 +12,6 @@ setup(
             Extension("pypokerengine.engine.*", ["pypokerengine/engine/*.py"]),
             Extension("pypokerengine.utils.*", ["pypokerengine/utils/*.py"]),
         ],
-        exclude=["Group23Player.py"],
         build_dir="build",
         compiler_directives=dict(
             always_allow_keywords=True
