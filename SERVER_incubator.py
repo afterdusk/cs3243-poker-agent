@@ -38,17 +38,18 @@ class Incubator():
             for name in badBots:
                 badWeight = badBots[name][weightIndex]
                 meanDiff = badWeight - w_mean
-                if meanDiff < 0 and badWeight > self.WEIGHT_BOUNDS[weightIndex][0]:
-                    # If higher than lower bound
-                    if abs(meanDiff) > TIGHTEN_THRESHOLD:
-                        print("Tightening Lower bound",weightIndex,self.WEIGHT_BOUNDS[weightIndex][0], badWeight)
-                        self.WEIGHT_BOUNDS[weightIndex][0] = badWeight
+                if badWeight > self.WEIGHT_BOUNDS[weightIndex][0] and badWeight < self.WEIGHT_BOUNDS[weightIndex][1]:
+                    if meanDiff < 0:
+                        # If higher than lower bound
+                        if abs(meanDiff) > TIGHTEN_THRESHOLD:
+                            print("Tightening Lower bound",weightIndex,self.WEIGHT_BOUNDS[weightIndex][0], badWeight)
+                            self.WEIGHT_BOUNDS[weightIndex][0] = badWeight
 
-                elif meanDiff > 0 and badWeight < self.WEIGHT_BOUNDS[weightIndex][1]:
-                    # If lower than upper bound
-                    if abs(meanDiff) > TIGHTEN_THRESHOLD:
-                        print("Tightening Upper bound",weightIndex,self.WEIGHT_BOUNDS[weightIndex][1], badWeight)
-                        self.WEIGHT_BOUNDS[weightIndex][1] = badWeight
+                    elif meanDiff > 0:
+                        # If lower than upper bound
+                        if abs(meanDiff) > TIGHTEN_THRESHOLD:
+                            print("Tightening Upper bound",weightIndex,self.WEIGHT_BOUNDS[weightIndex][1], badWeight)
+                            self.WEIGHT_BOUNDS[weightIndex][1] = badWeight
 
     # Mutates all data weights in steps of [-max to max] in either positive or negative direction
     # If max > 1 then it resets to a default of 0.2
@@ -56,9 +57,11 @@ class Incubator():
         multi = 1000
         def getBounds(weight, mutation, i):
             # Bounds for each weight
-            #print("BOUND: weight/mutation", weight, mutation)
-            high = min(weight+mutation, self.WEIGHT_BOUNDS[i][1])
-            low = max(weight-mutation, self.WEIGHT_BOUNDS[i][0])
+            # Second part is so boundaries never get reversed
+            high = max(min(weight+mutation, self.WEIGHT_BOUNDS[i][1]), self.WEIGHT_BOUNDS[i][0])
+            low = min(max(weight-mutation, self.WEIGHT_BOUNDS[i][0]), self.WEIGHT_BOUNDS[i][1])
+            if low > high:
+                print("ERROR WEIGHT BOUNDARIES REVERSED")
             return int(multi*low), int(multi*high)
 
         i = 0
@@ -172,7 +175,6 @@ class Incubator():
 # Also updates the Leaderboard for PERFORMANCE
 def updateLeaderboardPerf(incubator, goodOnes, badOnes, leaderboard, minBots):
     #print(goodOnes, badOnes)
-
     totalPlayers = len(leaderboard)
 
     # &&&&&&&&&&&&&&&&&&&&&&&&&& Cull weak players &&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -184,10 +186,11 @@ def updateLeaderboardPerf(incubator, goodOnes, badOnes, leaderboard, minBots):
 
     toRemove = []
     superBad = {}
+    superBad_T = int(max(len(badOnes)//3, 2))
     for bot in badOnes:
         stats = getStats(bot,leaderboard)
         performace = float(stats[2]) - 5 #Kill instantly
-        if bot in badOnes[:int(len(badOnes)//3)]:
+        if bot in badOnes[:superBad_T]:
             # Record for weight bound adjustment
             superBad[bot] = getWeights(bot,leaderboard)
         if performace <= KILL_THRESHOLD:
@@ -320,9 +323,9 @@ if __name__ == "__main__":
         args = parser.parse_args()
         return args.boardname
     bn = parse()
-    # leaderboard = IB.generateLeaderboard(bn, 55, 12)
+    #leaderboard = IB.generateLeaderboard(bn, 255)
     leaderboard, gens, players = cacheLeaderboard(bn)
-    newBoard, plateauBool, platVal = IB.incubate(leaderboard, 50, False)
+    newBoard, plateauBool, platVal = IB.incubate(leaderboard, 500, False)
     # print("NEWBOARD LEN", len(newBoard))
     # print(plateauBool)
-    writeToLeaderboardFile(newBoard, bn+"o", players)
+    #writeToLeaderboardFile(newBoard, bn+"o", players)
