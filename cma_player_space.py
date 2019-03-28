@@ -74,7 +74,7 @@ class CMAPlayerSpace:
         particles = []
         for _ in xrange(self.instance.popsize):
             particle = self.instance.ask(1)[0]
-            while all(True if v >= -1 and v <= 1 else False for v in particle):
+            while not all(True if v >= -1 and v <= 1 else False for v in particle):
                 particle = self.instance.ask(1)[0]
             particles += [particle]
 
