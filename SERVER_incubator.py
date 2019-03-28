@@ -16,8 +16,220 @@ from argparse import ArgumentParser
 CHILD_THRESHOLD = 2
 KILL_THRESHOLD = -1
 
-WEIGHT_BOUNDS = []
-INIT_WEIGHTBOUNDS = [0]
+class Incubator():
+    WEIGHT_BOUNDS = []
+
+    # Takes in a player class
+    def __init__(self, pc):
+        self.numWeights = pc.number_of_weights
+        self.initWeightBounds(self.numWeights)
+
+    def initWeightBounds(self,nw):
+        for i in range(0,nw):
+            self.WEIGHT_BOUNDS.append([-1,1]) # Lower, Upper
+
+    # Tightens the bounds based on a bunch of very lousy bots
+    def tightenWeightBounds(self,leaderboard, badBots):
+        positiveBoardStats = evaluateBoard(leaderboard)
+        for weightIndex in range(0,len(positiveBoardStats)):
+            w_mean, w_stdev = positiveBoardStats[weightIndex]
+            TIGHTEN_THRESHOLD = 2.5*w_stdev # !!! CONFIGURE BOUND CONDITIONS HERE !!!
+            for name in badBots:
+                badWeight = badBots[name][weightIndex]
+                meanDiff = badWeight - w_mean
+                if meanDiff < 0 and badWeight > self.WEIGHT_BOUNDS[weightIndex][0]:
+                    # If higher than lower bound
+                    if abs(meanDiff) > TIGHTEN_THRESHOLD:
+                        print("Tightening Lower bound",weightIndex,self.WEIGHT_BOUNDS[weightIndex][0], badWeight)
+                        self.WEIGHT_BOUNDS[weightIndex][0] = badWeight
+
+                elif meanDiff > 0 and badWeight < self.WEIGHT_BOUNDS[weightIndex][1]:
+                    # If lower than upper bound
+                    if abs(meanDiff) > TIGHTEN_THRESHOLD:
+                        print("Tightening Upper bound",weightIndex,self.WEIGHT_BOUNDS[weightIndex][1], badWeight)
+                        self.WEIGHT_BOUNDS[weightIndex][1] = badWeight
+
+    # Mutates all data weights in steps of [-max to max] in either positive or negative direction
+    # If max > 1 then it resets to a default of 0.2
+    def mutateWeights(self, data, maxMutation):
+        multi = 1000
+        def bound(weight, mutation, i):
+            # Bounds for each weight
+            #print("BOUND: weight/mutation", weight, mutation)
+            high = min(mutation, self.WEIGHT_BOUNDS[i][1] - weight)
+            low = max(-mutation, self.WEIGHT_BOUNDS[i][0] - weight)
+            return int(multi*low), int(multi*high)
+
+        i = 0
+        newData = []
+        for weight in data:
+            lowerBound, upperBound = bound(weight,maxMutation, i)
+            newWeight = float(random.randint(lowerBound,upperBound))/multi
+            #print(lowerBound, upperBound, newWeight)
+            newData.append(newWeight)
+            i+=1
+        #print(data,newData)
+        return newData
+
+    def generateRandomWeights(self,n):
+        w = []
+        while len(w) < n:
+            w.append(0)
+        return self.mutateWeights(w,0.9)
+
+    def makeClone(self, pName, board):
+        parentW = getWeights(pName,board)
+        childW = self.mutateWeights(parentW,0.05)
+        childName = pName + "^" + str(random.randint(0,9))
+        addAgent(childName, childW, board)
+
+    def makeChildFromParents(self, botAName, botBName, leaderboard):
+        # Makes a child weight that takes the average of two parents and applies [+/-0.1] mutation
+        def makeChildWeightsFromParents(pAWeights, pBWeights):
+            childWeights = []
+            for i in range(0,len(pAWeights)):
+                # Takes the average of both parents
+                childWeights.append((pAWeights[i]+pBWeights[i])/2)
+
+            #Muatate the weights by +/- 0.05
+            self.mutateWeights(childWeights,0.05)
+            return childWeights
+
+        parentAWeights = getWeights(botAName,leaderboard)
+        parentBWeights = getWeights(botBName,leaderboard)
+        childWeights = makeChildWeightsFromParents(parentAWeights,parentBWeights)
+        childName = botAName[:9] + "-" + botBName[:9] + "#" + str(random.randint(0,99))
+
+        # Add child to board
+        addAgent(childName, childWeights, leaderboard)
+        #print("Created child " + child)
+
+    def spawnRandomChildren(self, num, leaderboard, numWeights):
+        NAME_LENGTH = 4
+        def id_generator(size=NAME_LENGTH, chars=string.ascii_uppercase):
+            return ''.join(random.choice(chars) for _ in range(size))
+        i = 0
+        while i < num:
+            botName = id_generator()
+            weights = self.generateRandomWeights(numWeights)
+            addAgent(botName, weights, leaderboard)
+            i += 1
+        return leaderboard
+
+    # INCUBATE!
+    def incubate(self,leaderboard, numWeights, minBots, champs):
+
+        print("..........INCUBATING..........")
+        # gpThreshold = int(len(leaderboard)//4) # Top 25%
+        # bpThreshold = int(len(leaderboard)//1.667) # Bottom 60%
+        valueBoard = []
+        for name in leaderboard:
+            stats = getStats(name, leaderboard)
+            winlose, currValue = evaluatePlayer(stats)
+            valueBoard.append((winlose, currValue, name))
+
+        # BAD = Winrate <= 50%
+        badPerformers = list(filter(lambda tup: tup[0] == False, valueBoard))
+        badPerformers.sort(key=lambda t:t[1])
+        badPerformers = map(lambda t: t[2], badPerformers)
+
+        goodPerformers = list(filter(lambda t: t[0] == True, valueBoard))
+        goodPerformers.sort(key=lambda t:t[1], reverse=True)
+        goodPerformers = map(lambda t: t[2], goodPerformers)
+
+        updatedBoard = updateLeaderboardPerf(self, goodPerformers,badPerformers, leaderboard, minBots)
+        plateauBool, plateauVal = checkPlateau(updatedBoard, numWeights)
+
+        if plateauBool:
+            print("Plateau detected!!")
+        else:
+            addStandardPlayers(updatedBoard,champs)
+
+            # Top up to meet minimum
+            if len(updatedBoard) < minBots:
+                print("TOP UP "+ str(minBots - len(updatedBoard)))
+                updatedBoard = self.spawnRandomChildren(minBots - len(updatedBoard), updatedBoard, numWeights)
+
+        # Update the leaderboard
+        print("..........FINISHED INCUBATION..........")
+        return updatedBoard, plateauBool, plateauVal
+
+
+    def generateLeaderboard(self, boardFileName, numPlayers):
+        numWeights = self.numWeights
+        leaderboard = {}
+        self.spawnRandomChildren(numPlayers, leaderboard, numWeights)
+        addStandardPlayers(leaderboard, False)
+        writeToLeaderboardFile(leaderboard, boardFileName,numPlayers)
+        print(leaderboard)
+        return leaderboard
+
+
+# DESTROY AND REPRODUCE
+# Also updates the Leaderboard for PERFORMANCE
+def updateLeaderboardPerf(incubator, goodOnes, badOnes, leaderboard, minBots):
+    #print(goodOnes, badOnes)
+
+    totalPlayers = len(leaderboard)
+
+    # &&&&&&&&&&&&&&&&&&&&&&&&&& Cull weak players &&&&&&&&&&&&&&&&&&&&&&&&&&
+    # If pop too high, gotta kill some goodOnes
+    if totalPlayers > 1.5*minBots:
+        cull = int(len(goodOnes)//5)
+        goodOnes = goodOnes[:cull] # Shorten goodOnes
+        badOnes.extend(goodOnes[cull:])
+
+    toRemove = []
+    superBad = {}
+    for bot in badOnes:
+        stats = getStats(bot,leaderboard)
+        performace = float(stats[2]) - 5 #Kill instantly
+        if bot in badOnes[:int(len(badOnes)//3)]:
+            # Record for weight bound adjustment
+            superBad[bot] = getWeights(bot,leaderboard)
+        if performace <= KILL_THRESHOLD:
+            toRemove.append(bot)
+        else: #In case I want to preserve bad bots
+            writeStats(bot,leaderboard,perf=performace)
+
+    for bot in toRemove:
+        removeAgent(bot, leaderboard)
+
+    incubator.tightenWeightBounds(leaderboard, superBad)
+
+    # Update value of totalPlayers
+    totalPlayers = len(leaderboard)
+
+    # &&&&&&&&&&&&&&&&&&&&&&&&&& Reward good players &&&&&&&&&&&&&&&&&&&&&&&&&&
+    # CLone top 10%
+    for bot in goodOnes[:int(minBots//10)]:
+        incubator.makeClone(bot, leaderboard)
+
+    # Limit
+    rewardLimit = int(max(minBots/3, len(goodOnes)))
+    #Extra Reward for 50% of good ones
+    extraReward = int(len(goodOnes)//2)
+
+    for bot in goodOnes[:rewardLimit]:
+        if len(leaderboard) > int(minBots):
+            # Prevent overpopulation
+            break
+        stats = getStats(bot,leaderboard)
+        performace = float(stats[2]) + 1
+        # Extra reward
+        if bot in goodOnes[:extraReward]:
+            performace += 1
+
+        if performace >= CHILD_THRESHOLD:
+            partner = random.choice(goodOnes)
+            while partner == bot:
+                partner = random.choice(goodOnes)
+            incubator.makeChildFromParents(bot, partner, leaderboard)
+            performace = 0
+
+        writeStats(bot,leaderboard,perf=performace)
+
+    return leaderboard
 
 def getMean(args):
     return sum(args) / len(args)
@@ -36,100 +248,6 @@ def addAgent(agentName, weights, leaderboard):
 def removeAgent(agentName, leaderboard):
     #print("Removing " + agentName)
     leaderboard.pop(agentName)
-
-def initWeightBounds(nw):
-    for i in range(0,nw):
-        WEIGHT_BOUNDS.append([-1,1]) # Lower, Upper
-    INIT_WEIGHTBOUNDS[0] = 1
-
-# Tightens the bounds based on a bunch of very lousy bots
-def tightenWeightBounds(leaderboard, badBots):
-    positiveBoardStats = evaluateBoard(leaderboard)
-    for weightIndex in range(0,len(positiveBoardStats)):
-        w_mean, w_stdev = positiveBoardStats[weightIndex]
-        TIGHTEN_THRESHOLD = 2*w_stdev # CONFIGURE HERE
-        for name in badBots:
-            badWeight = badBots[name][weightIndex]
-            meanDiff = badWeight - w_mean
-            if meanDiff < 0 and badWeight > WEIGHT_BOUNDS[weightIndex][0]:
-                # If higher than lower bound
-                if abs(meanDiff) > TIGHTEN_THRESHOLD:
-                    print("Tightening Lower bound",weightIndex,WEIGHT_BOUNDS[weightIndex][0], badWeight)
-                    WEIGHT_BOUNDS[weightIndex][0] = badWeight
-
-            elif meanDiff > 0 and badWeight < WEIGHT_BOUNDS[weightIndex][1]:
-                # If lower than upper bound
-                if abs(meanDiff) > TIGHTEN_THRESHOLD:
-                    print("Tightening Upper bound",weightIndex,WEIGHT_BOUNDS[weightIndex][1], badWeight)
-                    WEIGHT_BOUNDS[weightIndex][1] = badWeight
-
-# Mutates all data weights in steps of [-max to max] in either positive or negative direction
-# If max > 1 then it resets to a default of 0.2
-def mutateWeights(data, maxMutation):
-    multi = 1000
-    def bound(weight, mutation, i):
-        # Bounds for each weight
-        #print("BOUND: weight/mutation", weight, mutation)
-        high = min(mutation, WEIGHT_BOUNDS[i][1] - weight)
-        low = max(-mutation, WEIGHT_BOUNDS[i][0] - weight)
-        return int(multi*low), int(multi*high)
-
-    i = 0
-    newData = []
-    for weight in data:
-        lowerBound, upperBound = bound(weight,maxMutation, i)
-        newWeight = float(random.randint(lowerBound,upperBound))/multi
-        #print(lowerBound, upperBound, newWeight)
-        newData.append(newWeight)
-        i+=1
-    #print(data,newData)
-    return newData
-
-def makeClone(pName, board):
-    parentW = getWeights(pName,board)
-    childW = mutateWeights(parentW,0.05)
-    childName = pName + "^" + str(random.randint(0,9))
-    addAgent(childName, childW, board)
-
-def makeChildFromParents(botAName, botBName, leaderboard):
-    parentAWeights = getWeights(botAName,leaderboard)
-    parentBWeights = getWeights(botBName,leaderboard)
-    childWeights = makeChildWeightsFromParents(parentAWeights,parentBWeights)
-    childName = botAName[:9] + "-" + botBName[:9] + "#" + str(random.randint(0,99))
-
-    # Add child to board
-    addAgent(childName, childWeights, leaderboard)
-    #print("Created child " + child)
-
-# Makes a child weight that takes the average of two parents and applies [+/-0.1] mutation
-def makeChildWeightsFromParents(pAWeights, pBWeights):
-    childWeights = []
-    for i in range(0,len(pAWeights)):
-        # Takes the average of both parents
-        childWeights.append((pAWeights[i]+pBWeights[i])/2)
-
-    #Muatate the weights by +/- 0.05
-    mutateWeights(childWeights,0.05)
-    return childWeights
-
-def generateRandomWeights(n):
-    w = []
-    while len(w) < n:
-        w.append(0)
-    return mutateWeights(w,0.9)
-
-def spawnRandomChildren(num, leaderboard, numWeights):
-    NAME_LENGTH = 4
-    def id_generator(size=NAME_LENGTH, chars=string.ascii_uppercase):
-        return ''.join(random.choice(chars) for _ in range(size))
-    i = 0
-    while i < num:
-        botName = id_generator()
-        weights = generateRandomWeights(numWeights)
-        addAgent(botName, weights, leaderboard)
-        i += 1
-
-    return leaderboard
 
 # Evaluation function based on wins/loss ratio and multiplied by number of games played
 def evaluatePlayer(row):
@@ -168,112 +286,6 @@ def checkPlateau(board, numWeights):
     print("Plateau evaluation: ", avgStdDev, "Threshold:", PLATEAU_THRESHOLD)
     return avgStdDev < PLATEAU_THRESHOLD, avgStdDev
 
-# DESTROY AND REPRODUCE
-# Also updates the Agent_Leaderboard for PERFORMANCE
-def updateAgentsLeaderboardPerf(goodOnes, badOnes, leaderboard, minBots):
-    #print(goodOnes, badOnes)
-
-    totalPlayers = len(leaderboard)
-
-    # &&&&&&&&&&&&&&&&&&&&&&&&&& Cull weak players &&&&&&&&&&&&&&&&&&&&&&&&&&
-    # If pop too high, gotta kill some goodOnes
-    if totalPlayers > 1.5*minBots:
-        cull = int(len(goodOnes)//5)
-        goodOnes = goodOnes[:cull] # Shorten goodOnes
-        badOnes.extend(goodOnes[cull:])
-
-    toRemove = []
-    superBad = {}
-    for bot in badOnes:
-        stats = getStats(bot,leaderboard)
-        performace = float(stats[2]) - 5 #Kill instantly
-        if bot in badOnes[:int(len(badOnes)//3)]:
-            # Record for weight bound adjustment
-            superBad[bot] = getWeights(bot,leaderboard)
-        if performace <= KILL_THRESHOLD:
-            toRemove.append(bot)
-        else: #In case I want to preserve bad bots
-            writeStats(bot,leaderboard,perf=performace)
-
-    for bot in toRemove:
-        removeAgent(bot, leaderboard)
-
-    tightenWeightBounds(leaderboard, superBad)
-
-    # Update value of totalPlayers
-    totalPlayers = len(leaderboard)
-
-    # &&&&&&&&&&&&&&&&&&&&&&&&&& Reward good players &&&&&&&&&&&&&&&&&&&&&&&&&&
-    # CLone top 10%
-    for bot in goodOnes[:int(minBots//10)]:
-        makeClone(bot, leaderboard)
-
-    # Limit
-    rewardLimit = int(max(minBots/3, len(goodOnes)))
-    #Extra Reward for 50% of good ones
-    extraReward = int(len(goodOnes)//2)
-
-    for bot in goodOnes[:rewardLimit]:
-        if len(leaderboard) > int(minBots):
-            # Prevent overpopulation
-            break
-        stats = getStats(bot,leaderboard)
-        performace = float(stats[2]) + 1
-        # Extra reward
-        if bot in goodOnes[:extraReward]:
-            performace += 1
-
-        if performace >= CHILD_THRESHOLD:
-            partner = random.choice(goodOnes)
-            while partner == bot:
-                partner = random.choice(goodOnes)
-            makeChildFromParents(bot, partner, leaderboard)
-            performace = 0
-
-        writeStats(bot,leaderboard,perf=performace)
-
-    return leaderboard
-
-# INCUBATE!
-def incubate(leaderboard, numWeights, minBots, champs):
-    if INIT_WEIGHTBOUNDS[0] < 1:
-        initWeightBounds(numWeights)
-    print("..........INCUBATING..........")
-    # gpThreshold = int(len(leaderboard)//4) # Top 25%
-    # bpThreshold = int(len(leaderboard)//1.667) # Bottom 60%
-    valueBoard = []
-    for name in leaderboard:
-        stats = getStats(name, leaderboard)
-        winlose, currValue = evaluatePlayer(stats)
-        valueBoard.append((winlose, currValue, name))
-
-    # BAD = Win:loss = 1:1 or worse
-    badPerformers = list(filter(lambda tup: tup[0] == False, valueBoard))
-    badPerformers.sort(key=lambda t:t[1])
-    badPerformers = map(lambda t: t[2], badPerformers)
-
-    goodPerformers = list(filter(lambda t: t[0] == True, valueBoard))
-    goodPerformers.sort(key=lambda t:t[1], reverse=True)
-    goodPerformers = map(lambda t: t[2], goodPerformers)
-
-    updatedBoard = updateAgentsLeaderboardPerf(goodPerformers,badPerformers, leaderboard, minBots)
-    plateauBool, plateauVal = checkPlateau(updatedBoard, numWeights)
-
-    if plateauBool:
-        print("Plateau detected!!")
-    else:
-
-        addStandardPlayers(updatedBoard,champs)
-
-        # Top up to meet minimum
-        if len(updatedBoard) < minBots:
-            print("TOP UP "+ str(minBots - len(updatedBoard)))
-            updatedBoard = spawnRandomChildren(minBots - len(updatedBoard), updatedBoard, numWeights)
-
-    # Update the leaderboard
-    print("..........FINISHED INCUBATION..........")
-    return updatedBoard, plateauBool, plateauVal
-
 # Add some consistent players
 # these weights only work for EpsilonPlayer
 def addStandardPlayers(board, champs):
@@ -295,24 +307,19 @@ def addStandardPlayers(board, champs):
             w = STANDARDPLAYERS[name]
             addAgent(name,w, board)
 
-def generateLeaderboard(boardFileName, numPlayers, numWeights):
-    leaderboard = {}
-    spawnRandomChildren(numPlayers, leaderboard, numWeights)
-    addStandardPlayers(leaderboard, False)
-    writeToLeaderboardFile(leaderboard, boardFileName)
-    return leaderboard
-
 if __name__ == "__main__":
+    class dud:
+        number_of_weights = 12
+    IB = Incubator(dud)
     def parse():
         parser = ArgumentParser()
         parser.add_argument('-n', '--boardname', help="Name of board", default="evalboard", type=str)
         args = parser.parse_args()
         return args.boardname
     bn = parse()
-    #bn = "OOC_G23"
-    #leaderboard = generateLeaderboard(bn, 55, 12)
-    leaderboard = cacheLeaderboard(bn)
-    newBoard, plateauBool, platVal = incubate(leaderboard, 12, 50, False)
-    #print("NEWBOARD LEN", len(newBoard))
-    print(plateauBool)
-    writeToLeaderboardFile(newBoard, bn+"o")
+    # leaderboard = IB.generateLeaderboard(bn, 55, 12)
+    leaderboard, gens, players = cacheLeaderboard(bn)
+    newBoard, plateauBool, platVal = IB.incubate(leaderboard, 12, 50, False)
+    # print("NEWBOARD LEN", len(newBoard))
+    # print(plateauBool)
+    writeToLeaderboardFile(newBoard, bn+"o", players)

@@ -6,29 +6,31 @@ from collections import deque
 #from wise_player import WisePlayer
 from epsilon_player import EpsilonPlayer
 from CLIENT_stadium import train_bots
-from SERVER_incubator import incubate, generateLeaderboard
+from SERVER_incubator import Incubator
 from david_file_utils import *
 
 # SERVER SIDE david_player trainer
 # SERVER_script will call this
 
 LEADERBOARD = {}
-testing = 0
-def init(taskmaster):
+testing = 1
+def init(taskmaster, boardName):
     # CONFIGURATIONS
     AGENT_CLASS = EpsilonPlayer
-    LEADERBOARD_FILENAME = [str(time.time())[4:8]+"Ep_Board"]
+    #LEADERBOARD_FILENAME = [str(time.time())[4:8]+"Ep_Board"]
+    LEADERBOARD_FILENAME = [boardName] #Import boardname for continuity
     LEAGUE_MIN_SIZE = 256
-    GENERATIONS_PER_CYCLE = 317 # Limit on number of generations per training
+    GENERATIONS_PER_CYCLE = 400 # Limit on number of generations per training
     SHRINK_RATE = 75 # League shrink per generation
-    SHRINK_MAG = 2 # factor of shrink eqn
+    SHRINK_MAG = 2.5 # factor of shrink eqn
     NUM_GAMES = 3
     NUM_ROUNDS = 201
     CHAMPION_BUFFER = 100
     PLATEAU_EVAL = [1]
+    MY_INCUBATOR = Incubator(AGENT_CLASS)
 
     if testing:
-        LEAGUE_MIN_SIZE = 32
+        LEAGUE_MIN_SIZE = 25
         NUM_GAMES = 1
         NUM_ROUNDS = 1
         SHRINK_RATE = 16
@@ -96,7 +98,7 @@ def init(taskmaster):
         if gens[0] == CHAMPION_BUFFER:
             # Backup in case champions dominate
             writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0] + " (backup)",gens[0], PLATEAU_EVAL[0])
-        LEADERBOARD, plateauBool, plateauVal = incubate(LEADERBOARD, AGENT_CLASS.number_of_weights, CURR_LEAGUE_SIZE[0], champBool)
+        LEADERBOARD, plateauBool, plateauVal = MY_INCUBATOR.incubate(LEADERBOARD, AGENT_CLASS.number_of_weights, CURR_LEAGUE_SIZE[0], champBool)
         PLATEAU_EVAL[0] = plateauVal
         writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0],gens[0], PLATEAU_EVAL[0])
         return plateauBool
@@ -111,6 +113,7 @@ def init(taskmaster):
     # Message contains a tuple of (winner_name,loser_name)
     def handleOutcome(sentJob, outcome):
         global LEADERBOARD
+        global MY_INCUBATOR
         boardLength = len(LEADERBOARD)
         UPDATE_BOARD_FREQUENCY = boardLength
         INCUBATE_FREQUENCY = queuedMatches[0]
@@ -135,7 +138,9 @@ def init(taskmaster):
             if gens[0] > GENERATIONS_PER_CYCLE or plateau:
                 gens[0] = 1
                 LEADERBOARD_FILENAME[0] = LEADERBOARD_FILENAME[0] + "I"
-                LEADERBOARD = generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE, AGENT_CLASS.number_of_weights)
+                # New incubator
+                MY_INCUBATOR = Incubator()
+                LEADERBOARD = MY_INCUBATOR.generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE, AGENT_CLASS.number_of_weights)
 
             print("%%%%%%%%%%%%%%%%%%%%%% Beginning Generation "+ str(gens[0])+ "%%%%%%%%%%%%%%%%%%%%%%")
             roundRobinTraining()
@@ -167,12 +172,17 @@ def init(taskmaster):
         sendMatchup(matchup_job)
         queuedMatches[0] = queuedMatches[0] + 1
 
-    # This is the main stuff
+    # # This is the main stuff
+    # LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
+
     try:
-        LEADERBOARD = cacheLeaderboard(LEADERBOARD_FILENAME[0])
+        LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
+        print("FOUND LEADERBOARD",LEADERBOARD_FILENAME[0])
     except:
-        LEADERBOARD = generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE, AGENT_CLASS.number_of_weights)
-        LEADERBOARD = cacheLeaderboard(LEADERBOARD_FILENAME[0])
+        LEADERBOARD_FILENAME[0] = "G_" + LEADERBOARD_FILENAME[0]
+        print("GENERATING LEADERBOARD",LEADERBOARD_FILENAME[0])
+        LEADERBOARD = MY_INCUBATOR.generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE)
+        LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
     finally:
         roundRobinTraining()
 
