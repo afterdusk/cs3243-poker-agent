@@ -8,10 +8,11 @@ import os
 import activation_functions
 
 class CMA2PlayerSpace:
-    def __init__(self, taskmaster, name, player_class, weight_ranges, num_games, num_rounds, timeout):
+    def __init__(self, taskmaster, name, player_class, pop_size, weight_ranges, num_games, num_rounds, timeout):
         self.name = name
         self.taskmaster = taskmaster
         self.player_class = player_class
+        self.pop_size = pop_size
         self.dimensions = len(weight_ranges)
         self.weight_ranges = weight_ranges
         self.num_games = num_games
@@ -34,6 +35,7 @@ class CMA2PlayerSpace:
             cma_options.set('verbose', -9)
             cma_options.set('verb_disp', -1)
             cma_options.set('verb_log', 0)
+            cma_options.set('popsize', pop_size)
             self.instance = cma.CMAEvolutionStrategy(
                     [0] * self.dimensions, # Origin centered
                     0.34, # 3SD covering [-1, 1]

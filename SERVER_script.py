@@ -18,6 +18,7 @@ def createPlayerSpaces(taskmaster):
         taskmaster,
         'epsilon_player_train_apple',
         'EpsilonPlayer',
+        30,
         [[-1, 1]] * 12,
         4,
         101,
