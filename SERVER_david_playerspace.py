@@ -95,7 +95,7 @@ def init(taskmaster, boardName):
     def callIncubator():
         global LEADERBOARD
         reduceLeagueSize()
-        if gens[0] == CHAMPION_BUFFER:
+        if gens[0] >= CHAMPION_BUFFER:
             # Backup in case champions dominate
             MY_INCUBATOR.enableChamps()
 
