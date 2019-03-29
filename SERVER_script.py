@@ -12,8 +12,8 @@ def createPlayerSpaces(taskmaster):
     # Init player spaces here
     #  botlympics.init(taskmaster)
 
-    david_playerspace.init(taskmaster, "G_2803_CBW_Board")
-    
+    david_playerspace.init(taskmaster, "2903_ChampPlat_Board")
+
     CMAPlayerSpace(
         taskmaster,
         'neural3_player_train_cherry',
@@ -23,19 +23,19 @@ def createPlayerSpaces(taskmaster):
         4,
         101,
         60 * 4)
-    
-    ProfilePlayerSpace(
-        taskmaster,
-        'neural3_player_profile_cherry',
-        'Neural3Player',
-        10,
-        [[-1, 1]] * 10 + [[0, 1]] * 2,
-        20,
-        4000,
-        1000,
-        4,
-        101,
-        60 * 4)
+
+    # ProfilePlayerSpace(
+    #     taskmaster,
+    #     'neural3_player_profile_cherry',
+    #     'Neural3Player',
+    #     10,
+    #     [[-1, 1]] * 10 + [[0, 1]] * 2,
+    #     20,
+    #     4000,
+    #     1000,
+    #     4,
+    #     101,
+    #     60 * 4)
 
     # CMAPlayerSpace(
     #     taskmaster,

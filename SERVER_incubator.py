@@ -34,7 +34,7 @@ class Incubator():
         positiveBoardStats = evaluateBoard(leaderboard)
         for weightIndex in range(0,len(positiveBoardStats)):
             w_mean, w_stdev = positiveBoardStats[weightIndex]
-            TIGHTEN_THRESHOLD = 2.5*w_stdev # !!! CONFIGURE BOUND CONDITIONS HERE !!!
+            TIGHTEN_THRESHOLD = 3*w_stdev # !!! CONFIGURE BOUND CONDITIONS HERE !!!
             for name in badBots:
                 badWeight = badBots[name][weightIndex]
                 meanDiff = badWeight - w_mean
@@ -186,7 +186,7 @@ def updateLeaderboardPerf(incubator, goodOnes, badOnes, leaderboard, minBots):
 
     toRemove = []
     superBad = {}
-    superBad_T = int(max(len(badOnes)//3, 2))
+    superBad_T = int(max(len(badOnes)//4, 5))
     for bot in badOnes:
         stats = getStats(bot,leaderboard)
         performace = float(stats[2]) - 5 #Kill instantly

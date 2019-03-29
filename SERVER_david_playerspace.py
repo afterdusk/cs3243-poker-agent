@@ -13,7 +13,8 @@ from david_file_utils import *
 # SERVER_script will call this
 
 LEADERBOARD = {}
-testing = 0
+testing = 1
+
 def init(taskmaster, boardName):
     # CONFIGURATIONS
     AGENT_CLASS = EpsilonPlayer
@@ -23,14 +24,15 @@ def init(taskmaster, boardName):
     GENERATIONS_PER_CYCLE = 400 # Limit on number of generations per training
     SHRINK_RATE = 75 # League shrink per generation
     SHRINK_MAG = 2 # factor of shrink eqn
-    NUM_GAMES = 3
+    NUM_GAMES = 4
     NUM_ROUNDS = 201
     CHAMPION_BUFFER = 100
+    INTRO_CHAMPS = [0]
     PLATEAU_EVAL = [1]
     MY_INCUBATOR = Incubator(AGENT_CLASS)
 
     if testing:
-        #LEAGUE_MIN_SIZE = 25
+        LEAGUE_MIN_SIZE = 30
         NUM_GAMES = 1
         NUM_ROUNDS = 1
         #SHRINK_RATE = 16
@@ -93,15 +95,24 @@ def init(taskmaster, boardName):
     def callIncubator():
         global LEADERBOARD
         reduceLeagueSize()
-        champBool = gens[0] > CHAMPION_BUFFER
         if gens[0] == CHAMPION_BUFFER:
             # Backup in case champions dominate
+            INTRO_CHAMPS[0] = INTRO_CHAMPS[0] + 1
+
+        if INTRO_CHAMPS[0] == 1:
+            INTRO_CHAMPS[0] = INTRO_CHAMPS[0] + 1
             writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0] + " (backup)", CURR_LEAGUE_SIZE[0], gens[0], PLATEAU_EVAL[0])
 
+        champBool = INTRO_CHAMPS[0] > 0
         LEADERBOARD, plateauBool, plateauVal = MY_INCUBATOR.incubate(LEADERBOARD, CURR_LEAGUE_SIZE[0], champBool)
+
+        if plateauBool:
+            INTRO_CHAMPS[0] = INTRO_CHAMPS[0] + 1
+
         PLATEAU_EVAL[0] = plateauVal
-        writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0], CURR_LEAGUE_SIZE[0], gens[0], PLATEAU_EVAL[0])
-        return plateauBool
+        writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0], CURR_LEAGUE_SIZE[0], gens[0], plateauVal)
+
+        return plateauBool and INTRO_CHAMPS[0] > 1
 
     #************================================************
     #         Server-Client communication functions
@@ -143,8 +154,8 @@ def init(taskmaster, boardName):
                 gens[0] = 1
                 LEADERBOARD_FILENAME[0] = LEADERBOARD_FILENAME[0] + "I"
                 # New incubator
-                MY_INCUBATOR = Incubator()
-                LEADERBOARD = MY_INCUBATOR.generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE, AGENT_CLASS.number_of_weights)
+                MY_INCUBATOR = Incubator(AGENT_CLASS)
+                LEADERBOARD = MY_INCUBATOR.generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE)
 
             print("%%%%%%%%%%%%%%%%%%%%%% Beginning Generation "+ str(gens[0])+ "%%%%%%%%%%%%%%%%%%%%%%")
             roundRobinTraining()
