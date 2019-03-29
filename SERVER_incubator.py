@@ -33,10 +33,14 @@ class Incubator():
 
     def enableChamps(self):
         self.champs = True
-        self.backup += 1
+        if self.backup == 0:
+            self.backup = 1
 
     def makeBackup(self):
-        return self.backup == 1
+        if self.backup == 1:
+            self.backup = 2
+            return True
+        return False
 
     # Tightens the bounds based on a bunch of very lousy bots
     def tightenWeightBounds(self,leaderboard, badBots):
