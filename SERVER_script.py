@@ -15,14 +15,27 @@ def createPlayerSpaces(taskmaster):
     david_playerspace.init(taskmaster, "2903_ChampPlat_Board")
 
     CMAPlayerSpace(
-            taskmaster,
-            'epsilon_player_train_apple',
-            'EpsilonPlayer',
-            [[-1, 1]] * 12,
-            4000,
-            4,
-            101,
-            60 * 4)
+        taskmaster,
+        'epsilon_player_train_apple',
+        'EpsilonPlayer',
+        [[-1, 1]] * 12,
+        4000,
+        4,
+        101,
+        60 * 4)
+
+    ProfilePlayerSpace(
+        taskmaster,
+        'epsilon_player_profile_cherry',
+        'EpsilonPlayer',
+        10,
+        [[-1, 1]] * 12,
+        20,
+        4000,
+        1000,
+        4,
+        101,
+        60 * 4)
 
     #CMAPlayerSpace(
     #    taskmaster,
