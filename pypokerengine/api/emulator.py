@@ -60,12 +60,13 @@ class Emulator(object):
         players = game_state["table"].seats.players
         player_pos = game_state["next_player"]
         sb_amount = game_state["small_blind_amount"]
-        return ActionChecker.legal_actions(players, player_pos, sb_amount)
+        street = game_state['street']
+        return ActionChecker.legal_actions(players, player_pos, sb_amount, street)
 
-    def apply_action(self, game_state, action, bet_amount=0):
+    def apply_action(self, game_state, action):
         if game_state["street"] == Const.Street.FINISHED:
             game_state, events = self._start_next_round(game_state)
-        updated_state, messages = RoundManager.apply_action(game_state, action, bet_amount)
+        updated_state, messages = RoundManager.apply_action(game_state, action)
         events = [self.create_event(message[1]["message"]) for message in messages]
         events = [e for e in events if e]
         if self._is_last_round(updated_state, self.game_rule):
