@@ -1,0 +1,54 @@
+\typeout{IJCAI-18 Instructions for Authors}
+
+\documentclass{article}
+\pdfpagewidth=8.5in
+\pdfpageheight=11in
+\usepackage{ijcai18}
+
+\usepackage{times}
+\usepackage{xcolor}
+\usepackage{soul}
+\usepackage[utf8]{inputenc}
+\usepackage[small]{caption}
+
+\title{Poker Project - Team \#23}
+
+\author{
+Au Liang Jun, David Goh Zhi Wei, Law Yong Qiang Clinton, Lee Yiyuan, Tan E-Liang
+\\ 
+National University of Singapore
+}
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+This section should introduce the problem we are considering, together with a rough overview of our approach, and a summary of our results. It should also contain a rough summary of what to expect in each of the subsequent sections.
+
+\section{Agent Design}
+This section should contain information about how our agent makes decisions. Minimax, heuristics, etc.
+
+\section{Agent Training Methodology}
+\subsection{David's Leaderboard Approach}
+Intuition, justification, details.
+
+\subsection{CMA-ES Approach}
+Intuition, justification, details.
+
+\subsection{PSO Approach} 
+Intuition, justification, details.
+
+\subsection{Agent Training Framework}
+Details about how we monopolized entire clusters. Optimization tweaks (e.g. fast monte-carlo, Cython). Speedups achieved solely within training framework should be contained here, and not in training results.
+
+\section{Training Results}
+Performance (strength of trained players, convergence of training, etc) of agent designs/training. Uptime on CS3243's leaderboard.
+
+\section{Conclusion and Further Work}
+Summary of approach, implementation details. Thoughts and further work. Acknowledgements (maybe).
+
+\bibliographystyle{named}
+\bibliography{ijcai18}
+
+\end{document}
+
