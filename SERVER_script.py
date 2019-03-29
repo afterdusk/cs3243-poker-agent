@@ -10,7 +10,7 @@ from profile_player_space import ProfilePlayerSpace
 
 def createPlayerSpaces(taskmaster):
     # Init player spaces here
-     botlympics.init(taskmaster)
+    botlympics.init(taskmaster)
 
     david_playerspace.init(taskmaster, "2903_ChampPlat_Board")
 
