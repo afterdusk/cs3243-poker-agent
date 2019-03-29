@@ -37,55 +37,6 @@ def createPlayerSpaces(taskmaster):
         101,
         60 * 4)
 
-    # CMAPlayerSpace(
-    #     taskmaster,
-    #     'neural3_player_train_pear',
-    #     'Neural3Player',
-    #     [[-1, 1]] * 99 + [[0, 1]] * 2,
-    #     2500,
-    #     4,
-    #     101,
-    #     60 * 4)
-    #
-    # ProfilePlayerSpace(
-    #     taskmaster,
-    #     'neural3_player_profile_pear',
-    #     'Neural3Player',
-    #     [[-1, 1]] * 99 + [[0, 1]] * 2,
-    #     20,
-    #     2500,
-    #     1000,
-    #     4,
-    #     101,
-    #     60 * 4)
-    #
-
-    # CMAPlayerSpace(
-    #     taskmaster,
-    #     'neural2_player_train_pear',
-    #     'Neural2Player',
-    #     [[0, 1]] * 101, # weight ranges
-    #     0.34, # initial sd
-    #     2500, # samples per evaluation
-    #     4,
-    #     101,
-    #     60 * 4)
-    #
-    # ProfilePlayerSpace(
-    #     taskmaster,
-    #     'neural2_player_profile_pear',
-    #     'Neural2Player',
-    #     [[0, 1]] * 101,
-    #     20,
-    #     2500,
-    #     2000,
-    #     4,
-    #     101,
-    #     60 * 4)
-
-
-
-
 class TrainerServer:
     def __init__(self, client_id=None):
         self.taskmaster = Taskmaster()
