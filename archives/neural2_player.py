@@ -132,4 +132,4 @@ class Neural2Player(BasePokerPlayer):
         pass
 
     def setup_ai():
-        return NeuralPlayer()
+        return Neural2Player()

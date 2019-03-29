@@ -5,7 +5,8 @@ from datetime import datetime
 def estimate(hole_cards): 
     return fast_monte_carlo.estimate_win_rate(100000, hole_cards, [])
 
-def job((h1, h2)):
+def job(hs):
+    h1, h2 = hs
     win_rate = estimate([h1, h2])
     print(h1, h2, win_rate)
     return win_rate

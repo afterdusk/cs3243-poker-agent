@@ -8,10 +8,11 @@ import os
 import activation_functions
 
 class ProfilePlayerSpace:
-    def __init__(self, taskmaster, name, player_class, weight_ranges, evaluations_per_particle, samples_per_evaluation, transitivity_checks, num_games, num_rounds, timeout):
+    def __init__(self, taskmaster, name, player_class, num_profiles, weight_ranges, evaluations_per_particle, samples_per_evaluation, transitivity_checks, num_games, num_rounds, timeout):
         self.name = name
         self.taskmaster = taskmaster
         self.player_class = player_class
+        self.num_profiles = num_profiles
         self.dimensions = len(weight_ranges)
         self.weight_ranges = weight_ranges
         self.evaluations_per_particle = evaluations_per_particle
@@ -23,6 +24,7 @@ class ProfilePlayerSpace:
         self.output_dir = './cma_output/' + self.name + '/'
         self.output_state_path = self.output_dir + 'state.txt'
         self.output_log_path = self.output_dir + 'log.txt'
+        self.count = 0
 
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
@@ -39,6 +41,9 @@ class ProfilePlayerSpace:
         return [self.activation(i, x) for (i, x) in enumerate(particle)]
 
     def begin(self):
+        if self.count >= self.num_profiles:
+            return
+
         jobs = [] 
         
         print('Generating jobs...')
@@ -112,3 +117,6 @@ class ProfilePlayerSpace:
             log_file.write('Evaluation = ' + ' '.join([str(x) for x in evaluations]) + '\n')
             log_file.write('Transitivity = ' + str(float(pass_count) / self.transitivity_checks) + '\n')
             log_file.write('\n')
+
+        self.count += 1
+        self.begin()

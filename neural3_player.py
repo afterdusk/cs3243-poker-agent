@@ -70,7 +70,7 @@ class Neural3Player(BasePokerPlayer):
         n[1][5] = data[8]
     
         # Second layer (1)
-        n[2][0] = numpy.dot(self.weights[4:10], n[1])
+        n[2][0] = numpy.dot(self.weights[4:10], n[1]) / 6
         
         if n[2][0] < -self.weights[10]:
             return 0 # Fold
@@ -128,4 +128,4 @@ class Neural3Player(BasePokerPlayer):
         pass
 
     def setup_ai():
-        return NeuralPlayer()
+        return Neural3Player()

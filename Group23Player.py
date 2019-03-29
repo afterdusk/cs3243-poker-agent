@@ -25,6 +25,18 @@ def tanh(center, scale, k, offset):
     return lambda x: scale * math.tanh(k * (x - center)) + offset
 
 
+def street_as_int(street):
+    street = street.lower()
+    if street == "preflop":
+        return 0
+    if street == "flop":
+        return 1
+    if street == "turn":
+        return 2
+    if street == "river":
+        return 3
+
+
 class Group23Player(BasePokerPlayer):
 
     # Static variable
@@ -37,7 +49,7 @@ class Group23Player(BasePokerPlayer):
         if len(self.weights) == self.number_of_weights:
             self.initWeights(self.weights)
         else:
-            print("Bad number of weights. Expected " +str(self.number_of_weights) + " weights but got: " + str(weights))
+            print("Bad number of weights. Expected " +str(self.number_of_weights) + " weights but got: " + str(self.weights))
             return 0
 
         self.old_street = ""
