@@ -12,7 +12,7 @@ from profile_player_space import ProfilePlayerSpace
 def createPlayerSpaces(taskmaster):
     botlympics.init(taskmaster)
 
-    david_playerspace.init(taskmaster, "2903_ChampPlat_Board")
+    david_playerspace.init(taskmaster, "3003_ChampPlat_Board")
 
 class TrainerServer:
     def __init__(self, client_id=None):

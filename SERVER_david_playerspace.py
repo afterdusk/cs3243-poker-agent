@@ -27,7 +27,6 @@ def init(taskmaster, boardName):
     NUM_GAMES = 4
     NUM_ROUNDS = 201
     CHAMPION_BUFFER = 100
-    INTRO_CHAMPS = [0]
     PLATEAU_EVAL = [1]
     MY_INCUBATOR = Incubator(AGENT_CLASS)
 
@@ -35,6 +34,7 @@ def init(taskmaster, boardName):
         LEAGUE_MIN_SIZE = 30
         NUM_GAMES = 1
         NUM_ROUNDS = 1
+        GENERATIONS_PER_CYCLE = 1
         #SHRINK_RATE = 16
         #CHAMPION_BUFFER = 3
 
@@ -95,24 +95,19 @@ def init(taskmaster, boardName):
     def callIncubator():
         global LEADERBOARD
         reduceLeagueSize()
-        if gens[0] == CHAMPION_BUFFER:
+        if gens[0] >= CHAMPION_BUFFER:
             # Backup in case champions dominate
-            INTRO_CHAMPS[0] = INTRO_CHAMPS[0] + 1
+            MY_INCUBATOR.enableChamps()
 
-        if INTRO_CHAMPS[0] == 1:
-            INTRO_CHAMPS[0] = INTRO_CHAMPS[0] + 1
+        if MY_INCUBATOR.makeBackup():
             writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0] + " (backup)", CURR_LEAGUE_SIZE[0], gens[0], PLATEAU_EVAL[0])
 
-        champBool = INTRO_CHAMPS[0] > 0
-        LEADERBOARD, plateauBool, plateauVal = MY_INCUBATOR.incubate(LEADERBOARD, CURR_LEAGUE_SIZE[0], champBool)
-
-        if plateauBool:
-            INTRO_CHAMPS[0] = INTRO_CHAMPS[0] + 1
+        LEADERBOARD, plateauBool, plateauVal = MY_INCUBATOR.incubate(LEADERBOARD, CURR_LEAGUE_SIZE[0])
 
         PLATEAU_EVAL[0] = plateauVal
         writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0], CURR_LEAGUE_SIZE[0], gens[0], plateauVal)
 
-        return plateauBool and INTRO_CHAMPS[0] > 1
+        return plateauBool
 
     #************================================************
     #         Server-Client communication functions
@@ -152,10 +147,24 @@ def init(taskmaster, boardName):
 
             if gens[0] > GENERATIONS_PER_CYCLE or plateau:
                 gens[0] = 1
-                LEADERBOARD_FILENAME[0] = LEADERBOARD_FILENAME[0] + "I"
                 # New incubator
                 MY_INCUBATOR = Incubator(AGENT_CLASS)
-                LEADERBOARD = MY_INCUBATOR.generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE)
+
+                LEADERBOARD_FILENAME[0] = LEADERBOARD_FILENAME[0] + "I"
+                exists = os.path.isfile(folderize(LEADERBOARD_FILENAME[0]))
+                print("FOUND LEADERBOARD",LEADERBOARD_FILENAME[0])
+
+                if exists:
+                    try:
+                        LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
+                    except:
+                        print("Problem reading leaderboard!!\nGENERATING NEW LEADERBOARD",LEADERBOARD_FILENAME[0])
+                        LEADERBOARD = MY_INCUBATOR.generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE)
+                        LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
+                else:
+                    print("GENERATING LEADERBOARD",LEADERBOARD_FILENAME[0])
+                    LEADERBOARD = MY_INCUBATOR.generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE)
+
 
             print("%%%%%%%%%%%%%%%%%%%%%% Beginning Generation "+ str(gens[0])+ "%%%%%%%%%%%%%%%%%%%%%%")
             roundRobinTraining()
@@ -194,7 +203,6 @@ def init(taskmaster, boardName):
         LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
         print("FOUND LEADERBOARD",LEADERBOARD_FILENAME[0])
     except:
-        LEADERBOARD_FILENAME[0] = LEADERBOARD_FILENAME[0]
         print("GENERATING LEADERBOARD",LEADERBOARD_FILENAME[0])
         LEADERBOARD = MY_INCUBATOR.generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE)
         LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
