@@ -13,6 +13,8 @@ from argparse import ArgumentParser
 # Reward all winners
 # Kill all losers ~50%
 
+
+STANDARD_PLAYER_FLAG = False
 CHILD_THRESHOLD = 2
 KILL_THRESHOLD = -1
 
@@ -309,8 +311,11 @@ def checkPlateau(board, numWeights):
 # Add some consistent players
 # these weights only work for EpsilonPlayer
 def addStandardPlayers(board, champs):
+    if not STANDARD_PLAYER_FLAG:
+        return
+    
     STANDARDPLAYERS = {}
-
+   
     if champs:
         STANDARDPLAYERS['Acnd'] = (0.45854458,-0.010288565,0.023143473,0.003357603,-0.045208527,-0.291372468,0.012108953,-0.14727149,0.456158875,-0.156368715,-0.575275254,0.717262457)
         STANDARDPLAYERS['Cal9'] = (0.027780254,-0.006881324,-0.02755483,0.052425943,-0.247408722,-0.343405448,-0.092064001,-0.114631729,0.367807581,-0.466988527,-0.449206837,0.577756734)
