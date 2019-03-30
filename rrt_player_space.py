@@ -90,6 +90,6 @@ class RRTPlayerSpace:
             self.streak += 1
         else:
             self.best_point = job[0][1][1]
-            self.streak = 0
+            self.streak = 1
 
         self.begin()
