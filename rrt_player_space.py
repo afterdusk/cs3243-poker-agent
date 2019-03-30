@@ -8,7 +8,7 @@ import activation_functions
 import mtree
 
 class RRTPlayerSpace:
-    def __init__(self, taskmaster, name, player_class, weight_ranges, num_games, num_rounds, timeout):
+    def __init__(self, taskmaster, name, player_class, seed, weight_ranges, num_games, num_rounds, timeout):
         self.taskmaster = taskmaster
         self.name = name
         self.player_class = player_class
@@ -21,7 +21,7 @@ class RRTPlayerSpace:
         self.output_state_path = self.output_dir + 'state.txt'
         self.output_log_path = self.output_dir + 'log.txt'
         self.index = mtree.MTree(self.norm, max_node_size=4)
-        self.max_step = 0.01
+        self.max_step = 0.1
         self.streak = 0
     
         if not os.path.exists(self.output_dir):
@@ -34,7 +34,7 @@ class RRTPlayerSpace:
                 self.index.add_all(self.points)
         else:
             print('Generating new state...')
-            self.best_point = [0] * self.dimensions
+            self.best_point = seed
             self.points = [self.best_point]
             self.index.add(self.best_point)
             self.save_state()

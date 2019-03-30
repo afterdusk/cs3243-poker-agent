@@ -11,36 +11,32 @@ from rrt_player_space import RRTPlayerSpace
 from profile_player_space import ProfilePlayerSpace
 
 def createPlayerSpaces(taskmaster):
-    #  botlympics.init(taskmaster)
+      #botlympics.init(taskmaster)
+      lj_playerspace.init(taskmaster, "300319_LJ_Training")
+      #david_playerspace.init(taskmaster, "3003_ChampPlat_Board")
 
-    lj_playerspace.init(taskmaster, "300319_LJ_Training")
-    #  david_playerspace.init(taskmaster, "3003_ChampPlat_Board")
-
-    ProfilePlayerSpace(
-        taskmaster,
-        'minimaxv2_player_profile_apple',
-        'MinimaxV2Player',
-        10,
-        [[0, 1]] * 50,
-        10,
-        2000,
-        1000,
-        4,
-        101,
-        60 * 4)
-    
-    ProfilePlayerSpace(
-        taskmaster,
-        'smart_warrior_profile_apple',
-        'SmartWarrior',
-        10,
-        [[0, 1]] * 50,
-        10,
-        2000,
-        1000,
-        4,
-        101,
-        60 * 4)
+      RRTPlayerSpace(
+          taskmaster,
+          'epsilon_player_train_apple',
+          'EpsilonPlayer',
+          [
+              0.45854458,
+              -0.010288565,
+              0.023143473,
+              0.003357603,
+              -0.045208527,
+              -0.291372468,
+              0.012108953,
+              -0.14727149,
+              0.456158875,
+              -0.156368715,
+              -0.575275254,
+              0.717262457
+          ],
+          [[-1, 1]] * 12,
+          1,
+          1000,
+          60 * 4)
 
 class TrainerServer:
     def __init__(self, client_id=None):
