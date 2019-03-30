@@ -14,16 +14,6 @@ def createPlayerSpaces(taskmaster):
 
     david_playerspace.init(taskmaster, "2903_ChampPlat_Board")
 
-    CMA2PlayerSpace(
-        taskmaster,
-        'epsilon_player_train_apple',
-        'EpsilonPlayer',
-        50,
-        [[-1, 1]] * 12,
-        4,
-        101,
-        60 * 4)
-
 class TrainerServer:
     def __init__(self, client_id=None):
         self.taskmaster = Taskmaster()
