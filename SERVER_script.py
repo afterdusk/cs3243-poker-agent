@@ -17,8 +17,10 @@ def createPlayerSpaces(taskmaster):
     david_playerspace.init(taskmaster, "3003_ChampPlat_Board")
 
     ProfilePlayerSpace(
+        taskmaster,
         'minimaxv2_player_profile_apple',
         'MinimaxV2Player',
+        10,
         [[0, 1]] * 50,
         10,
         2000,
@@ -28,8 +30,10 @@ def createPlayerSpaces(taskmaster):
         60 * 4)
     
     ProfilePlayerSpace(
+        taskmaster,
         'smart_warrior_profile_apple',
         'SmartWarrior',
+        10,
         [[0, 1]] * 50,
         10,
         2000,
