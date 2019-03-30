@@ -6,13 +6,22 @@ import config
 import SERVER_david_playerspace as david_playerspace
 import botlympics as botlympics
 from cma_player_space import CMAPlayerSpace
-from cma2_player_space import CMA2PlayerSpace
+from rrt_player_space import RRTPlayerSpace
 from profile_player_space import ProfilePlayerSpace
 
 def createPlayerSpaces(taskmaster):
     botlympics.init(taskmaster)
 
     david_playerspace.init(taskmaster, "3003_ChampPlat_Board")
+
+    RRTPlayerSpace(
+        taskmaster,
+        'epsilon_player_train_apple',
+        'EpsilonPlayer',
+        [[-1, 1]] * 12,
+        4,
+        101,
+        60 * 4)
 
 class TrainerServer:
     def __init__(self, client_id=None):
