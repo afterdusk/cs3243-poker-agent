@@ -26,6 +26,7 @@ MAX_ROUNDS = 1000
 
 class MinimaxV2Player(BasePokerPlayer):
     hand_strengths = {}
+    number_of_weights = 50
 
     def __init__(self, weights):
        self.weights = weights
