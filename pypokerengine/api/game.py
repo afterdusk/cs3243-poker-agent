@@ -39,7 +39,7 @@ class Config(object):
 
         # Wrap the function with a timeout
         default_action_info      = "fold"
-        algorithm.declare_action = timeout2(0.5,default_action_info)(algorithm.declare_action)
+        algorithm.declare_action = timeout2(10,default_action_info)(algorithm.declare_action)
         info = { "name" : name, "algorithm" : algorithm }
         self.players_info.append(info)
 

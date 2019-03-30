@@ -14,11 +14,24 @@ def createPlayerSpaces(taskmaster):
 
     david_playerspace.init(taskmaster, "3003_ChampPlat_Board")
 
-    RRTPlayerSpace(
-        taskmaster,
-        'epsilon_player_train_apple',
-        'EpsilonPlayer',
-        [[-1, 1]] * 12,
+    ProfilePlayerSpace(
+        'minimaxv2_player_profile_apple',
+        'MinimaxV2Player',
+        [[0, 1]] * 50,
+        10,
+        2000,
+        1000,
+        4,
+        101,
+        60 * 4)
+    
+    ProfilePlayerSpace(
+        'smart_warrior_profile_apple',
+        'SmartWarrior',
+        [[0, 1]] * 50,
+        10,
+        2000,
+        1000,
         4,
         101,
         60 * 4)
