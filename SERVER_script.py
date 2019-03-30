@@ -34,7 +34,7 @@ def createPlayerSpaces(taskmaster):
               0.717262457
           ],
           [[-1, 1]] * 12,
-          1,
+          500,
           1000,
           60 * 4)
 
