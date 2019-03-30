@@ -49,6 +49,7 @@ class RRTPlayerSpace:
 
     def log_result(self):
         with open(self.output_log_path, 'a') as log_file:
+            log_file.write('Tree Size = ' + str(len(self.index)) + '\n')
             log_file.write('Weights = ' + ' '.join(str(x) for x in self.get_weights(self.best_point)) + '\n')
             log_file.write('Streak = ' + str(self.streak) + '\n')
             log_file.write('\n')
