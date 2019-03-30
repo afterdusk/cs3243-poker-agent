@@ -4,6 +4,7 @@ import config
 
 # Import player spaces here
 import SERVER_david_playerspace as david_playerspace
+import ljs_copy_david_playerspace as lj_playerspace
 import botlympics as botlympics
 from cma_player_space import CMAPlayerSpace
 from rrt_player_space import RRTPlayerSpace
@@ -12,6 +13,7 @@ from profile_player_space import ProfilePlayerSpace
 def createPlayerSpaces(taskmaster):
     botlympics.init(taskmaster)
 
+    lj_playerspace.init(taskmaster, "300319_LJ_Training")
     david_playerspace.init(taskmaster, "3003_ChampPlat_Board")
 
     ProfilePlayerSpace(
