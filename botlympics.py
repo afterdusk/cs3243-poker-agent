@@ -147,8 +147,10 @@ def init(taskmaster):
         UPDATE_BOARD_FREQUENCY = boardLength
         INCUBATE_FREQUENCY = queuedMatches[0] + 1
 
-        winnerName = sentJob[2][1-outcome]
-        loserName = sentJob[2][outcome]
+        player1wins = 1 if outcome[0] >= outcome[1] else 0
+
+        winnerName = sentJob[2][1-player1wins]
+        loserName = sentJob[2][player1wins]
 
         print(str(winnerName) + " WINS AGAINST " + str(loserName))
 
@@ -183,7 +185,7 @@ def init(taskmaster):
         botOne = composeBot(agentOneName)
         botTwo = composeBot(agentTwoName)
         num_games = 21
-        num_rounds = 1200
+        num_rounds = 1000
         if QUICK:
             num_games = 1
             num_rounds = 300
