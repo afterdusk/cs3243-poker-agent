@@ -1,4 +1,4 @@
-# python2 cma2_summarize_log.py cma2_output/epsilon_player_train_1/log.txt | gnuplot -p -e "plot '-' with lines"
+# python2 cma2_summarize_log.py cma2_output/epsilon_player_train_1/log.txt | gnuplot -p -e "plot '-' using 1:2 with lines"
 
 import sys
 import re
@@ -18,4 +18,4 @@ for log_match in log_matches:
     entries += [(weights, mean, sigma)]
 
 for (i, entry) in enumerate(entries):
-    print(str(i) + ' ' + str(entry[2]))
+    print(str(i) + ' ' + str(entry[2]) + ' ' + ' '.join(str(x) for x in entry[0]))
