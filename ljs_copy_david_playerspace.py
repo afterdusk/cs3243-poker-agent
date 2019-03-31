@@ -34,7 +34,7 @@ def init(taskmaster, boardName):
         LEAGUE_MIN_SIZE = 30
         NUM_GAMES = 1
         NUM_ROUNDS = 1
-        GENERATIONS_PER_CYCLE = 1
+        GENERATIONS_PER_CYCLE = 5
         #SHRINK_RATE = 16
         #CHAMPION_BUFFER = 3
 
@@ -95,6 +95,7 @@ def init(taskmaster, boardName):
     def callIncubator():
         global LEADERBOARD
         reduceLeagueSize()
+        
         if gens[0] >= CHAMPION_BUFFER:
             # Backup in case champions dominate
             MY_INCUBATOR.enableChamps()
@@ -102,6 +103,7 @@ def init(taskmaster, boardName):
         if MY_INCUBATOR.makeBackup():
             writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0] + " (backup)", CURR_LEAGUE_SIZE[0], gens[0], PLATEAU_EVAL[0])
 
+        print("Playerspace calling incubator")
         LEADERBOARD, plateauBool, plateauVal = MY_INCUBATOR.incubate(LEADERBOARD, CURR_LEAGUE_SIZE[0])
 
         PLATEAU_EVAL[0] = plateauVal
@@ -122,7 +124,7 @@ def init(taskmaster, boardName):
         global MY_INCUBATOR
         boardLength = len(LEADERBOARD)
         UPDATE_BOARD_FREQUENCY = boardLength
-        INCUBATE_FREQUENCY = queuedMatches[0] + 1
+        INCUBATE_FREQUENCY = queuedMatches[0]
 
         print("\n============ LJ Training progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
 
@@ -140,6 +142,7 @@ def init(taskmaster, boardName):
         matchCountArr[0] = matchCountArr[0] + 1
 
         if matchCountArr[0] >= INCUBATE_FREQUENCY:
+            print("GENERATION COMPLETE")
             matchCountArr[0] = 1
             gens[0] = gens[0] + 1
 

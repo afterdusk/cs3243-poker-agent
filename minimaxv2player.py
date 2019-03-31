@@ -207,7 +207,7 @@ class MinimaxTree:
             return stack_change
 
         pot_amount = node.events[index]['round_state']['pot']['main']['amount']
-        print pot_amount
+        if DEBUG: print pot_amount
          
         if DEBUG: print "node level: " + str(node.level)
         my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises =  node.agent.parse_history(histories, node.agent.is_small_blind)
