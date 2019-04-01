@@ -7,40 +7,26 @@ import SERVER_david_playerspace as david_playerspace
 import ljs_copy_david_playerspace as lj_playerspace
 import botlympics as botlympics
 from cma_player_space import CMAPlayerSpace
+from cma2_player_space import CMA2PlayerSpace
 from rrt_player_space import RRTPlayerSpace
 from profile_player_space import ProfilePlayerSpace
 
 def createPlayerSpaces(taskmaster):
-    botlympics.init(taskmaster)
-
+    #botlympics.init(taskmaster)
     lj_playerspace.init(taskmaster, "300319_LJ_Training")
-    david_playerspace.init(taskmaster, "3003_ChampPlat_Board")
+    #david_playerspace.init(taskmaster, "3003_ChampPlat_Board")
 
-    ProfilePlayerSpace(
-        taskmaster,
-        'minimaxv2_player_profile_apple',
-        'MinimaxV2Player',
-        10,
-        [[0, 1]] * 50,
-        10,
-        2000,
-        1000,
-        4,
-        101,
-        60 * 4)
-    
-    ProfilePlayerSpace(
-        taskmaster,
-        'smart_warrior_profile_apple',
-        'SmartWarrior',
-        10,
-        [[0, 1]] * 50,
-        10,
-        2000,
-        1000,
-        4,
-        101,
-        60 * 4)
+    CMA2PlayerSpace(
+       taskmaster,
+       'epsilon_player_train_1',
+       'EpsilonPlayer',
+       [[-1, 1]] * 12,
+       500,
+       1000,
+       60 * 2
+    )
+      
+
 
 class TrainerServer:
     def __init__(self, client_id=None):

@@ -20,12 +20,12 @@ def init(taskmaster, boardName):
     AGENT_CLASS = EpsilonPlayer
     #LEADERBOARD_FILENAME = [str(time.time())[4:8]+"Ep_Board"]
     LEADERBOARD_FILENAME = [boardName] #Import boardname for continuity
-    LEAGUE_MIN_SIZE = 256
-    GENERATIONS_PER_CYCLE = 400 # Limit on number of generations per training
+    LEAGUE_MIN_SIZE = 120
+    GENERATIONS_PER_CYCLE = 350 # Limit on number of generations per training
     SHRINK_RATE = 75 # League shrink per generation
     SHRINK_MAG = 2 # factor of shrink eqn
-    NUM_GAMES = 4
-    NUM_ROUNDS = 201
+    NUM_GAMES = 3
+    NUM_ROUNDS = 1000
     CHAMPION_BUFFER = 100
     PLATEAU_EVAL = [1]
     MY_INCUBATOR = Incubator(AGENT_CLASS)
@@ -117,12 +117,13 @@ def init(taskmaster, boardName):
     gens = [0]
     # Processes outcomes received from remote clients
     # Message contains a tuple of (winner_name,loser_name)
-    def handleOutcome(sentJob, outcome):
+    def handleOutcome(sentJob, stacks):
         global LEADERBOARD
         global MY_INCUBATOR
         boardLength = len(LEADERBOARD)
         UPDATE_BOARD_FREQUENCY = boardLength
         INCUBATE_FREQUENCY = queuedMatches[0] + 1
+        outcome = stacks[0] > stacks[1]
 
         print("\n============Training progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
 

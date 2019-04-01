@@ -34,7 +34,7 @@ def init(taskmaster, boardName):
         LEAGUE_MIN_SIZE = 30
         NUM_GAMES = 1
         NUM_ROUNDS = 1
-        GENERATIONS_PER_CYCLE = 1
+        GENERATIONS_PER_CYCLE = 5
         #SHRINK_RATE = 16
         #CHAMPION_BUFFER = 3
 
@@ -80,7 +80,7 @@ def init(taskmaster, boardName):
 
     def roundRobinTraining():
         wipeWinLoss()
-        print("ROUND ROBIN TRAINING")
+        print("LJ ROUND ROBIN TRAINING")
         queuedMatches[0] = 0
         botlist = list(LEADERBOARD)
         line = 0
@@ -95,6 +95,7 @@ def init(taskmaster, boardName):
     def callIncubator():
         global LEADERBOARD
         reduceLeagueSize()
+
         if gens[0] >= CHAMPION_BUFFER:
             # Backup in case champions dominate
             MY_INCUBATOR.enableChamps()
@@ -102,6 +103,7 @@ def init(taskmaster, boardName):
         if MY_INCUBATOR.makeBackup():
             writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0] + " (backup)", CURR_LEAGUE_SIZE[0], gens[0], PLATEAU_EVAL[0])
 
+        print("Playerspace calling incubator")
         LEADERBOARD, plateauBool, plateauVal = MY_INCUBATOR.incubate(LEADERBOARD, CURR_LEAGUE_SIZE[0])
 
         PLATEAU_EVAL[0] = plateauVal
@@ -117,14 +119,15 @@ def init(taskmaster, boardName):
     gens = [0]
     # Processes outcomes received from remote clients
     # Message contains a tuple of (winner_name,loser_name)
-    def handleOutcome(sentJob, outcome):
+    def handleOutcome(sentJob, stacks):
         global LEADERBOARD
         global MY_INCUBATOR
         boardLength = len(LEADERBOARD)
         UPDATE_BOARD_FREQUENCY = boardLength
-        INCUBATE_FREQUENCY = queuedMatches[0] + 1
+        INCUBATE_FREQUENCY = queuedMatches[0]
+        outcome = stacks[0] > stacks[1]
 
-        print("\n============Training progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
+        print("\n============ LJ Training progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
 
         winnerName = sentJob[2][1-outcome]
         loserName = sentJob[2][outcome]
@@ -134,12 +137,13 @@ def init(taskmaster, boardName):
             try:
                 writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0], CURR_LEAGUE_SIZE[0],gens[0], PLATEAU_EVAL[0])
             except:
-                print("Could not write to LEADERBOARD at this time",LEADERBOARD_FILENAME[0])
+                print("LJ Could not write to LEADERBOARD at this time",LEADERBOARD_FILENAME[0])
 
 
         matchCountArr[0] = matchCountArr[0] + 1
 
         if matchCountArr[0] >= INCUBATE_FREQUENCY:
+            print("GENERATION COMPLETE")
             matchCountArr[0] = 1
             gens[0] = gens[0] + 1
 
@@ -152,21 +156,21 @@ def init(taskmaster, boardName):
 
                 LEADERBOARD_FILENAME[0] = LEADERBOARD_FILENAME[0] + "I"
                 exists = os.path.isfile(folderize(LEADERBOARD_FILENAME[0]))
-                print("FOUND LEADERBOARD",LEADERBOARD_FILENAME[0])
+                print("LJ FOUND LEADERBOARD",LEADERBOARD_FILENAME[0])
 
                 if exists:
                     try:
                         LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
                     except:
-                        print("Problem reading leaderboard!!\nGENERATING NEW LEADERBOARD",LEADERBOARD_FILENAME[0])
+                        print("LJ Problem reading leaderboard!!\nGENERATING NEW LEADERBOARD",LEADERBOARD_FILENAME[0])
                         LEADERBOARD = MY_INCUBATOR.generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE)
                         LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
                 else:
-                    print("GENERATING LEADERBOARD",LEADERBOARD_FILENAME[0])
+                    print("LJ GENERATING LEADERBOARD",LEADERBOARD_FILENAME[0])
                     LEADERBOARD = MY_INCUBATOR.generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE)
 
 
-            print("%%%%%%%%%%%%%%%%%%%%%% Beginning Generation "+ str(gens[0])+ "%%%%%%%%%%%%%%%%%%%%%%")
+            print("%%%%%%%%%%%%%%%%%%%%%% LJ Beginning Generation "+ str(gens[0])+ "%%%%%%%%%%%%%%%%%%%%%%")
             roundRobinTraining()
 
     def jobDone(returnedJob,outcome):
@@ -175,7 +179,7 @@ def init(taskmaster, boardName):
     # Sends a message to the clients in the form of a tuple
     # matchup_job = ((bot_1, bot_2), training_configuration, (b1Name, b2Name))
     def sendMatchup(matchup_job):
-        TASKMASTER.schedule_job(matchup_job, 120, jobDone)
+        TASKMASTER.schedule_job(matchup_job, 600, jobDone)
 
     def composeBot(agentName):
         agentWeights = getWeights(agentName,LEADERBOARD)
@@ -201,9 +205,9 @@ def init(taskmaster, boardName):
 
     try:
         LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
-        print("FOUND LEADERBOARD",LEADERBOARD_FILENAME[0])
+        print("LJ FOUND LEADERBOARD",LEADERBOARD_FILENAME[0])
     except:
-        print("GENERATING LEADERBOARD",LEADERBOARD_FILENAME[0])
+        print("LJ GENERATING LEADERBOARD",LEADERBOARD_FILENAME[0])
         LEADERBOARD = MY_INCUBATOR.generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE)
         LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
     finally:
@@ -211,5 +215,5 @@ def init(taskmaster, boardName):
 
     # MAIN
 if __name__ == "__main__":
-    print("YOOOO")
+    print("LJ YOOOO")
     init("some")

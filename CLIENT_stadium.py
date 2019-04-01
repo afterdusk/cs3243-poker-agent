@@ -45,16 +45,14 @@ def play_bots(agent_one, agent_two, n, rounds):
     if stack_one > stack_two:
         winner = agent_one
         loser = agent_two
-        result = 1
     else:
         winner = agent_two
         loser = agent_one
-        result = 0
 
     print(winner[0] + " wins!")
 
-    # returns 1 if first is the winner and 0 if the second is winner
-    return result
+    # Returns stack size of each player respectively
+    return (stack_one, stack_two)
 
 # w is a tuple of weights
 PLAYER_LIBRARY = {}
