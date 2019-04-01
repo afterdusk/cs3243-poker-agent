@@ -27,6 +27,7 @@ class Incubator():
         self.champs = False
         self.backup = 0
         self.initWeightBounds()
+        self.SPF = False
 
     def initWeightBounds(self):
         nw = self.numWeights
@@ -37,6 +38,9 @@ class Incubator():
         self.champs = True
         if self.backup == 0:
             self.backup = 1
+
+    def enableStdPlayers(self):
+        self.SPF = True
 
     def makeBackup(self):
         if self.backup == 1:
@@ -166,7 +170,7 @@ class Incubator():
             print("Plateau detected!!")
             self.enableChamps()
         else:
-            addStandardPlayers(updatedBoard,self.champs)
+            addStandardPlayers(updatedBoard,self)
 
             # Top up to meet minimum
             if len(updatedBoard) < minBots:
@@ -182,7 +186,7 @@ class Incubator():
         numWeights = self.numWeights
         leaderboard = {}
         self.spawnRandomChildren(numPlayers, leaderboard, numWeights)
-        addStandardPlayers(leaderboard, self.champs)
+        addStandardPlayers(leaderboard, self)
         writeToLeaderboardFile(leaderboard, boardFileName,numPlayers)
         return leaderboard
 
@@ -310,23 +314,24 @@ def checkPlateau(board, numWeights):
 
 # Add some consistent players
 # these weights only work for EpsilonPlayer
-def addStandardPlayers(board, champs):
-    if not STANDARD_PLAYER_FLAG:
+def addStandardPlayers(board, incubator):
+    champs = incubator.champs
+    if not incubator.SPF:
         return
-    
+
     STANDARDPLAYERS = {}
-   
+
     if champs:
-        STANDARDPLAYERS['Acnd'] = (0.45854458,-0.010288565,0.023143473,0.003357603,-0.045208527,-0.291372468,0.012108953,-0.14727149,0.456158875,-0.156368715,-0.575275254,0.717262457)
-        STANDARDPLAYERS['Cal9'] = (0.027780254,-0.006881324,-0.02755483,0.052425943,-0.247408722,-0.343405448,-0.092064001,-0.114631729,0.367807581,-0.466988527,-0.449206837,0.577756734)
-        STANDARDPLAYERS['Razr'] = (0.438242914,0.004563298,-0.075314788,0.056284926,-0.06059732,-0.174429317,-0.086815867,0.015310329,0.160619342,-0.863199979,-0.350535249,0.181354672)
-        STANDARDPLAYERS['G3Dy'] = (0.62731144,0.006782764,0.0354006,-0.017738708,-0.060943432,-0.202364151,-0.059767574,0.033646709,0.744256733,0.183438671,-0.43500795,0.721879707)
+        STANDARDPLAYERS['Acnd'] = (0.45854458,-0.010288565,0.023143473,0.003357603,-0.045208527,-0.291372468,0.012108953,-0.14727149,0.456158875,-0.156368715,-0.575275254,0.717262457,0,0.1)
+        STANDARDPLAYERS['Cal9'] = (0.027780254,-0.006881324,-0.02755483,0.052425943,-0.247408722,-0.343405448,-0.092064001,-0.114631729,0.367807581,-0.466988527,-0.449206837,0.577756734,0,0.1)
+        STANDARDPLAYERS['Razr'] = (0.438242914,0.004563298,-0.075314788,0.056284926,-0.06059732,-0.174429317,-0.086815867,0.015310329,0.160619342,-0.863199979,-0.350535249,0.181354672,0,0.1)
+        STANDARDPLAYERS['G3Dy'] = (0.62731144,0.006782764,0.0354006,-0.017738708,-0.060943432,-0.202364151,-0.059767574,0.033646709,0.744256733,0.183438671,-0.43500795,0.721879707,0,0.1)
         #STANDARDPLAYERS['Ep_RNG'] = (0,-0.362,-0.699,0.535,0.022,-0.744,-0.767,0.79,0.895,-0.713,0.86,0.007)
     else:
-        STANDARDPLAYERS['Rais'] = (0.3,0,0,0,0,0,0,0,-0.9,-0.8,0.1,0.3)
-        STANDARDPLAYERS['Hnst'] = (0.3,0,0,0,0,0,0,0,0.4,0.2,-0.3,0.8)
-        STANDARDPLAYERS['Call'] = (0.3,0,0,0,0,0,0,0,0.8,-0.9,-0.2,0.3)
-        STANDARDPLAYERS['Grdy'] = (0.8,0,0,0,0,0,0,0,0.6,0.1,-0.1,0.5)
+        STANDARDPLAYERS['Rais'] = (0.3,0,0,0,0,0,0,0,-0.9,-0.8,0.1,0.3,0,0)
+        STANDARDPLAYERS['Hnst'] = (0.3,0,0,0,0,0,0,0,0.4,0.2,-0.3,0.8,0,0)
+        STANDARDPLAYERS['Call'] = (0.3,0,0,0,0,0,0,0,0.8,-0.9,-0.2,0.3,0,0.4)
+        STANDARDPLAYERS['Grdy'] = (0.8,0,0,0,0,0,0,0,0.6,0.1,-0.1,0.5,0.3,0)
 
     for name in STANDARDPLAYERS:
         if not name in board:
