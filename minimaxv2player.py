@@ -31,8 +31,8 @@ class MinimaxV2Player(BasePokerPlayer):
     def __init__(self, weights):
        self.weights = weights
        # self.weights = [random.uniform(-1, 1) for i in range(0,50)]
-       if sum(1 for weight in self.weights if weight < 0) > 0:
-           self.weights = [(i + 1)/2 for i in self.weights]
+       # if sum(1 for weight in self.weights if weight < 0) > 0:
+       self.weights = [(i + 1)/2 for i in self.weights]
        self.starting_stack = -1
 
        self.emulator = Emulator()
