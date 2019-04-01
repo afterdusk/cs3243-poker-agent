@@ -2,7 +2,7 @@ from pypokerengine.api.game import setup_config, start_poker
 from neural3_player import Neural3Player
 from wise_player import WisePlayer
 from smartwarrior import SmartWarrior
-#from delta_player import DeltaPlayer
+from delta_player import DeltaPlayer
 from epsilon_player import EpsilonPlayer
 from theta_player import ThetaPlayer
 from minimaxv2player import MinimaxV2Player
