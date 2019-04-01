@@ -4,6 +4,7 @@ from raise_player import RaisedPlayer
 from wise_player import WisePlayer
 from Group23Player import Group23Player
 from epsilon_player import EpsilonPlayer
+from theta_player import ThetaPlayer
 
 #TODO:config the config as our wish
 config = setup_config(max_round=1500, initial_stack=30000, small_blind_amount=10)
@@ -15,6 +16,7 @@ good_player = WisePlayer(zwup)
 
 callw = (-0.097629624,-0.015322028,-0.053460944,0.079522507,-0.25760026,-0.386826604,-0.062169782,-0.033438914,0.385211212,-0.463661391,-0.383216098,0.580381615)
 call_player = EpsilonPlayer(callw)
+tCall = ThetaPlayer(callw)
 
 Z = (0.472384782,-0.013161448,0.025753558,0.006890752,-0.040231418,-0.293013775,0.014284528,-0.153108951,0.464752312,-0.170325176,-0.574609741,0.734561248)
 zLion = EpsilonPlayer(Z)
@@ -30,9 +32,10 @@ greed = Group23Player()
 #config.register_player(name="CallPolice", algorithm=call_player)
 #config.register_player(name="Gr33dy", algorithm = greed)
 #config.register_player(name="ZWUP", algorithm = good_player)
-config.register_player(name="ZLion", algorithm = zLion)
+#config.register_player(name="ZLion", algorithm = zLion)
+config.register_player(name="Theta", algorithm = tCall)
 #config.register_player(name="GreedCaller", algorithm = greedcaller)
-#config.register_player(name="FT2", algorithm=RaisedPlayer())
+config.register_player(name="FT2", algorithm=RaisedPlayer())
 
 
 print("HELLO!!")
