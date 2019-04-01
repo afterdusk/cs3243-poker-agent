@@ -14,7 +14,7 @@ from david_file_utils import *
 # SERVER_script will call this
 
 LEADERBOARD = {}
-testing = 1
+testing = 0
 
 def init(taskmaster, boardName):
     # CONFIGURATIONS
