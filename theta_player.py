@@ -28,15 +28,17 @@ class ThetaPlayer(BasePokerPlayer):
         #print("INITALIZING WisePlayer")
         self.STREET_DICT = {'preflop':0, 'flop':0, 'river':0, 'turn':0 }
 
-        self.my_stack = 0
-        self.opp_stack = 0
-        self.perfEval = 0
+        self.my_stack = float(0)
+        self.opp_stack = float(0)
+        self.stacks = (0,0)
+        self.perfEval = float(0)
+        self.my_index = 0
 
         if len(weights) == self.number_of_weights:
             self.initWeights(weights)
         else:
             print("Bad number of weights. Expected " +str(self.number_of_weights) + " weights but got: " + str(weights))
-            return 0
+            exit()
 
         self.old_street = ""
         self.current_street = ""
@@ -78,26 +80,27 @@ class ThetaPlayer(BasePokerPlayer):
     def getPerfReview(self):
         # Bound between -1 and 1
         value = max(min(self.perfEval,1),-1)
+        #print("REVIEW VALUE: ", value)
         if self.perfEval < 0:
             return value*self.losing_w
         elif self.perfEval >= 0:
             return value*self.winning_w
 
-    def contPerfReview(self,stacks):
+    def contPerfReview(self):
         #Arbitrary constant
-        A_CONSTANT = 4
-        n_self_stack, n_opp_stack = stacks
+        A_CONSTANT = float(4)
+        n_self_stack, n_opp_stack = self.stacks
 
         # initial conditions
         if self.my_stack == 0 and self.opp_stack == 0:
             self.my_stack = n_self_stack
             self.opp_stack = n_opp_stack
-            return
 
         # Evaluate self performance
-        diff = n_self_stack - self.my_stack
+        diff = float(n_self_stack) - self.my_stack
         norm_diff = diff/MAX_POT_AMOUNT
         norm_diff = norm_diff/A_CONSTANT
+        #print("NORMAL DIFF", norm_diff)
 
         self.perfEval += norm_diff
 
@@ -151,15 +154,13 @@ class ThetaPlayer(BasePokerPlayer):
         # holeValue = self.calculateHandValue(hole_card, community_cards
         community_cards = round_state['community_card']
         pot_amount = round_state['pot']['main']['amount']
-        my_index = round_state['next_player']
+        self.my_index = round_state['next_player']
         smallblind_index = round_state['small_blind_pos']
         # my_state = round_state['seats'][my_index]
         # enemy_index = 1 - my_index
         # enemy_state = round_state['seats'][enemy_index]
-        hist = self.parse_history(round_state['action_histories'], my_index == smallblind_index)
+        hist = self.parse_history(round_state['action_histories'], self.my_index == smallblind_index)
         my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises =  hist
-        stacks = self.get_stacks(round_state, my_index)
-        self.contPerfReview(stacks)
 
         decision = self.make_move(valid_actions,hole_card,community_cards, pot_amount, my_num_raises, enemy_num_raises)
 
@@ -180,14 +181,17 @@ class ThetaPlayer(BasePokerPlayer):
         pass
 
     def receive_round_result_message(self, winners, hand_info, round_state):
-        pass
-        #print(winners, hand_info, round_state)
+        # Only call this when the round ends
+        #print("ROUND EDNDED")
+        self.stacks = self.get_stacks(round_state, self.my_index)
+        #print(self.stacks)
+        self.contPerfReview()
 
     def setup_ai():
         return ThetaPlayer()
 
     @staticmethod
-    def get_stacks(state,my_index):
+    def get_stacks(state, my_index):
         my_stack = state['seats'][my_index]['stack']
         opp_stack = state['seats'][1-my_index]['stack']
         return my_stack, opp_stack
