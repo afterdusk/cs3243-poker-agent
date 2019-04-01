@@ -4,7 +4,8 @@ import random
 import time
 from collections import deque
 #from wise_player import WisePlayer
-from epsilon_player import EpsilonPlayer
+#from epsilon_player import EpsilonPlayer
+from theta_player import ThetaPlayer
 from CLIENT_stadium import train_bots
 from SERVER_incubator import Incubator
 from david_file_utils import *
@@ -13,28 +14,28 @@ from david_file_utils import *
 # SERVER_script will call this
 
 LEADERBOARD = {}
-testing = 0
+testing = 1
 
 def init(taskmaster, boardName):
     # CONFIGURATIONS
-    AGENT_CLASS = EpsilonPlayer
-    #LEADERBOARD_FILENAME = [str(time.time())[4:8]+"Ep_Board"]
+    AGENT_CLASS = ThetaPlayer
     LEADERBOARD_FILENAME = [boardName] #Import boardname for continuity
     LEAGUE_MIN_SIZE = 120
     GENERATIONS_PER_CYCLE = 350 # Limit on number of generations per training
     SHRINK_RATE = 75 # League shrink per generation
-    SHRINK_MAG = 2 # factor of shrink eqn
-    NUM_GAMES = 3
+    SHRINK_MAG = 1 # factor of shrink eqn
+    NUM_GAMES = 4
     NUM_ROUNDS = 1000
     CHAMPION_BUFFER = 100
     PLATEAU_EVAL = [1]
     MY_INCUBATOR = Incubator(AGENT_CLASS)
+    MY_INCUBATOR.enableStdPlayers()
 
     if testing:
         LEAGUE_MIN_SIZE = 30
         NUM_GAMES = 1
-        NUM_ROUNDS = 1
-        GENERATIONS_PER_CYCLE = 1
+        NUM_ROUNDS = 10
+        GENERATIONS_PER_CYCLE = 5
         #SHRINK_RATE = 16
         #CHAMPION_BUFFER = 3
 
@@ -150,6 +151,7 @@ def init(taskmaster, boardName):
                 gens[0] = 1
                 # New incubator
                 MY_INCUBATOR = Incubator(AGENT_CLASS)
+                MY_INCUBATOR.enableStdPlayers()
 
                 LEADERBOARD_FILENAME[0] = LEADERBOARD_FILENAME[0] + "I"
                 exists = os.path.isfile(folderize(LEADERBOARD_FILENAME[0]))
