@@ -95,7 +95,7 @@ def init(taskmaster, boardName):
     def callIncubator():
         global LEADERBOARD
         reduceLeagueSize()
-        
+
         if gens[0] >= CHAMPION_BUFFER:
             # Backup in case champions dominate
             MY_INCUBATOR.enableChamps()
@@ -119,12 +119,13 @@ def init(taskmaster, boardName):
     gens = [0]
     # Processes outcomes received from remote clients
     # Message contains a tuple of (winner_name,loser_name)
-    def handleOutcome(sentJob, outcome):
+    def handleOutcome(sentJob, stacks):
         global LEADERBOARD
         global MY_INCUBATOR
         boardLength = len(LEADERBOARD)
         UPDATE_BOARD_FREQUENCY = boardLength
         INCUBATE_FREQUENCY = queuedMatches[0]
+        outcome = stacks[0] > stacks[1]
 
         print("\n============ LJ Training progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
 
