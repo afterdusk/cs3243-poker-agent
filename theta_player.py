@@ -22,7 +22,7 @@ MAX_POT_AMOUNT = 320
 class ThetaPlayer(BasePokerPlayer):
 
     # Static variable
-    number_of_weights = 12
+    number_of_weights = 14
 
     def __init__(self, weights):
         #print("INITALIZING WisePlayer")
@@ -30,6 +30,7 @@ class ThetaPlayer(BasePokerPlayer):
 
         self.my_stack = 0
         self.opp_stack = 0
+        self.perfEval = 0
 
         if len(weights) == self.number_of_weights:
             self.initWeights(weights)
@@ -64,10 +65,42 @@ class ThetaPlayer(BasePokerPlayer):
         self.raise_threshold = data[8]
         self.call_threshold = data[9]
 
+
         self.pot_w = data[10]
         self.hand_w = data[11]
 
+        # Adapt playstyle
+        self.losing_w = data[12]
+        self.winning_w = data[13]
+
         return self
+
+    def getPerfReview(self):
+        # Bound between -1 and 1
+        value = max(min(self.perfEval,1),-1)
+        if self.perfEval < 0:
+            return value*self.losing_w
+        elif self.perfEval >= 0:
+            return value*self.winning_w
+
+    def contPerfReview(self,stacks):
+        #Arbitrary constant
+        A_CONSTANT = 4
+        n_self_stack, n_opp_stack = stacks
+
+        # initial conditions
+        if self.my_stack == 0 and self.opp_stack == 0:
+            self.my_stack = n_self_stack
+            self.opp_stack = n_opp_stack
+            return
+
+        # Evaluate self performance
+        diff = n_self_stack - self.my_stack
+        norm_diff = diff/MAX_POT_AMOUNT
+        norm_diff = norm_diff/A_CONSTANT
+
+        self.perfEval += norm_diff
+
 
     def evaluateHand(self, hole_cards, common_cards):
         # print(self.old_street, self.current_street)
@@ -95,7 +128,8 @@ class ThetaPlayer(BasePokerPlayer):
         pot_o = self.pot_w*(pot_amount/MAX_POT_AMOUNT)
         turn_o = self.STREET_DICT[self.current_street]
         history_o = (self.self_raise_w*self_raises/4) + (self.opp_raise_w*opp_raises/4)
-        output =  hand_o + pot_o + payout_o + turn_o + history_o + self.overall_bias
+        stack_o = self.getPerfReview()
+        output =  hand_o + pot_o + payout_o + turn_o + history_o + stack_o + self.overall_bias
 
         # Activation bounds [-1, 1]
         return activation_functions.logistic(0, 2, 4, -1)(output)
@@ -124,13 +158,12 @@ class ThetaPlayer(BasePokerPlayer):
         # enemy_state = round_state['seats'][enemy_index]
         hist = self.parse_history(round_state['action_histories'], my_index == smallblind_index)
         my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises =  hist
+        stacks = self.get_stacks(round_state, my_index)
+        self.contPerfReview(stacks)
 
         decision = self.make_move(valid_actions,hole_card,community_cards, pot_amount, my_num_raises, enemy_num_raises)
 
-
-
         if DEBUG:
-        #if True:
             print "Decision made: ", decision
         return decision  # action returned here is sent to the poker engine
 
@@ -147,11 +180,17 @@ class ThetaPlayer(BasePokerPlayer):
         pass
 
     def receive_round_result_message(self, winners, hand_info, round_state):
-        print(winners, hand_info, round_state)
+        pass
+        #print(winners, hand_info, round_state)
 
     def setup_ai():
         return ThetaPlayer()
 
+    @staticmethod
+    def get_stacks(state,my_index):
+        my_stack = state['seats'][my_index]['stack']
+        opp_stack = state['seats'][1-my_index]['stack']
+        return my_stack, opp_stack
 # ====================== SMARTWARRIOR WORKINGS ====================== #
 
     @staticmethod
