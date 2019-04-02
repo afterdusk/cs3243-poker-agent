@@ -20,11 +20,11 @@ def init(taskmaster, boardName):
     # CONFIGURATIONS
     AGENT_CLASS = ThetaPlayer
     LEADERBOARD_FILENAME = [boardName] #Import boardname for continuity
-    LEAGUE_MIN_SIZE = 120
-    GENERATIONS_PER_CYCLE = 350 # Limit on number of generations per training
+    LEAGUE_MIN_SIZE = 156
+    GENERATIONS_PER_CYCLE = 365 # Limit on number of generations per training
     SHRINK_RATE = 75 # League shrink per generation
     SHRINK_MAG = 1 # factor of shrink eqn
-    NUM_GAMES = 4
+    NUM_GAMES = 5
     NUM_ROUNDS = 1000
     CHAMPION_BUFFER = 100
     PLATEAU_EVAL = [1]
@@ -148,6 +148,8 @@ def init(taskmaster, boardName):
             plateau = callIncubator()
 
             if gens[0] > GENERATIONS_PER_CYCLE or plateau:
+                # Start a new training cycle
+
                 gens[0] = 1
                 # New incubator
                 MY_INCUBATOR = Incubator(AGENT_CLASS)
@@ -161,7 +163,7 @@ def init(taskmaster, boardName):
                     try:
                         LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
                     except:
-                        print("Problem reading leaderboard!!\nGENERATING NEW LEADERBOARD",LEADERBOARD_FILENAME[0])
+                        print("Problem reading leaderboard!\nGENERATING NEW LEADERBOARD",LEADERBOARD_FILENAME[0])
                         LEADERBOARD = MY_INCUBATOR.generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE)
                         LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
                 else:
