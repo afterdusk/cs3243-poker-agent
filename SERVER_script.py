@@ -13,19 +13,33 @@ from profile_player_space import ProfilePlayerSpace
 
 def createPlayerSpaces(taskmaster):
     #botlympics.init(taskmaster)
-    lj_playerspace.init(taskmaster, "300319_LJ_Training")
-    #david_playerspace.init(taskmaster, "3003_ChampPlat_Board")
+    # lj_playerspace.init(taskmaster, "300319_LJ_Training")
+    david_playerspace.init(taskmaster, "0204_Theta_Board")
 
-    CMA2PlayerSpace(
-       taskmaster,
-       'epsilon_player_train_1',
-       'EpsilonPlayer',
-       [[-1, 1]] * 12,
-       500,
-       1000,
-       60 * 2
-    )
-      
+    #CMA2PlayerSpace(
+    #   taskmaster,
+    #   'epsilon_player_train_1',
+    #   'EpsilonPlayer',
+    #   [[-1, 1]] * 12,
+    #   500,
+    #   1000,
+    #   60 * 2
+    #)
+
+    # ProfilePlayerSpace(
+    #     taskmaster,
+    #     'epsilon_player_profile_1',
+    #     'EpsilonPlayer',
+    #     5,
+    #     [[-1, 1]] * 12,
+    #     10,
+    #     1000,
+    #     1000,
+    #     50,
+    #     1000,
+    #     60 * 2)
+
+
 
 
 class TrainerServer:

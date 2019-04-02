@@ -2,8 +2,8 @@ from pypokerengine.api.game import setup_config, start_poker
 from neural3_player import Neural3Player
 from wise_player import WisePlayer
 from smartwarrior import SmartWarrior
-from delta_player import DeltaPlayer
 from epsilon_player import EpsilonPlayer
+from theta_player import ThetaPlayer
 from minimaxv2player import MinimaxV2Player
 
 # CLIENT SIDE
@@ -59,9 +59,9 @@ PLAYER_LIBRARY = {}
 PLAYER_LIBRARY['Neural3Player'] = lambda w: Neural3Player(w)
 PLAYER_LIBRARY['WisePlayer'] = lambda w: WisePlayer(w)
 PLAYER_LIBRARY['SmartWarrior'] = lambda w: SmartWarrior(w)
-PLAYER_LIBRARY['DeltaPlayer'] = lambda w: DeltaPlayer(w)
 PLAYER_LIBRARY['EpsilonPlayer'] = lambda w: EpsilonPlayer(w)
 PLAYER_LIBRARY['MinimaxV2Player'] = lambda w: MinimaxV2Player(w)
+PLAYER_LIBRARY['ThetaPlayer'] = lambda w: ThetaPlayer(w)
 
 # A job is {{bot1,bot2}, {training_regime}, {...extra info...}}
 # Each bot is in a tuple of {bot_type, weights}
