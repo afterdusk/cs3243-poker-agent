@@ -235,7 +235,7 @@ def updateLeaderboardPerf(incubator, goodOnes, badOnes, leaderboard, minBots):
         incubator.makeClone(bot, leaderboard)
 
     # Limit
-    rewardLimit = int(min(minBots/3, len(goodOnes)))
+    rewardLimit = int(min(minBots/2, len(goodOnes)))
     #Extra Reward for 50% of good ones
     extraReward = int(len(goodOnes)//2)
 

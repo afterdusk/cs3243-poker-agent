@@ -124,7 +124,7 @@ def init(taskmaster, boardName):
         boardLength = len(LEADERBOARD)
         UPDATE_BOARD_FREQUENCY = boardLength
         INCUBATE_FREQUENCY = queuedMatches[0] + 1
-        outcome = stacks[0] > stacks[1]
+        outcome = stacks[0] >= stacks[1]
 
         print("\n============Training progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
 
