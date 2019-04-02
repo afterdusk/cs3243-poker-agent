@@ -1,6 +1,6 @@
 import sys
 sys.path.insert(0, './pypokerengine/api/')
-import game
+from pypokerengine.api import game
 setup_config = game.setup_config
 start_poker = game.start_poker
 import time
@@ -9,7 +9,8 @@ from argparse import ArgumentParser
 
 """ =========== *Remember to import your agent!!! =========== """
 from randomplayer import RandomPlayer
-# from smartwarrior import SmartWarrior
+from smartwarrior import SmartWarrior
+from minimaxv2player import MinimaxV2Player
 """ ========================================================= """
 
 """ Example---To run testperf.py with random warrior AI against itself. 
@@ -33,10 +34,10 @@ def testperf(agent_name1, agent1, agent_name2, agent2):
     config = setup_config(max_round=max_round, initial_stack=initial_stack, small_blind_amount=smallblind_amount)
     
     # Register players
-    config.register_player(name=agent_name1, algorithm=RandomPlayer())
-    config.register_player(name=agent_name2, algorithm=RandomPlayer())
-    # config.register_player(name=agent_name1, algorithm=agent1())
-    # config.register_player(name=agent_name2, algorithm=agent2())
+    # config.register_player(name=agent_name1, algorithm=RandomPlayer())
+    # config.register_player(name=agent_name2, algorithm=RandomPlayer())
+    config.register_player(name=agent_name1, algorithm=agent1())
+    config.register_player(name=agent_name2, algorithm=agent2())
     
 
     # Start playing num_game games
@@ -73,10 +74,13 @@ def parse_arguments():
     args = parser.parse_args()
     return args.agent_name1, args.agent1, args.agent_name2, args.agent2
 
-if __name__ == '__main__':
+def str_to_class(classname):
+    return getattr(sys.modules[__name__], classname)
+
+if  __name__ == '__main__':
     name1, agent1, name2, agent2 = parse_arguments()
     start = time.time()
-    testperf(name1, agent1, name2, agent2)
+    testperf(name1, str_to_class(agent1), name2, str_to_class(agent2))
     end = time.time()
 
     print("\n Time taken to play: %.4f seconds" %(end-start))
