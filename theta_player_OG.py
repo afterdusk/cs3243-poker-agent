@@ -19,7 +19,7 @@ MAX_POT_AMOUNT = 320
 
 # The successor to EpsilonPlayer
 # Adjusts based on win/losses
-class ThetaPlayer(BasePokerPlayer):
+class ThetaPlayerOG(BasePokerPlayer):
 
     # Static variable
     number_of_weights = 14
