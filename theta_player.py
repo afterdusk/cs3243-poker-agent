@@ -15,7 +15,7 @@ DEBUG = 0
 # Game rules
 SMALL_BLIND = 10
 MAX_RAISES = 4
-MAX_POT_AMOUNT = 320
+MAX_POT_AMOUNT = 320*2
 
 # The successor to EpsilonPlayer
 # Adjusts based on win/losses
@@ -79,17 +79,17 @@ class ThetaPlayer(BasePokerPlayer):
 
     def getPerfReview(self):
         # Bound between -1 and 1
-        value = max(min(self.perfEval,1),-1)
+        value = self.perfEval
         #print("REVIEW VALUE: ", value)
-        if self.perfEval < 0:
+        if value < 0:
             return value*self.losing_w
-        elif self.perfEval >= 0:
+        elif value >= 0:
             return value*self.winning_w
 
-    def contPerfReview(self):
+    def contPerfReview(self, new_stacks):
         #Arbitrary constant
-        A_CONSTANT = float(4)
-        n_self_stack, n_opp_stack = self.stacks
+        A_CONSTANT = float(10)
+        n_self_stack, n_opp_stack = new_stacks
 
         # initial conditions
         if self.my_stack == 0 and self.opp_stack == 0:
@@ -97,12 +97,14 @@ class ThetaPlayer(BasePokerPlayer):
             self.opp_stack = n_opp_stack
 
         # Evaluate self performance
-        diff = float(n_self_stack) - self.my_stack
-        norm_diff = diff/MAX_POT_AMOUNT
-        norm_diff = norm_diff/A_CONSTANT
+        diff = float(n_self_stack) - self.my_stack  #New minus old
+        norm_diff = diff/(MAX_POT_AMOUNT*A_CONSTANT)
         #print("NORMAL DIFF", norm_diff)
+        self.my_stack = n_self_stack
+        self.opp_stack = n_opp_stack
 
         self.perfEval += norm_diff
+        self.perfEval = activation_functions.logistic(0, 2, 4, -1)(self.perfEval)
 
 
     def evaluateHand(self, hole_cards, common_cards):
@@ -183,9 +185,9 @@ class ThetaPlayer(BasePokerPlayer):
     def receive_round_result_message(self, winners, hand_info, round_state):
         # Only call this when the round ends
         #print("ROUND EDNDED")
-        self.stacks = self.get_stacks(round_state, self.my_index)
+        stacks = self.get_stacks(round_state, self.my_index)
+        self.contPerfReview(stacks)
         #print(self.stacks)
-        self.contPerfReview()
 
     def setup_ai():
         return ThetaPlayer()

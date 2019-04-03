@@ -20,12 +20,12 @@ def init(taskmaster, boardName):
     # CONFIGURATIONS
     AGENT_CLASS = ThetaPlayer
     LEADERBOARD_FILENAME = [boardName] #Import boardname for continuity
-    LEAGUE_MIN_SIZE = 156
-    GENERATIONS_PER_CYCLE = 365 # Limit on number of generations per training
-    SHRINK_RATE = 75 # League shrink per generation
-    SHRINK_MAG = 1 # factor of shrink eqn
-    NUM_GAMES = 3
-    NUM_ROUNDS = 1500
+    LEAGUE_MIN_SIZE = 128
+    GENERATIONS_PER_CYCLE = 317 # Limit on number of generations per training
+    SHRINK_RATE = 70 # League shrink per generation
+    SHRINK_MAG = 2 # factor of shrink eqn
+    NUM_GAMES = 5
+    NUM_ROUNDS = 1000
     CHAMPION_BUFFER = 100
     PLATEAU_EVAL = [1]
     MY_INCUBATOR = Incubator(AGENT_CLASS)
@@ -124,7 +124,7 @@ def init(taskmaster, boardName):
         boardLength = len(LEADERBOARD)
         UPDATE_BOARD_FREQUENCY = boardLength
         INCUBATE_FREQUENCY = queuedMatches[0] + 1
-        outcome = stacks[0] > stacks[1]
+        outcome = stacks[0] >= stacks[1]
 
         print("\n============Training progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
 

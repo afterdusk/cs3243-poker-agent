@@ -54,7 +54,7 @@ class Incubator():
         positiveBoardStats = evaluateBoard(leaderboard)
         for weightIndex in range(0,len(positiveBoardStats)):
             w_mean, w_stdev = positiveBoardStats[weightIndex]
-            TIGHTEN_THRESHOLD = 3.5*w_stdev # !!! CONFIGURE BOUND CONDITIONS HERE !!!
+            TIGHTEN_THRESHOLD = 2.5*w_stdev # !!! CONFIGURE BOUND CONDITIONS HERE !!!
             for name in badBots:
                 badWeight = badBots[name][weightIndex]
                 meanDiff = badWeight - w_mean
@@ -74,7 +74,7 @@ class Incubator():
     # Mutates all data weights in steps of [-max to max] in either positive or negative direction
     # If max > 1 then it resets to a default of 0.2
     def mutateWeights(self, data, maxMutation):
-        multi = 1000
+        multi = 100000
         def getBounds(weight, mutation, i):
             # Bounds for each weight
             # Second part is so boundaries never get reversed
@@ -235,7 +235,7 @@ def updateLeaderboardPerf(incubator, goodOnes, badOnes, leaderboard, minBots):
         incubator.makeClone(bot, leaderboard)
 
     # Limit
-    rewardLimit = int(min(minBots/3, len(goodOnes)))
+    rewardLimit = int(min(minBots/2, len(goodOnes)))
     #Extra Reward for 50% of good ones
     extraReward = int(len(goodOnes)//2)
 
@@ -325,16 +325,16 @@ def addStandardPlayers(board, incubator):
     STANDARDPLAYERS = {}
 
     if champs:
-        STANDARDPLAYERS['Acnd'] = (0.45854458,-0.010288565,0.023143473,0.003357603,-0.045208527,-0.291372468,0.012108953,-0.14727149,0.456158875,-0.156368715,-0.575275254,0.717262457,0,0.1)
-        STANDARDPLAYERS['Cal9'] = (0.027780254,-0.006881324,-0.02755483,0.052425943,-0.247408722,-0.343405448,-0.092064001,-0.114631729,0.367807581,-0.466988527,-0.449206837,0.577756734,0,0.1)
-        STANDARDPLAYERS['Lion'] = (0.472384782,-0.013161448,0.025753558,0.006890752,-0.040231418,-0.293013775,0.014284528,-0.153108951,0.464752312,-0.170325176,-0.574609741,0.734561248,-0.05,0.1)
-        STANDARDPLAYERS['G3Dy'] = (0.62731144,0.006782764,0.0354006,-0.017738708,-0.060943432,-0.202364151,-0.059767574,0.033646709,0.744256733,0.183438671,-0.43500795,0.721879707,0,0.1)
+        STANDARDPLAYERS['Acnd'] = (0.45854458,-0.010288565,0.023143473,0.003357603,-0.045208527,-0.291372468,0.012108953,-0.14727149,0.456158875,-0.156368715,-0.575275254,0.717262457,0,0.)
+        STANDARDPLAYERS['Cal9'] = (0.027780254,-0.006881324,-0.02755483,0.052425943,-0.247408722,-0.343405448,-0.092064001,-0.114631729,0.367807581,-0.466988527,-0.449206837,0.577756734,0,0)
+        STANDARDPLAYERS['Lion'] = (0.472384782,-0.013161448,0.025753558,0.006890752,-0.040231418,-0.293013775,0.014284528,-0.153108951,0.464752312,-0.170325176,-0.574609741,0.734561248,0,0)
+        STANDARDPLAYERS['G3Dy'] = (0.62731144,0.006782764,0.0354006,-0.017738708,-0.060943432,-0.202364151,-0.059767574,0.033646709,0.744256733,0.183438671,-0.43500795,0.721879707,0,0)
         #STANDARDPLAYERS['Ep_RNG'] = (0,-0.362,-0.699,0.535,0.022,-0.744,-0.767,0.79,0.895,-0.713,0.86,0.007)
     else:
-        STANDARDPLAYERS['Rais'] = (0.3,0,0,0,0,0,0,0,-0.9,-0.8,0.1,0.3,0,0)
-        STANDARDPLAYERS['Hnst'] = (0.3,0,0,0,0,0,0,0,0.4,0.2,-0.3,0.8,0,0)
-        STANDARDPLAYERS['Call'] = (0.3,0,0,0,0,0,0,0,0.8,-0.9,-0.2,0.3,0,0.4)
-        STANDARDPLAYERS['Grdy'] = (0.8,0,0,0,0,0,0,0,0.6,0.1,-0.1,0.5,0.3,0)
+        STANDARDPLAYERS['Rais'] = (0.3,0,0,0,0,0,0,0,-0.9,-0.8,0.1,0.3,0,0.02)
+        STANDARDPLAYERS['Hnst'] = (0.3,0,0,0,0,0,0,0,0.4,0.2,-0.3,0.8,0,0.02)
+        STANDARDPLAYERS['Call'] = (0.3,0,0,0,0,0,0,0,0.8,-0.9,-0.2,0.3,0,0.02)
+        STANDARDPLAYERS['Grdy'] = (0.8,0,0,0,0,0,0,0,0.6,0.1,-0.1,0.5,0,0.02)
 
     for name in STANDARDPLAYERS:
         if not name in board:
