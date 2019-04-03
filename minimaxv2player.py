@@ -10,6 +10,7 @@ import win_rate_estimates
 from time import sleep
 import pprint
 import random
+import string
 import activation_functions
 import numpy
 
@@ -26,17 +27,38 @@ MAX_ROUNDS = 1000
 
 class MinimaxV2Player(BasePokerPlayer):
     hand_strengths = {}
-    number_of_weights = 50
+    
+    # linear eval
+    number_of_weights = 9
+
+    # smart eval
+    # number_of_weights = 50
 
     def __init__(self, weights):
-       self.weights = weights
-       # self.weights = [random.uniform(-1, 1) for i in range(0,50)]
+       # self.weights = weights
        # if sum(1 for weight in self.weights if weight < 0) > 0:
-       self.weights = [(i + 1)/2 for i in self.weights]
+       # self.weights = [(i + 1)/2 for i in self.weights]
+       # weights = [random.uniform(-1, 1) for i in range(0,9)]
+       self.init_weights(weights)
        self.starting_stack = -1
 
        self.emulator = Emulator()
        self.emulator.set_game_rule(NUM_PLAYERS, MAX_ROUNDS, SMALL_BLIND, ANTE)
+       self.fold_count = 0
+    
+    def init_weights(self, data):
+       self.street_weights = {'preflop':0, 'flop':0, 'river':0, 'turn':0 }
+       
+       i = 1
+       for street in self.street_weights:
+           self.street_weights[street] = data[i]
+           i += 1
+
+       self.enemy_raise_weight = data[4]
+       self.my_raise_weight = data[5]
+       self.overall_bias = data[6]
+       self.pot_weight = data[7]
+       self.hand_weight = data[8]
 
     def declare_action(self, valid_actions, hole_card, round_state):
         game_state = restore_game_state(round_state)
@@ -45,6 +67,7 @@ class MinimaxV2Player(BasePokerPlayer):
         self.my_index = round_state['next_player']
         self.is_small_blind = self.my_index == round_state['small_blind_pos'] 
         if self.starting_stack == -1: self.starting_stack = round_state['seats'][self.my_index]['stack']
+        self.current_street = round_state['street']
 
         my_uuid = round_state['seats'][round_state['next_player']]['uuid']
         for player in game_state['table'].seats.players:
@@ -54,13 +77,17 @@ class MinimaxV2Player(BasePokerPlayer):
             else:
                 game_state = attach_hole_card_from_deck(game_state, player.uuid)
         
-        
         # calculate hand strength
         self.current_hand_strength = self.get_hand_strength(hole_card, round_state['community_card'])
 
         tree = MinimaxTree(self, game_state)
         decision, payoff = tree.minimax_decision()
-        if DEBUG: print "Decision Made: ", decision
+        if decision == "fold": 
+            self.fold_count += 1
+        if DEBUG:
+            print "Payoff: ", payoff
+            print "Decision Made: ", decision
+            print "fold_count: " + str(self.fold_count)
         return decision  # action returned here is sent to the poker engine
 
     def receive_game_start_message(self, game_info):
@@ -80,7 +107,6 @@ class MinimaxV2Player(BasePokerPlayer):
 
     @staticmethod
     def parse_history(history, is_small_blind):
-        my_turn = is_small_blind
         my_amount_bet = SMALL_BLIND if is_small_blind else 2 * SMALL_BLIND
         enemy_amount_bet = SMALL_BLIND if not is_small_blind else 2 * SMALL_BLIND
         my_num_raises = 0
@@ -92,16 +118,16 @@ class MinimaxV2Player(BasePokerPlayer):
             if street in history:
                 flat_list.extend(history[street])
         
+        my_uuid = flat_list[0]['uuid'] if is_small_blind else flat_list[1]['uuid']
         for i in flat_list:
             if i['action'] == "SMALLBLIND" or i['action'] == "BIGBLIND":
                 continue
-            if my_turn:
+            if i['uuid'] == my_uuid:
                 my_amount_bet += i['paid']
                 my_num_raises += (i['action'] == 'RAISE')
             else:
                 enemy_amount_bet += i['paid']
                 enemy_num_raises += (i['action'] == 'RAISE')
-            my_turn = not my_turn
         return my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises
 
     @staticmethod
@@ -168,6 +194,26 @@ class MinimaxTree:
         return node.is_terminal
 
     @staticmethod
+    def eval(node, pot_amount, my_num_raises, enemy_num_raises):
+        hand = node.agent.current_hand_strength * node.agent.hand_weight
+        pot = pot_amount/MAX_POT_AMOUNT * node.agent.pot_weight
+        
+        
+        turn = node.agent.street_weights[node.agent.current_street]
+        my_confidence = my_num_raises/4 * node.agent.my_raise_weight
+        enemy_confidence = enemy_num_raises/4 * node.agent.enemy_raise_weight
+
+        output_arr = [hand, pot, turn, my_confidence, enemy_confidence, node.agent.overall_bias]
+        output = hand + pot + turn + my_confidence + enemy_confidence + node.agent.overall_bias
+        scaled_output = activation_functions.tanh(0, 1, 2/3, 0)(output)
+        if DEBUG:
+            print "=" * 100
+            print output, "->", scaled_output
+            print output_arr
+        return scaled_output
+        
+
+    @staticmethod
     def smart_eval(agent, pot_amount, raises_made):
         data = [1, agent.current_hand_strength, pot_amount/MAX_POT_AMOUNT, raises_made/MAX_RAISES]
         
@@ -191,7 +237,7 @@ class MinimaxTree:
         n[3][0] = activation_functions.tanh(2.5, 1, 2 / 2.5, 0)(numpy.dot(agent.weights[45:50], n[2]))
 
         # Max
-        return n[3]
+        return n[3][0]
     
 
     @staticmethod
@@ -204,15 +250,19 @@ class MinimaxTree:
         if node.has_folded:
             stack_change = node.events[index]['round_state']['seats'][node.agent.my_index]['stack'] - node.agent.starting_stack
             if DEBUG:
-                print "end stack: {}".format(node.events[-1]['round_state']['seats'][node.agent.my_index]['stack'])
-                print "start stack: {}".format(node.agent.starting_stack)
+                start = "start stack: {}".format(node.agent.starting_stack)
+                end = "end stack: {}".format(node.events[index]['round_state']['seats'][node.agent.my_index]['stack'])
+                print "node: ", str(node.id), ", ", start, ", ", end
             return stack_change
 
-        pot_amount = node.events[index]['round_state']['pot']['main']['amount']
+        pot_amount = node.events[index]['round_state']['pot']['main']['amount']/2
          
-        if DEBUG: print "node level: " + str(node.level)
-        my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises =  node.agent.parse_history(histories, node.agent.is_small_blind)
-        return MinimaxTree.smart_eval(node.agent, pot_amount, enemy_num_raises)
+        my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises = node.agent.parse_history(histories, node.agent.is_small_blind)
+        result = MinimaxTree.eval(node, pot_amount, my_num_raises, enemy_num_raises)
+        payoff = result * pot_amount
+        if DEBUG:
+            print "node : {}\teval result: {}, payoff: {}, pot: {}".format(node.id, result, payoff, pot_amount)
+        return payoff
 
     def __init__(self, agent, game_state):
         # root is always a max node
@@ -231,11 +281,9 @@ class MinimaxTree:
                 best_action = action
             alpha = max(alpha, utility)
             results.append((action, utility))
-        if True:
+        if DEBUG:
             for (action, utility) in results:
-                if DEBUG:
-                    print "(action: {}, payoff: {})".format(
-                        constant_to_string(action), utility)
+                print "(action: {}, payoff: {})".format(action, utility)
         return best_action, best_utility
 
 
@@ -248,11 +296,12 @@ class MinimaxNode:
         self.events = events
         self.has_folded = has_folded
         self.level = level
+        self.id = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(6));
 
     def successors(self):
         successors = []
+        if DEBUG: print "=" * 20 + "successors({})".format(self.id) + "=" * 20
         actions = [i['action'] for i in self.agent.emulator.generate_possible_actions(self.game_state)]
-        
         # generate a child node for each action
         for action in actions:
             child = self.generate_child(action)
@@ -279,8 +328,10 @@ class MinimaxNode:
             # check if any party as folded
             if events[index]['round_state']['seats'][0]['state'] == 'folded' or events[index]['round_state']['seats'][1]['state'] == 'folded':
                 has_folded = True
-        if DEBUG: print str(self.level) + " -> " + str(self.level + 1)
-        return MinimaxNode(self.agent, not self.is_max, is_terminal, has_folded, new_state, events, self.level + 1)
+        child_node = MinimaxNode(self.agent, not self.is_max, is_terminal, has_folded, new_state, events, self.level + 1)
+        if DEBUG: 
+            print "node: {}".format(self.id), "\t", str(self.level), "--", action, "--> ", str(self.level + 1), "\tnode: ", str(child_node.id)
+        return child_node
 
 
 def street_as_int(street):
