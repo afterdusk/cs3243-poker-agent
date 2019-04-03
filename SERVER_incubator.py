@@ -74,7 +74,7 @@ class Incubator():
     # Mutates all data weights in steps of [-max to max] in either positive or negative direction
     # If max > 1 then it resets to a default of 0.2
     def mutateWeights(self, data, maxMutation):
-        multi = 1000
+        multi = 100000
         def getBounds(weight, mutation, i):
             # Bounds for each weight
             # Second part is so boundaries never get reversed

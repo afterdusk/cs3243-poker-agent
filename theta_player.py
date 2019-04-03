@@ -88,7 +88,7 @@ class ThetaPlayer(BasePokerPlayer):
 
     def contPerfReview(self, new_stacks):
         #Arbitrary constant
-        A_CONSTANT = float(5)
+        A_CONSTANT = float(10)
         n_self_stack, n_opp_stack = new_stacks
 
         # initial conditions
