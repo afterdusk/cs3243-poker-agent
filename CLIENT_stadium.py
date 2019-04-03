@@ -1,5 +1,4 @@
 from pypokerengine.api.game import setup_config, start_poker
-from neural3_player import Neural3Player
 from wise_player import WisePlayer
 from smartwarrior import SmartWarrior
 from epsilon_player import EpsilonPlayer
