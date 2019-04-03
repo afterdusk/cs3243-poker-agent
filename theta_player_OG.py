@@ -188,7 +188,7 @@ class ThetaPlayerOG(BasePokerPlayer):
         self.contPerfReview()
 
     def setup_ai():
-        return ThetaPlayer()
+        return ThetaPlayerOG()
 
     @staticmethod
     def get_stacks(state, my_index):
