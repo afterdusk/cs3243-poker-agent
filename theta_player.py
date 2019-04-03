@@ -15,7 +15,7 @@ DEBUG = 0
 # Game rules
 SMALL_BLIND = 10
 MAX_RAISES = 4
-MAX_POT_AMOUNT = 320
+MAX_POT_AMOUNT = 320*2
 
 # The successor to EpsilonPlayer
 # Adjusts based on win/losses

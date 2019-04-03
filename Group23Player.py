@@ -165,9 +165,6 @@ class Group23Player(BasePokerPlayer):
     def receive_round_result_message(self, winners, hand_info, round_state):
         pass
 
-    def setup_ai():
-        return Group23Player()
-
 # ====================== SMARTWARRIOR WORKINGS ====================== #
 
     @staticmethod
@@ -200,3 +197,6 @@ class Group23Player(BasePokerPlayer):
             # raise_amount * 2 is generalisation, can still raise with less than that in reality
             return ["call", "fold"]
         return ["raise", "call", "fold"]
+
+def setup_ai():
+    return Group23Player()

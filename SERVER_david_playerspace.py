@@ -22,9 +22,9 @@ def init(taskmaster, boardName):
     LEADERBOARD_FILENAME = [boardName] #Import boardname for continuity
     LEAGUE_MIN_SIZE = 128
     GENERATIONS_PER_CYCLE = 317 # Limit on number of generations per training
-    SHRINK_RATE = 75 # League shrink per generation
+    SHRINK_RATE = 70 # League shrink per generation
     SHRINK_MAG = 2 # factor of shrink eqn
-    NUM_GAMES = 3
+    NUM_GAMES = 5
     NUM_ROUNDS = 1000
     CHAMPION_BUFFER = 100
     PLATEAU_EVAL = [1]

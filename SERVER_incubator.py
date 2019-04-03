@@ -54,7 +54,7 @@ class Incubator():
         positiveBoardStats = evaluateBoard(leaderboard)
         for weightIndex in range(0,len(positiveBoardStats)):
             w_mean, w_stdev = positiveBoardStats[weightIndex]
-            TIGHTEN_THRESHOLD = 3.5*w_stdev # !!! CONFIGURE BOUND CONDITIONS HERE !!!
+            TIGHTEN_THRESHOLD = 2.5*w_stdev # !!! CONFIGURE BOUND CONDITIONS HERE !!!
             for name in badBots:
                 badWeight = badBots[name][weightIndex]
                 meanDiff = badWeight - w_mean
