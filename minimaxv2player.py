@@ -246,16 +246,22 @@ class MinimaxTree:
         while 'round_state' not in node.events[index]:
             index -= 1
         histories = node.events[index]['round_state']['action_histories']
+        pot_amount = node.events[index]['round_state']['pot']['main']['amount']/2
+        
         # if either player has folded
         if node.has_folded:
-            stack_change = node.events[index]['round_state']['seats'][node.agent.my_index]['stack'] - node.agent.starting_stack
-            if DEBUG:
-                start = "start stack: {}".format(node.agent.starting_stack)
-                end = "end stack: {}".format(node.events[index]['round_state']['seats'][node.agent.my_index]['stack'])
-                print "node: ", str(node.id), ", ", start, ", ", end
-            return stack_change
+            # stack_change = node.events[index]['round_state']['seats'][node.agent.my_index]['stack'] - node.agent.starting_stack
+            # if DEBUG:
+                # start = "start stack: {}".format(node.agent.starting_stack)
+                # end = "end stack: {}".format(node.events[index]['round_state']['seats'][node.agent.my_index]['stack'])
+                # print "node: ", str(node.id), ", ", start, ", ", end
+            if node.is_max:
+                # if node is max, it means the previous player (opponent) folded
+                return pot_amount
+            else:
+                # if node is min, it means the previous player (myself) folded
+                return - pot_amount
 
-        pot_amount = node.events[index]['round_state']['pot']['main']['amount']/2
          
         my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises = node.agent.parse_history(histories, node.agent.is_small_blind)
         result = MinimaxTree.eval(node, pot_amount, my_num_raises, enemy_num_raises)
