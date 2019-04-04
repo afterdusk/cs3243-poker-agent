@@ -26,7 +26,7 @@ def init(taskmaster, boardName):
     SHRINK_MAG = 1 # factor of shrink eqn
     NUM_GAMES = 5
     NUM_ROUNDS = 1000
-    CHAMPION_BUFFER = 100
+    CHAMPION_BUFFER = 60
     PLATEAU_EVAL = [1]
     MY_INCUBATOR = Incubator(AGENT_CLASS)
     MY_INCUBATOR.enableStdPlayers()
