@@ -16,6 +16,15 @@ def createPlayerSpaces(taskmaster):
     lj_playerspace.init(taskmaster, "030419_LJ_Training")
     david_playerspace.init(taskmaster, "0304_Theta_Board")
 
+    CMAPlayerSpace(
+        taskmaster,
+        'theta_player_train_1',
+        'ThetaPlayer',
+        [[-1, 1]] * 14,
+        2000,
+        5,
+        1000,
+        60 * 5)
 
 class TrainerServer:
     def __init__(self, client_id=None):
