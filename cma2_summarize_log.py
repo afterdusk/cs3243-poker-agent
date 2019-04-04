@@ -23,4 +23,4 @@ for (i, entry) in enumerate(entries):
     entry[3] = np.linalg.norm(np.array(entry[0]) - np.array(entries[i - 1][0]))
 
 for (i, entry) in enumerate(entries):
-    print(str(i) + ' ' + str(entry[2]) + ' ' + str(entry[3]) + ' '.join(str(x) for x in entry[0]))
+    print(str(i) + ' ' + str(entry[2]) + ' ' + str(entry[3]) + ' ' + ' '.join(str(x) for x in entry[0]))
