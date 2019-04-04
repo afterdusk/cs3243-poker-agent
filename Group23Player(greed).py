@@ -44,8 +44,7 @@ class Group23Player(BasePokerPlayer):
 
     def __init__(self):
         self.STREET_DICT = {'preflop':0, 'flop':0, 'river':0, 'turn':0 }
-        callPlayer = (0.02778,-0.00688,-0.02755,0.052426,-0.2474,-0.34341,-0.09206,-0.11463,0.37808,-0.46699,-0.44921,0.577757)
-        self.weights = callPlayer
+        self.weights = (0.62731144,0.006782764,0.0354006,-0.017738708,-0.060943432,-0.202364151,-0.059767574,0.033646709,0.744256733,0.183438671,-0.43500795,0.721879707)
 
         if len(self.weights) == self.number_of_weights:
             self.initWeights(self.weights)
@@ -97,7 +96,7 @@ class Group23Player(BasePokerPlayer):
             community = [Card.from_str(c) for c in common_cards]
 
 
-            NUM_SIMULATIONS = 200
+            NUM_SIMULATIONS = 150
             if len(common_cards) == 0:
                 #self.curr_card_wr = win_rate_estimates.estimates[hole[0] - 1][hole[1] - 1]
                 self.curr_card_wr = estimate_win_rate(NUM_SIMULATIONS, hole, [])
