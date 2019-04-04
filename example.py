@@ -30,20 +30,23 @@ erw = (-0.15475,0.00125,0.062,-0.07975,-0.19175,-0.2795,0.076,0.00625,0.5325,-0.
 Plat = EpsilonPlayer(erw)
 greed = Group23Player()
 
-LionCall986 = (0.3842713004869657,-0.01859930416887775,-0.013721383027899842,0.03811035615974509,-0.032320079429710845,-0.3053368432978914,-0.0517824156436372,-0.055762478560196775,0.45731134247036587,-0.06214135361720763,-0.4876935328930009,0.7727753719244155,0.05577339838374313,-0.057029778385599195)
-test = LionCall986
+Omega2_w = (0.457895,-0.0253075,-0.01069,0.0101225,0.0025675,-0.35887,-0.08472,-0.10998,0.3922275,-0.1183975,-0.5474175,0.715655,0.0253325,-0.05307)
+Omega2Ex_w = (0.457895,0.0253075,0.01069,0.0101225,0.0025675,-0.35887,-0.01472,-0.10998,0.3922275,-0.1183975,-0.5474175,0.7205655,0.0253325,-0.05307)
+
 OmegaOG = (0.39834,-0.021305,-0.02627,0.029645,-0.013075,-0.30985,-0.06516,-0.09723,0.410035,-0.095695,-0.520825,0.78539,0.041705,-0.02993)
 OmegaStable = (0.39334,-0.021305,-0.02627,0.029645,-0.013075,-0.29485,-0.06516,-0.09723,0.410035,-0.095695,-0.505825,0.72539,0.039705,-0.02993)
 OmegaPlayer = (0.4634,-0.021305,-0.02627,0.029645,-0.013075,-0.34785,-0.06516,-0.09723,0.410035,-0.095695,-0.550825,0.71539,0.039705,-0.02993)
 oEx = (0.44034,-0.021305,-0.02627,0.029645,-0.013075,-0.34085,-0.008,-0.09723,0.410035,-0.095695,-0.540325,0.72739,0.039705,-0.02993)
-test = oEx
 wrath_w1= (0.457495,-0.03758,-0.010125,-0.04319,-0.050635,-0.327235,-0.05119,-0.11063,0.420975,-0.08234,-0.54522,0.737925,-0.016405,0.04441)
-wrath_w2= (0.515495,-0.03758,-0.010125,-0.04319,-0.050635,-0.2527235,-0.05119,-0.11063,0.420975,-0.08234,-0.59522,0.757925,-0.016405,0.04441)
-wrath = ThetaPlayer(wrath_w2)
-test2 = ()
+wrath_ex= (0.515495,-0.03758,-0.010125,-0.04319,-0.050635,-0.2527235,-0.05119,-0.11063,0.420975,-0.08234,-0.59522,0.757925,-0.0159405,0.04441)
+wrath = ThetaPlayer(wrath_ex)
+
+test = Omega2Ex_w
 tp = ThetaPlayer(test)
-tp = wrath
+# tp = tcall_player #Theta version of Call9996
+# tp = call_player
 print("BEGIN")
+print("TESTING OMEGA2Ex")
 
 config = setup_config(max_round=1000, initial_stack=20000, small_blind_amount=10)
 config.register_player(name="Testing", algorithm = tp)
@@ -51,16 +54,15 @@ config.register_player(name="Raiseplayer", algorithm=RaisedPlayer())
 
 game_result = start_poker(config, verbose=0)
 print(game_result)
-#exit()
+if game_result['players'][0]['stack'] < 20000: exit()
+# game_result = start_poker(config, verbose=0)
+# print(game_result)
+# game_result = start_poker(config, verbose=0)
+# print(game_result)
+# exit()
 
 config = setup_config(max_round=3000, initial_stack=20000, small_blind_amount=10)
 config.register_player(name="Testing", algorithm = tp)
-#config.register_player(name="RGIO", algorithm = RGIO)
-#config.register_player(name="T_Call_Killer", algorithm = tCall)
-#config.register_player(name="T_Call_Killer2", algorithm = tCall)
-#config.register_player(name="CallPolice", algorithm=call_player)
-#config.register_player(name="Gr33dy", algorithm = greed)
-#config.register_player(name="ZLion", algorithm = zLion)
 config.register_player(name="Ascend", algorithm = greedcaller)
 game_result = start_poker(config, verbose=0)
 print(game_result)
@@ -73,14 +75,21 @@ game_result = start_poker(config, verbose=0)
 print(game_result)
 
 
-config = setup_config(max_round=1000, initial_stack=20000, small_blind_amount=10)
+config = setup_config(max_round=3000, initial_stack=20000, small_blind_amount=10)
 config.register_player(name="Testing", algorithm = tp)
 config.register_player(name="ZLion", algorithm = zLion)
 game_result = start_poker(config, verbose=0)
 print(game_result)
 
 config = setup_config(max_round=3000, initial_stack=20000, small_blind_amount=10)
-config.register_player(name="Testing", algorithm = tcall_player)
+config.register_player(name="Testing", algorithm = tp)
 config.register_player(name="CallPolice", algorithm=call_player)
 game_result = start_poker(config, verbose=0)
 print(game_result)
+
+#config.register_player(name="RGIO", algorithm = RGIO)
+#config.register_player(name="T_Call_Killer", algorithm = tCall)
+#config.register_player(name="T_Call_Killer2", algorithm = tCall)
+#config.register_player(name="CallPolice", algorithm=call_player)
+#config.register_player(name="Gr33dy", algorithm = greed)
+#config.register_player(name="ZLion", algorithm = zLion)
