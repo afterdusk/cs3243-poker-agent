@@ -27,8 +27,8 @@ def makeMatrixBoard(leaderboard):
 
 def updateMatrixBoard(winner, winStack, loser, loseStack):
     global MATRIXBOARD
-    winStack = winStack/1000
-    loseStack = loseStack/1000
+    winStack = winStack/100
+    loseStack = loseStack/100
     MATRIXBOARD[winner][loser][0] = MATRIXBOARD[winner][loser][0] + winStack
     MATRIXBOARD[winner][loser][1] = MATRIXBOARD[winner][loser][1] + loseStack
     MATRIXBOARD[loser][winner][0] = MATRIXBOARD[loser][winner][0] + loseStack
