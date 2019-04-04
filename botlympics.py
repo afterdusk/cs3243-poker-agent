@@ -25,10 +25,14 @@ def makeMatrixBoard(leaderboard):
             MATRIXBOARD[name][opp] = [0,0]
     writeToMatrixFile()
 
-def updateMatrixBoard(winner, loser):
+def updateMatrixBoard(winner, winStack, loser, loseStack):
     global MATRIXBOARD
-    MATRIXBOARD[winner][loser][0] = MATRIXBOARD[winner][loser][0] + 1
-    MATRIXBOARD[loser][winner][1] = MATRIXBOARD[loser][winner][1] + 1
+    winStack = winStack/1000
+    loseStack = loseStack/1000
+    MATRIXBOARD[winner][loser][0] = MATRIXBOARD[winner][loser][0] + winStack
+    MATRIXBOARD[winner][loser][1] = MATRIXBOARD[winner][loser][1] + loseStack
+    MATRIXBOARD[loser][winner][0] = MATRIXBOARD[loser][winner][0] + loseStack
+    MATRIXBOARD[loser][winner][1] = MATRIXBOARD[loser][winner][1] + winStack
 
 def writeToMatrixFile():
     mb_filename = MATRIXBOARD_filename
@@ -82,11 +86,11 @@ def init(taskmaster):
     global LEADERBOARD
     TASKMASTER = taskmaster
 
-    def updateAgentsLeaderboardStats(winAgentName, loseAgentName):
+    def updateAgentsLeaderboardStats(winAgentName, winStack, loseAgentName, loseStack):
         #updates the LEADERBOARD
         writeStats(winAgentName,LEADERBOARD, win=1)
         writeStats(loseAgentName,LEADERBOARD, lose=1)
-        updateMatrixBoard(winAgentName, loseAgentName)
+        updateMatrixBoard(winAgentName, winStack, loseAgentName, loseStack)
 
 
     def wipeWinLoss():
@@ -127,7 +131,7 @@ def init(taskmaster):
 
     def blRoundRobinTraining():
         print("EXTENDED ROUND ROBIN TRAINING")
-        MULTIPLIER = 5
+        MULTIPLIER = 10
         queuedMatches[0] = 0
         for i in range(0,MULTIPLIER):
             roundRobinTraining()
@@ -150,13 +154,15 @@ def init(taskmaster):
         player1wins = 1 if outcome[0] >= outcome[1] else 0
 
         winnerName = sentJob[2][1-player1wins]
+        winStack = outcome[1-player1wins]
         loserName = sentJob[2][player1wins]
+        loseStack = outcome[player1wins]
 
         print(str(winnerName) + " WINS AGAINST " + str(loserName))
 
         print("\n============BOTLYMPIC GAMES progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
 
-        updateAgentsLeaderboardStats(winnerName,loserName)
+        updateAgentsLeaderboardStats(winnerName,winStack,loserName, loseStack)
 
         if matchCountArr[0] >= UPDATE_BOARD_FREQUENCY and matchCountArr[0] % UPDATE_BOARD_FREQUENCY == 0:
             writeToBLboardFile(LEADERBOARD,LEADERBOARD_FILENAME[0])
@@ -184,7 +190,7 @@ def init(taskmaster):
     def arrangeLongMatch(agentOneName, agentTwoName):
         botOne = composeBot(agentOneName)
         botTwo = composeBot(agentTwoName)
-        num_games = 21
+        num_games = 5
         num_rounds = 1000
         if QUICK:
             num_games = 1
