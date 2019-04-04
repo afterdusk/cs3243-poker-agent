@@ -104,7 +104,7 @@ class CMAPlayerSpace:
         print('Updating instances...')
         particle_evaluations = [0] * len(particles)
         for completed_job in completed_jobs:
-            particle_evaluations[completed_job[0][2][0]] += completed_job[1]
+            particle_evaluations[completed_job[0][2][0]] += 1 if completed_job[1][0] >= completed_job[1][1] else 0
         particle_evaluations = [-float(e) / self.samples_per_evaluation for e in particle_evaluations]
         self.instance.tell(particles, particle_evaluations, check_points=False)
         
