@@ -38,18 +38,23 @@ class TrainerServer:
         self.client.register_callback(config.mqttTopicJobOutcome, self.on_outcome)
         self.client.connect()
 
+        self.client_ids = set()
+
     def on_connect(self, client):
         client.subscribe(config.mqttTopicJobReq)
         client.subscribe(config.mqttTopicJobOutcome)
 
     def on_request(self, client, topic, content):
-        print("GOT GAME REQUEST", topic, content)
+        #  print("GOT GAME REQUEST", topic, content)
         next_job = self.taskmaster.get_next_job()
         target_id = client.guess_interlocutor_id(topic)
+        if target_id not in self.client_ids:
+            self.client_ids.add(target_id)
+            print("NEW CLIENT", target_id, ". Num clients:", len(self.client_ids))
         client.send_message(next_job, config.mqttTopicJobRes, True, target_id)
 
     def on_outcome(self, client, topic, content):
-        print("GOT OUTCOME", topic, content)
+        #  print("GOT OUTCOME", topic, content)
         self.taskmaster.handle_outcome(content)
 
 
