@@ -32,6 +32,7 @@ def all_node_hostnames():
 blacklist_node_names = [
     "xcna1",  # Manually manage the server's server
     "xcnd32",  # Si Jie's group is training here
+    "xcnd9",  # Somehow doesn't respond to SSH
 ]
 blacklist = [node_name_to_hostname(n) for n in blacklist_node_names]
 

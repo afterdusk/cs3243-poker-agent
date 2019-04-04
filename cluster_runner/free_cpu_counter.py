@@ -1,17 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Counts the number of free cores on a machine.
-# Requires psutil library.
+# Estimates the number of free cores on a machine.
 
-import psutil
-
-
-def count_free_cpus():
-    cpu_usage = psutil.cpu_percent(interval=10, percpu=True)
-    return len([x for x in cpu_usage if x < 1])
-
+from multiprocessing import cpu_count
+from os import getloadavg
+from math import ceil
 
 if __name__ == "__main__":
-    print(count_free_cpus())
-    print(psutil.cpu_count())
+    print(cpu_count() - ceil(getloadavg()[1]))
+    print(cpu_count())
