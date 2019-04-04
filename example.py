@@ -15,6 +15,8 @@ good_player = WisePlayer(zwup)
 
 callw = (0.02778,-0.00688,-0.02755,0.052426,-0.2474,-0.34341,-0.09206,-0.11463,0.37808,-0.46699,-0.44921,0.577757)
 call_player = EpsilonPlayer(callw)
+tcallw = (0.02778*2,-0.00688,-0.02755,0.052426,-0.2474,-0.34341,-0.09206,-0.11463,0.37808,-0.46699,-0.44921*2,0.577757,0,0)
+tcall_player = ThetaPlayer(tcallw)
 Z = (0.472384782,-0.013161448,0.025753558,0.006890752,-0.040231418,-0.293013775,0.014284528,-0.153108951,0.464752312,-0.170325176,-0.574609741,0.734561248)
 
 tCall = ThetaPlayer(Z + (-0.012,-0.008))
@@ -35,9 +37,12 @@ OmegaStable = (0.39334,-0.021305,-0.02627,0.029645,-0.013075,-0.29485,-0.06516,-
 OmegaPlayer = (0.4634,-0.021305,-0.02627,0.029645,-0.013075,-0.34785,-0.06516,-0.09723,0.410035,-0.095695,-0.550825,0.71539,0.039705,-0.02993)
 oEx = (0.44034,-0.021305,-0.02627,0.029645,-0.013075,-0.34085,-0.008,-0.09723,0.410035,-0.095695,-0.540325,0.72739,0.039705,-0.02993)
 test = oEx
+wrath_w1= (0.457495,-0.03758,-0.010125,-0.04319,-0.050635,-0.327235,-0.05119,-0.11063,0.420975,-0.08234,-0.54522,0.737925,-0.016405,0.04441)
+wrath_w2= (0.515495,-0.03758,-0.010125,-0.04319,-0.050635,-0.2527235,-0.05119,-0.11063,0.420975,-0.08234,-0.59522,0.757925,-0.016405,0.04441)
+wrath = ThetaPlayer(wrath_w2)
 test2 = ()
 tp = ThetaPlayer(test)
-
+tp = wrath
 print("BEGIN")
 
 config = setup_config(max_round=1000, initial_stack=20000, small_blind_amount=10)
@@ -75,7 +80,7 @@ game_result = start_poker(config, verbose=0)
 print(game_result)
 
 config = setup_config(max_round=3000, initial_stack=20000, small_blind_amount=10)
-config.register_player(name="Testing", algorithm = tp)
+config.register_player(name="Testing", algorithm = tcall_player)
 config.register_player(name="CallPolice", algorithm=call_player)
 game_result = start_poker(config, verbose=0)
 print(game_result)
