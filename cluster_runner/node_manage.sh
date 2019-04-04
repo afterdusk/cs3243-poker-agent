@@ -8,8 +8,11 @@ then
 fi
 
 if [ "$1" = "countcpu" ]; then
+    # Clear outdated data. We don't want blacklisted machines to have stale data lying around
+    rm -rf free_core_data
+    mkdir free_core_data
     # Count cores
-    python3 cluster_specs.py hostnames | parallel -j300 -u "ssh -oBatchMode=yes -oStrictHostKeyChecking=no {} -t \"cd cs3243-poker-agent/cluster_runner; python3 free_cpu_counter.py\" > free_core_data/{}"
+    python3 cluster_specs.py whitelistedhostnames | parallel -j300 -u "ssh -oBatchMode=yes -oStrictHostKeyChecking=no {} -t \"cd cs3243-poker-agent/cluster_runner; python3 free_cpu_counter.py\" > free_core_data/{}"
 
     # Generate job allocations from gathered data
     python3 allocate_jobs.py
