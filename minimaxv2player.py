@@ -15,7 +15,8 @@ import activation_functions
 import numpy
 
 ############# Constants #############
-DEBUG = 0
+DEBUG = False
+SEARCH_CUTOFF = 4
 MAX_RAISES = 4
 SMALL_BLIND = 10
 ANTE = 0
@@ -66,7 +67,6 @@ class MinimaxV2Player(BasePokerPlayer):
         # retrieve useful information
         self.my_index = round_state['next_player']
         self.is_small_blind = self.my_index == round_state['small_blind_pos'] 
-        if self.starting_stack == -1: self.starting_stack = round_state['seats'][self.my_index]['stack']
         self.current_street = round_state['street']
 
         my_uuid = round_state['seats'][round_state['next_player']]['uuid']
@@ -94,6 +94,7 @@ class MinimaxV2Player(BasePokerPlayer):
         pass
 
     def receive_round_start_message(self, round_count, hole_card, seats):
+        # self.starting_stack = seats[self.my_index]['stack']
         pass
 
     def receive_street_start_message(self, street, round_state):
@@ -299,6 +300,8 @@ class MinimaxNode:
         self.is_max = is_max
         self.game_state = game_state
         self.is_terminal = is_terminal
+        if (level >= SEARCH_CUTOFF): 
+            self.is_terminal = True
         self.events = events
         self.has_folded = has_folded
         self.level = level
