@@ -116,7 +116,7 @@ class ThetaPlayer(BasePokerPlayer):
             hole = [Card.from_str(c).to_id() for c in hole_cards]
             community = [Card.from_str(c).to_id() for c in common_cards]
 
-            NUM_SIMULATIONS = 150
+            NUM_SIMULATIONS = 200
             if len(common_cards) == 0:
                 self.curr_card_wr = win_rate_estimates.estimates[hole[0] - 1][hole[1] - 1]
             else:
