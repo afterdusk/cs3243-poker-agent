@@ -5,6 +5,7 @@ from wise_player import WisePlayer
 from Group23Player import Group23Player
 from epsilon_player import EpsilonPlayer
 from theta_player import ThetaPlayer
+from lambda_player import LambdaPlayer
 
 #TODO:config the config as our wish
 RGIO_W = (0.40077642,-0.022973634,-0.094166709,0.09965165,0.035324082,-0.197451808,-0.026212688,-0.018908599,0.323128337,-0.317679528,-0.630921615,0.337817059)
@@ -18,7 +19,6 @@ call_player = EpsilonPlayer(callw)
 tcallw = (0.02778*2,-0.00688,-0.02755,0.052426,-0.2474,-0.34341,-0.09206,-0.11463,0.37808,-0.46699,-0.44921*2,0.577757,0,0)
 tcall_player = ThetaPlayer(tcallw)
 Z = (0.472384782,-0.013161448,0.025753558,0.006890752,-0.040231418,-0.293013775,0.014284528,-0.153108951,0.464752312,-0.170325176,-0.574609741,0.734561248)
-tCall = ThetaPlayer(Z + (-0.012,-0.008))
 
 zLion = EpsilonPlayer(Z)
 
@@ -41,12 +41,17 @@ wrath_w1= (0.457495,-0.03758,-0.010125,-0.04319,-0.050635,-0.327235,-0.05119,-0.
 wrath_ex= (0.515495,-0.03758,-0.010125,-0.04319,-0.050635,-0.2527235,-0.05119,-0.11063,0.420975,-0.08234,-0.59522,0.757925,-0.0159405,0.04441)
 wrath = ThetaPlayer(wrath_ex)
 
-test = Omeg62_w
-tp = ThetaPlayer(test)
+megagreed_w = (0.85901144,-0.007261118,0.0045653,0.005953146,-0.037009216,-0.275107076,-0.062463787,-0.031791646,0.577145867,0.043871836,-0.71042045,0.718634854,0.0198525,-0.014965)
+MEGAGREED = ThetaPlayer(megagreed_w)
+
+lp_w = (0.7,0,0,0,0,0,0.5771,0.043872,-0.5,0.75,0,0,0,0,0,0,0,0)
+lplayer = LambdaPlayer(lp_w)
+tp = MEGAGREED
+tp = lplayer
 #tp = tcall_player #Theta version of Call9996
 # tp = call_player
 print("BEGIN")
-print("TESTING Omega62")
+print("TESTING Lambda")
 
 config = setup_config(max_round=1000, initial_stack=20000, small_blind_amount=10)
 config.register_player(name="Testing", algorithm = tp)
@@ -67,13 +72,6 @@ config.register_player(name="Ascend", algorithm = greedcaller)
 game_result = start_poker(config, verbose=0)
 print(game_result)
 # exit()
-
-config = setup_config(max_round=3000, initial_stack=20000, small_blind_amount=10)
-config.register_player(name="Testing", algorithm = tp)
-config.register_player(name="T_Call_Killer2", algorithm = tCall)
-game_result = start_poker(config, verbose=0)
-print(game_result)
-
 
 config = setup_config(max_round=3000, initial_stack=20000, small_blind_amount=10)
 config.register_player(name="Testing", algorithm = tp)
