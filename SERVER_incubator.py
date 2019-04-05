@@ -243,7 +243,8 @@ def updateLeaderboardPerf(incubator, goodOnes, badOnes, leaderboard, minBots):
 
     # &&&&&&&&&&&&&&&&&&&&&&&&&& Reward good players &&&&&&&&&&&&&&&&&&&&&&&&&&
     # CLone top 4%
-    for bot in goodOnes[:int(minBots/25)]:
+    limit = min(int(minBots/25),5)
+    for bot in goodOnes[:limit]:
         if len(leaderboard) > int(1.5*minBots):
             # Prevent super overpopulation
             break
