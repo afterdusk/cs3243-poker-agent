@@ -115,9 +115,9 @@ class Incubator():
 
             childW = parentW
             childW[i] = childW[i] - MOVEMENT
-            childName = pName + "^" + str(i+1)
+            childName = pName + "^" + str(2*i)
             addAgent(childName, childW, board)
-            i += 2
+            i += 1
 
     def makeChildFromParents(self, botAName, botBName, leaderboard):
         # Makes a child weight that takes the average of two parents and applies [+/-0.1] mutation
@@ -243,7 +243,7 @@ def updateLeaderboardPerf(incubator, goodOnes, badOnes, leaderboard, minBots):
 
     # &&&&&&&&&&&&&&&&&&&&&&&&&& Reward good players &&&&&&&&&&&&&&&&&&&&&&&&&&
     # CLone top 4%
-    for bot in goodOnes[:int(minBots//25)]:
+    for bot in goodOnes[:int(minBots/25)]:
         if len(leaderboard) > int(1.5*minBots):
             # Prevent super overpopulation
             break
