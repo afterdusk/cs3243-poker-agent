@@ -127,7 +127,7 @@ def init(taskmaster, boardName):
         global MY_INCUBATOR
         boardLength = len(LEADERBOARD)
         UPDATE_BOARD_FREQUENCY = boardLength
-        INCUBATE_FREQUENCY = queuedMatches[0] + 1
+        INCUBATE_FREQUENCY = queuedMatches[0]
         outcome = stacks[0] > stacks[1]
 
         print("\n============ LJ Training progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
