@@ -3,6 +3,7 @@ import os
 import random
 import string
 import math
+import copy
 from david_file_utils import *
 from argparse import ArgumentParser
 
@@ -103,20 +104,24 @@ class Incubator():
 
     def makeClone(self, pName, board):
         parentW = getWeights(pName,board)
-        MOVEMENT = 0.02
+        MOVEMENT = 0.05
         # Gradient descent?
         # Creates 2*W clones
         i = 0
-        while i < len(parentW):
-            childW = parentW
-            childW[i] = childW[i] + MOVEMENT
-            childName = pName + "^" + str(i)
-            addAgent(childName, childW, board)
+        numWeights = len(parentW)
+        while i < numWeights:
+            childUW = copy.copy(getWeights(pName,board))
+            childDW = copy.copy(getWeights(pName,board))
 
-            childW = parentW
-            childW[i] = childW[i] - MOVEMENT
-            childName = pName + "^" + str(2*i)
-            addAgent(childName, childW, board)
+            childUW[i] = float(childUW[i]) + MOVEMENT
+            childName = pName + "^" + str(i+1)
+            addAgent(childName, childUW, board)
+
+            print(childDW, "w[i]" ,i, childDW[i])
+            childDW[i] = float(childDW[i]) - MOVEMENT
+            childName = pName + "^" + str(i+numWeights+1)
+            addAgent(childName, childDW, board)
+            print(childDW,"w[i]",i, childDW[i])
             i += 1
 
     def makeChildFromParents(self, botAName, botBName, leaderboard):
@@ -390,10 +395,10 @@ if __name__ == "__main__":
     #leaderboard = IB.generateLeaderboard(bn, 255)
     leaderboard, gens, players = cacheLeaderboard(bn)
     newBoard, plateauBool, platVal = IB.incubate(leaderboard, 200)
-    IB.enableChamps()
-    newBoard, plateauBool, platVal = IB.incubate(newBoard, 200)
-    IB.enableChamps()
-    newBoard, plateauBool, platVal = IB.incubate(newBoard, 200)
+    # IB.enableChamps()
+    # newBoard, plateauBool, platVal = IB.incubate(newBoard, 200)
+    # IB.enableChamps()
+    # newBoard, plateauBool, platVal = IB.incubate(newBoard, 200)
 
     # print("NEWBOARD LEN", len(newBoard))
     # print(plateauBool)
