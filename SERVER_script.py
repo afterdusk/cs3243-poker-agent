@@ -13,9 +13,9 @@ from profile_player_space import ProfilePlayerSpace
 
 def createPlayerSpaces(taskmaster):
     #botlympics.init(taskmaster)
-    
+
     lj_playerspace.init(taskmaster, "050419_LJ_Training")
-    david_playerspace.init(taskmaster, "0304_Theta_Board")
+    david_playerspace.init(taskmaster, "0504_Theta_Board")
 
     CMA2PlayerSpace(
         taskmaster,
@@ -25,7 +25,7 @@ def createPlayerSpaces(taskmaster):
         20,
         1000,
         60 * 5)
-    
+
     CMA2PlayerSpace(
         taskmaster,
         'theta_isolated_player_train_1',
