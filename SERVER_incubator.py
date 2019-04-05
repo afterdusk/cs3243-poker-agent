@@ -54,7 +54,7 @@ class Incubator():
         positiveBoardStats = evaluateBoard(leaderboard)
         for weightIndex in range(0,len(positiveBoardStats)):
             w_mean, w_stdev = positiveBoardStats[weightIndex]
-            TIGHTEN_THRESHOLD = 2.5*w_stdev # !!! CONFIGURE BOUND CONDITIONS HERE !!!
+            TIGHTEN_THRESHOLD = 3*w_stdev # !!! CONFIGURE BOUND CONDITIONS HERE !!!
             for name in badBots:
                 badWeight = badBots[name][weightIndex]
                 meanDiff = badWeight - w_mean
@@ -103,9 +103,21 @@ class Incubator():
 
     def makeClone(self, pName, board):
         parentW = getWeights(pName,board)
-        childW = self.mutateWeights(parentW,0.05)
-        childName = pName + "^" + str(random.randint(0,9))
-        addAgent(childName, childW, board)
+        MOVEMENT = 0.02
+        # Gradient descent?
+        # Creates 2*W clones
+        i = 0
+        while i < len(parentW):
+            childW = parentW
+            childW[i] = childW[i] + MOVEMENT
+            childName = pName + "^" + str(i)
+            addAgent(childName, childW, board)
+
+            childW = parentW
+            childW[i] = childW[i] - MOVEMENT
+            childName = pName + "^" + str(i+1)
+            addAgent(childName, childW, board)
+            i += 2
 
     def makeChildFromParents(self, botAName, botBName, leaderboard):
         # Makes a child weight that takes the average of two parents and applies [+/-0.1] mutation
@@ -122,7 +134,7 @@ class Incubator():
         parentAWeights = getWeights(botAName,leaderboard)
         parentBWeights = getWeights(botBName,leaderboard)
         childWeights = makeChildWeightsFromParents(parentAWeights,parentBWeights)
-        childName = botAName[:9] + "-" + botBName[:9] + "#" + str(random.randint(0,99))
+        childName = botAName[:12] + "-" + botBName[:12] + "#" + str(random.randint(0,99))
 
         # Add child to board
         addAgent(childName, childWeights, leaderboard)
@@ -230,18 +242,18 @@ def updateLeaderboardPerf(incubator, goodOnes, badOnes, leaderboard, minBots):
     totalPlayers = len(leaderboard)
 
     # &&&&&&&&&&&&&&&&&&&&&&&&&& Reward good players &&&&&&&&&&&&&&&&&&&&&&&&&&
-    # CLone top 10%
-    for bot in goodOnes[:int(minBots//10)]:
+    # CLone top 4%
+    for bot in goodOnes[:int(minBots//25)]:
         incubator.makeClone(bot, leaderboard)
 
     # Limit
-    rewardLimit = int(min(minBots/2, len(goodOnes)))
+    rewardLimit = int(min(minBots/3, len(goodOnes)))
     #Extra Reward for 50% of good ones
     extraReward = int(len(goodOnes)//2)
 
     for bot in goodOnes[:rewardLimit]:
-        if len(leaderboard) > int(minBots):
-            # Prevent overpopulation
+        if len(leaderboard) > int(1.5*minBots):
+            # Prevent super overpopulation
             break
         stats = getStats(bot,leaderboard)
         performace = float(stats[2]) + 1
@@ -326,7 +338,7 @@ def addStandardPlayers(board, incubator):
 
     if champs:
         # SANITY CHECK
-        STANDARDPLAYERS['Raiz'] = (0.4,0.05,0.05,-0.05,-0.05,0,0,0,-0.8,-0.8,-0.5,0.5,0,0)
+        STANDARDPLAYERS['Raiz'] = (0.4,0.05,0.05,-0.05,-0.05,0,0,0,-0.8,-0.8,0,0.5,0,0)
 
         # Epsilon Ported
         STANDARDPLAYERS['Acnd'] = (0.45854458*2,-0.010288565,0.023143473,0.003357603,-0.045208527,-0.291372468,0.012108953,-0.14727149,0.456158875,-0.156368715,-0.575275254*2,0.717262457,0,0)
@@ -338,8 +350,9 @@ def addStandardPlayers(board, incubator):
         STANDARDPLAYERS['WrtH'] = (0.457495,-0.03758,-0.010125,-0.04319,-0.050635,-0.327235,-0.05119,-0.11063,0.420975,-0.08234,-0.54522,0.737925,-0.016405,0.04441)
         STANDARDPLAYERS['OmX2'] = (0.457895,0.0253075,0.01069,0.0101225,0.0025675,-0.34887,-0.01472,-0.10998,0.3922275,-0.1183975,-0.5474175,0.7205655,0.0253325,-0.05307)
         STANDARDPLAYERS['Pr1D'] = (0.48393,-0.0370925,-0.03515,0.0109875,-0.0227425,-0.350185,-0.0771,-0.07662,0.4209825,-0.1094175,-0.5335175,0.719145,0.0159975,-0.01311)
+        STANDARDPLAYERS['MG3d'] = (0.85901144,-0.007261118,0.0045653,0.005953146,-0.037009216,-0.275107076,-0.062463787,-0.031791646,0.577145867,0.043871836,-0.71042045,0.718634854,0.0198525,-0.014965)
     else:
-        STANDARDPLAYERS['Raiz'] = (0.4,0.05,0.05,-0.05,-0.05,0,0,0,-0.8,-0.8,-0.5,0.5,0,0)
+        STANDARDPLAYERS['Raiz'] = (0.4,0.05,0.05,-0.05,-0.05,0,0,0,-0.8,-0.8,0,0.5,0,0)
         STANDARDPLAYERS['Hnst'] = (0.3,0,0,0,0,0,0,0,0.4,0.2,-0.4,0.85,0,0.02)
         STANDARDPLAYERS['Call'] = (0.1,0,0,0,0,0,0,0,0.8,-0.8,-0.4,0.3,0,0.02)
         STANDARDPLAYERS['Grdy'] = (0.8,0,0,0,0,0,0,0,0.6,0.1,-0.2,0.5,0,0.02)

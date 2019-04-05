@@ -20,13 +20,13 @@ def init(taskmaster, boardName):
     # CONFIGURATIONS
     AGENT_CLASS = ThetaPlayer
     LEADERBOARD_FILENAME = [boardName] #Import boardname for continuity
-    LEAGUE_MIN_SIZE = 196
-    GENERATIONS_PER_CYCLE = 250 # Limit on number of generations per training
+    LEAGUE_MIN_SIZE = 256
+    GENERATIONS_PER_CYCLE = 300 # Limit on number of generations per training
     SHRINK_RATE = 60 # League shrink per generation
     SHRINK_MAG = 1 # factor of shrink eqn
-    NUM_GAMES = 5
+    NUM_GAMES = 3
     NUM_ROUNDS = 1000
-    CHAMPION_BUFFER = 60
+    CHAMPION_BUFFER = 80
     PLATEAU_EVAL = [1]
     MY_INCUBATOR = Incubator(AGENT_CLASS)
     MY_INCUBATOR.enableStdPlayers()
@@ -97,10 +97,10 @@ def init(taskmaster, boardName):
         global LEADERBOARD
         reduceLeagueSize()
         if gens[0] >= CHAMPION_BUFFER:
-            # Backup in case champions dominate
             MY_INCUBATOR.enableChamps()
 
         if MY_INCUBATOR.makeBackup():
+            # Backup in case champions dominate
             writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0] + " (backup)", CURR_LEAGUE_SIZE[0], gens[0], PLATEAU_EVAL[0])
 
         LEADERBOARD, plateauBool, plateauVal = MY_INCUBATOR.incubate(LEADERBOARD, CURR_LEAGUE_SIZE[0])
@@ -161,7 +161,9 @@ def init(taskmaster, boardName):
 
                 if exists:
                     try:
+                        print("Reading from leaderboard!",LEADERBOARD_FILENAME[0])
                         LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
+                        print("Read success!")
                     except:
                         print("Problem reading leaderboard!\nGENERATING NEW LEADERBOARD",LEADERBOARD_FILENAME[0])
                         LEADERBOARD = MY_INCUBATOR.generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE)
@@ -169,6 +171,7 @@ def init(taskmaster, boardName):
                 else:
                     print("GENERATING LEADERBOARD",LEADERBOARD_FILENAME[0])
                     LEADERBOARD = MY_INCUBATOR.generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE)
+                    LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
 
 
             print("%%%%%%%%%%%%%%%%%%%%%% Beginning Generation "+ str(gens[0])+ "%%%%%%%%%%%%%%%%%%%%%%")
