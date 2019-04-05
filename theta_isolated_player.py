@@ -185,7 +185,7 @@ class ThetaIsolatedPlayer(BasePokerPlayer):
         #print(self.stacks)
 
     def setup_ai():
-        return ThetaPlayer()
+        return ThetaIsolatedPlayer()
 
     @staticmethod
     def get_stacks(state, my_index):
