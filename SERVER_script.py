@@ -17,21 +17,20 @@ def createPlayerSpaces(taskmaster):
     lj_playerspace.init(taskmaster, "050419_LJ_Training")
     david_playerspace.init(taskmaster, "0304_Theta_Board")
 
-    #CMAPlayerSpace(
-    #    taskmaster,
-    #    'theta_player_train_1',
-    #    'ThetaPlayer',
-    #    [[-1, 1]] * 14,
-    #    2000,
-    #    5,
-    #    1000,
-    #    60 * 5)
-
     CMA2PlayerSpace(
         taskmaster,
         'theta_player_train_1',
         'ThetaPlayer',
         [[-1, 1]] * 14,
+        20,
+        1000,
+        60 * 5)
+    
+    CMA2PlayerSpace(
+        taskmaster,
+        'theta_isolated_player_train_1',
+        'ThetaIsolatedPlayer',
+        [[-1, 1]] * 12,
         20,
         1000,
         60 * 5)

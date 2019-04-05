@@ -2,6 +2,7 @@ from pypokerengine.api.game import setup_config, start_poker
 from smartwarrior import SmartWarrior
 from epsilon_player import EpsilonPlayer
 from theta_player import ThetaPlayer
+from theta_isolated_player import ThetaIsolatedPlayer
 from minimaxv2player import MinimaxV2Player
 from wise_player import WisePlayer
 
@@ -59,6 +60,7 @@ PLAYER_LIBRARY['SmartWarrior'] = lambda w: SmartWarrior(w)
 PLAYER_LIBRARY['EpsilonPlayer'] = lambda w: EpsilonPlayer(w)
 PLAYER_LIBRARY['MinimaxV2Player'] = lambda w: MinimaxV2Player(w)
 PLAYER_LIBRARY['ThetaPlayer'] = lambda w: ThetaPlayer(w)
+PLAYER_LIBRARY['ThetaIsolatedPlayer'] = lambda w: ThetaIsolatedPlayer(w)
 PLAYER_LIBRARY['WisePlayer'] = lambda w: WisePlayer(w)
 
 
