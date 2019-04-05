@@ -24,7 +24,7 @@ def init(taskmaster, boardName):
     LEAGUE_MIN_SIZE = 256
     GENERATIONS_PER_CYCLE = 300 # Limit on number of generations per training
     SHRINK_RATE = 100 # League shrink per generation
-    SHRINK_MAG = 1 # factor of shrink eqn
+    SHRINK_MAG = 1.5 # factor of shrink eqn
     NUM_GAMES = 3
     NUM_ROUNDS = 1000
     CHAMPION_BUFFER = 80
@@ -105,9 +105,13 @@ def init(taskmaster, boardName):
             writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0] + " (backup)", CURR_LEAGUE_SIZE[0], gens[0], PLATEAU_EVAL[0])
 
         LEADERBOARD, plateauBool, plateauVal = MY_INCUBATOR.incubate(LEADERBOARD, CURR_LEAGUE_SIZE[0])
-
         PLATEAU_EVAL[0] = plateauVal
         writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0], CURR_LEAGUE_SIZE[0], gens[0], plateauVal)
+
+        with open(folderize(LEADERBOARD_FILENAME[0] + "_stats"),'a') as csvfile:
+            row = ((str(gens[0]), str(PLATEAU_EVAL[0])),)
+            writer = csv.writer(csvfile)
+            writer.writerows(row)
 
         return plateauBool
 
@@ -138,7 +142,6 @@ def init(taskmaster, boardName):
                 writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0], CURR_LEAGUE_SIZE[0],gens[0], PLATEAU_EVAL[0])
             except:
                 print("Could not write to LEADERBOARD at this time",LEADERBOARD_FILENAME[0])
-
 
         matchCountArr[0] = matchCountArr[0] + 1
 
@@ -174,6 +177,7 @@ def init(taskmaster, boardName):
                     LEADERBOARD = MY_INCUBATOR.generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE)
                     LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
 
+                makeStatFile()
 
             print("%%%%%%%%%%%%%%%%%%%%%% Beginning Generation "+ str(gens[0])+ "%%%%%%%%%%%%%%%%%%%%%%")
             roundRobinTraining()
@@ -207,6 +211,13 @@ def init(taskmaster, boardName):
 
     # # This is the main stuff
     # LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
+    def makeStatFile()
+        with open(folderize(LEADERBOARD_FILENAME[0] + "_stats"),'a') as csvfile:
+            row = ("Generation", "Winner STDDev")
+            writer = csv.writer(csvfile)
+            writer.writerows(row)
+
+    makeStatFile()
 
     try:
         LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
@@ -221,4 +232,4 @@ def init(taskmaster, boardName):
     # MAIN
 if __name__ == "__main__":
     print("YOOOO")
-    init("some")
+    init("some","BOARDNAME")
