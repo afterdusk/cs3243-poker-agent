@@ -15,7 +15,7 @@ def createPlayerSpaces(taskmaster):
     #botlympics.init(taskmaster)
 
     lj_playerspace.init(taskmaster, "050419_LJ_Training")
-    david_playerspace.init(taskmaster, "0504_Theta_Board")
+    david_playerspace.init(taskmaster, "0504_Lambda_Board")
 
     CMA2PlayerSpace(
         taskmaster,

@@ -6,6 +6,7 @@ from collections import deque
 #from wise_player import WisePlayer
 #from epsilon_player import EpsilonPlayer
 from theta_player import ThetaPlayer
+from lambda_player import LambdaPlayer
 from CLIENT_stadium import train_bots
 from SERVER_incubator import Incubator
 from david_file_utils import *

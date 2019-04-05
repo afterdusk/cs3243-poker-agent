@@ -46,8 +46,9 @@ MEGAGREED = ThetaPlayer(megagreed_w)
 
 lp_w = (0.7,0,0,0,0,0,0.5771,0.043872,-0.5,0.75,0,0,0,0,0,0,0,0)
 lplayer = LambdaPlayer(lp_w)
-tp = MEGAGREED
-tp = lplayer
+#tp = MEGAGREED
+tp = LambdaPlayer(megagreed_w)
+tp = LambdaPlayer(tcallw)
 #tp = tcall_player #Theta version of Call9996
 # tp = call_player
 print("BEGIN")
