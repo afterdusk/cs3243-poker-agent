@@ -139,24 +139,29 @@ class LambdaPlayer(BasePokerPlayer):
 
     def evaluateHand(self, hole_cards, common_cards):
         # print(self.old_street, self.current_street)
-        NUM_SIMULATIONS = float(400)
+        NUM_SIMULATIONS = 400
+        hole = [Card.from_str(c).to_id() for c in hole_cards]
+        community = [Card.from_str(c).to_id() for c in common_cards]
+
         if not self.old_street == self.current_street:
             self.num_sims = float(0)
             # If value is not cached...
             self.old_street = self.current_street
-
-            hole = [Card.from_str(c).to_id() for c in hole_cards]
-            community = [Card.from_str(c).to_id() for c in common_cards]
 
             if len(common_cards) == 0:
                 self.curr_card_wr = win_rate_estimates.estimates[hole[0] - 1][hole[1] - 1]
             else:
                 self.curr_card_wr = estimate_win_rate(NUM_SIMULATIONS, hole, community)
             self.num_sims += NUM_SIMULATIONS
+
         else:
             # Continue to simulate
-            delta_wr = estimate_win_rate(NUM_SIMULATIONS, hole, community)
-            self.curr_card_wr = (NUM_SIMULATIONS*delta_wr + self.num_sims*self.curr_card_wr)/(NUM_SIMULATIONS + self.num_sims)
+            if len(common_cards) == 0:
+                delta_wr = win_rate_estimates.estimates[hole[0] - 1][hole[1] - 1]
+            else:
+                delta_wr = estimate_win_rate(NUM_SIMULATIONS, hole, community)
+
+            self.curr_card_wr = (float(NUM_SIMULATIONS)*delta_wr + self.num_sims*self.curr_card_wr)/(NUM_SIMULATIONS + self.num_sims)
             self.num_sims += NUM_SIMULATIONS
         return self.curr_card_wr
 

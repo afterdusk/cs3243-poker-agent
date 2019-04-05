@@ -332,7 +332,6 @@ def checkPlateau(board, numWeights):
 def addStandardPlayers(board, incubator):
     def parseTPWeights(*weights):
         # Parse ThetaPlayer weights
-        print(weights)
         lambda_w = []
         lambda_w.extend(weights[:5])
         lambda_w.append(weights[7]+weights[12])

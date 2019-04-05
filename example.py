@@ -7,6 +7,20 @@ from epsilon_player import EpsilonPlayer
 from theta_player import ThetaPlayer
 from lambda_player import LambdaPlayer
 
+def parseTPWeights(*weights):
+    # Parse ThetaPlayer weights
+    if len(weights) == 1:
+        weights = weights[0]
+    print(weights)
+    lambda_w = []
+    lambda_w.extend(weights[:5])
+    lambda_w.append(weights[7]+weights[12])
+    lambda_w.extend(weights[8:12])
+    lambda_w.extend(4*[weights[5],])
+    lambda_w.extend(4*[weights[6],])
+    print(len(lambda_w))
+    return lambda_w
+
 #TODO:config the config as our wish
 RGIO_W = (0.40077642,-0.022973634,-0.094166709,0.09965165,0.035324082,-0.197451808,-0.026212688,-0.018908599,0.323128337,-0.317679528,-0.630921615,0.337817059)
 RGIO = EpsilonPlayer(RGIO_W)
@@ -47,8 +61,8 @@ MEGAGREED = ThetaPlayer(megagreed_w)
 lp_w = (0.7,0,0,0,0,0,0.5771,0.043872,-0.5,0.75,0,0,0,0,0,0,0,0)
 lplayer = LambdaPlayer(lp_w)
 #tp = MEGAGREED
-tp = LambdaPlayer(megagreed_w)
-tp = LambdaPlayer(tcallw)
+tp = LambdaPlayer(parseTPWeights(megagreed_w))
+tp = LambdaPlayer(parseTPWeights(tcallw))
 #tp = tcall_player #Theta version of Call9996
 # tp = call_player
 print("BEGIN")
