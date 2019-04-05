@@ -17,29 +17,19 @@ SMALL_BLIND = 10
 MAX_RAISES = 4
 MAX_POT_AMOUNT = 320*2
 
-# The successor to EpsilonPlayer
-# Adjusts based on win/losses
+# The second successor to EpsilonPlayer, now considers raises wrt STREET
 class LambdaPlayer(BasePokerPlayer):
 
     # Static variable
     number_of_weights = 18
 
     def __init__(self, weights):
-        #print("INITALIZING WisePlayer")
         self.STREET_DICT = {'preflop':0, 'flop':0, 'river':0, 'turn':0 }
         self.my_index = 0
 
         if len(weights) == self.number_of_weights:
             self.initWeights(weights)
-        elif len(weights) == 14:
-            # Parse ThetaPlayer
-            lambda_w = []
-            lambda_w.extend(weights[:5])
-            lambda_w.append(weights[7]+weights[12])
-            lambda_w.extend(weights[8:12])
-            lambda_w.extend(4*[weights[5],])
-            lambda_w.extend(4*[weights[6],])
-            self.initWeights(lambda_w)
+
         else:
             print("Bad number of weights. Expected " +str(self.number_of_weights) + " weights but got: " + str(weights))
             exit()
