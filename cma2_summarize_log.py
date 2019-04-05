@@ -17,10 +17,14 @@ for log_match in log_matches:
     mean = [float(s) for s in lines[1].split(' ')[2:]]
     sigma = float(lines[2].split(' ')[2])
     entries += [[weights, mean, sigma, 0]]
-for (i, entry) in enumerate(entries):
-    if i == 0:
-        continue
-    entry[3] = np.linalg.norm(np.array(entry[0]) - np.array(entries[i - 1][0]))
 
+distinct_entries = []
 for (i, entry) in enumerate(entries):
+    if i > 0 and entry[0] == entries[i - 1][0] and entry[1] == entries[i - 1][1] and entry[2] == entries[i - 1][2]:
+        continue
+    distinct_entries += [entry]
+    if len(distinct_entries) > 1:
+        distinct_entries[-1][3] = np.linalg.norm(np.array(distinct_entries[-1][1]) - np.array(distinct_entries[-2][1]))
+
+for (i, entry) in enumerate(distinct_entries):
     print(str(i) + ' ' + str(entry[2]) + ' ' + str(entry[3]) + ' ' + ' '.join(str(x) for x in entry[0]))
