@@ -338,7 +338,6 @@ def addStandardPlayers(board, incubator):
         lambda_w.extend(weights[8:12])
         lambda_w.extend(4*[weights[5],])
         lambda_w.extend(4*[weights[6],])
-        print(len(lambda_w))
         return lambda_w
 
     champs = incubator.champs
