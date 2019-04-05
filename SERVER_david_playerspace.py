@@ -211,7 +211,7 @@ def init(taskmaster, boardName):
 
     # # This is the main stuff
     # LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
-    def makeStatFile()
+    def makeStatFile():
         with open(folderize(LEADERBOARD_FILENAME[0] + "_stats"),'a') as csvfile:
             row = ("Generation", "Winner STDDev")
             writer = csv.writer(csvfile)
