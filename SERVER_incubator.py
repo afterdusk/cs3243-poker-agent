@@ -117,11 +117,9 @@ class Incubator():
             childName = pName + "^" + str(i+1)
             addAgent(childName, childUW, board)
 
-            print(childDW, "w[i]" ,i, childDW[i])
             childDW[i] = float(childDW[i]) - MOVEMENT
             childName = pName + "^" + str(i+numWeights+1)
             addAgent(childName, childDW, board)
-            print(childDW,"w[i]",i, childDW[i])
             i += 1
 
     def makeChildFromParents(self, botAName, botBName, leaderboard):
