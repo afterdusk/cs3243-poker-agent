@@ -18,9 +18,8 @@ testing = 0
 def init(taskmaster, boardName):
     # CONFIGURATIONS
     AGENT_CLASS = MinimaxV2Player
-    #LEADERBOARD_FILENAME = [str(time.time())[4:8]+"Ep_Board"]
     LEADERBOARD_FILENAME = [boardName] #Import boardname for continuity
-    LEAGUE_MIN_SIZE = 64
+    LEAGUE_MIN_SIZE = 80
     GENERATIONS_PER_CYCLE = 200 # Limit on number of generations per training
     SHRINK_RATE = 70 # League shrink per generation
     SHRINK_MAG = 1 # factor of shrink eqn
