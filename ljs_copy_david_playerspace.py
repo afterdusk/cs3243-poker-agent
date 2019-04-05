@@ -20,12 +20,12 @@ def init(taskmaster, boardName):
     AGENT_CLASS = MinimaxV2Player
     #LEADERBOARD_FILENAME = [str(time.time())[4:8]+"Ep_Board"]
     LEADERBOARD_FILENAME = [boardName] #Import boardname for continuity
-    LEAGUE_MIN_SIZE = 256
-    GENERATIONS_PER_CYCLE = 400 # Limit on number of generations per training
-    SHRINK_RATE = 75 # League shrink per generation
-    SHRINK_MAG = 2 # factor of shrink eqn
-    NUM_GAMES = 4
-    NUM_ROUNDS = 201
+    LEAGUE_MIN_SIZE = 64
+    GENERATIONS_PER_CYCLE = 200 # Limit on number of generations per training
+    SHRINK_RATE = 70 # League shrink per generation
+    SHRINK_MAG = 1 # factor of shrink eqn
+    NUM_GAMES = 1
+    NUM_ROUNDS = 501
     CHAMPION_BUFFER = 100
     PLATEAU_EVAL = [1]
     MY_INCUBATOR = Incubator(AGENT_CLASS)
@@ -108,6 +108,10 @@ def init(taskmaster, boardName):
 
         PLATEAU_EVAL[0] = plateauVal
         writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0], CURR_LEAGUE_SIZE[0], gens[0], plateauVal)
+        with open(folderize(LEADERBOARD_FILENAME[0] + "_stats"),'a') as csvfile:
+            row = ((str(gens[0]), str(PLATEAU_EVAL[0])),)
+            writer = csv.writer(csvfile)
+            writer.writerows(row)
 
         return plateauBool
 
@@ -169,6 +173,7 @@ def init(taskmaster, boardName):
                     print("LJ GENERATING LEADERBOARD",LEADERBOARD_FILENAME[0])
                     LEADERBOARD = MY_INCUBATOR.generateLeaderboard(LEADERBOARD_FILENAME[0], LEAGUE_MIN_SIZE)
 
+                makeStatFile()
 
             print("%%%%%%%%%%%%%%%%%%%%%% LJ Beginning Generation "+ str(gens[0])+ "%%%%%%%%%%%%%%%%%%%%%%")
             roundRobinTraining()
@@ -200,11 +205,19 @@ def init(taskmaster, boardName):
         sendMatchup(matchup_job)
         queuedMatches[0] = queuedMatches[0] + 1
 
+    def makeStatFile():
+        with open(folderize(LEADERBOARD_FILENAME[0] + "_stats"),'a') as csvfile:
+            row = (("Generation", "Winner STDDev"),)
+            writer = csv.writer(csvfile)
+            writer.writerows(row)
+
+    makeStatFile()
     # # This is the main stuff
     # LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
 
     try:
-        LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
+        LEADERBOARD, gens[0], leaguesize = cacheLeaderboard(LEADERBOARD_FILENAME[0])
+        CURR_LEAGUE_SIZE[0] = min(leaguesize, CURR_LEAGUE_SIZE[0])
         print("LJ FOUND LEADERBOARD",LEADERBOARD_FILENAME[0])
     except:
         print("LJ GENERATING LEADERBOARD",LEADERBOARD_FILENAME[0])
