@@ -27,15 +27,19 @@ class LambdaPlayer(BasePokerPlayer):
     def __init__(self, weights):
         #print("INITALIZING WisePlayer")
         self.STREET_DICT = {'preflop':0, 'flop':0, 'river':0, 'turn':0 }
-
-        self.my_stack = float(0)
-        self.opp_stack = float(0)
-        self.stacks = (0,0)
-        self.perfEval = float(0)
         self.my_index = 0
 
         if len(weights) == self.number_of_weights:
             self.initWeights(weights)
+        elif len(weights) == 14:
+            # Parse ThetaPlayer
+            lambda_w = []
+            lambda_w.extend(weights[:5])
+            lambda_w.append(weights[7]+weights[12])
+            lambda_w.extend(weights[8:12])
+            lambda_w.extend(4*[weights[5],])
+            lambda_w.extend(4*[weights[6],])
+            self.initWeights(lambda_w)
         else:
             print("Bad number of weights. Expected " +str(self.number_of_weights) + " weights but got: " + str(weights))
             exit()
@@ -83,7 +87,6 @@ class LambdaPlayer(BasePokerPlayer):
         turn_o = self.STREET_DICT[self.current_street]
         raises_o = self.getRaiseEval()
         output =  hand_o + pot_o + payout_o + turn_o + raises_o + self.overall_bias
-
         # Activation bounds [-1, 1]
         return activation_functions.logistic(0, 2, 4, -1)(output)
 
@@ -138,10 +141,10 @@ class LambdaPlayer(BasePokerPlayer):
         self.opp_bet = 0
 
     def getRaiseEval(self):
-        eval = 0
+        eval = float(0)
         for i in range(len(self.opp_raise_history)):
-            eval += self.opp_raise_history[i]*self.opp_TRA[i]
-            eval += self.my_raise_history[i]*self.my_TRA[i]
+            eval += self.opp_raise_history[i]*self.opp_TRA[i] + self.my_raise_history[i]*self.my_TRA[i]
+        eval/=MAX_RAISES
         return eval
 
     def evaluateHand(self, hole_cards, common_cards):
@@ -165,10 +168,12 @@ class LambdaPlayer(BasePokerPlayer):
         my_bet_amt, my_raises, opp_bet_amt, opp_raises = history
         street_index = street_as_int(self.current_street)
         if opp_raises > self.opp_raises:
+            self.opp_raises += 1
             diff = opp_bet_amt - self.opp_bet
             self.opp_bet = opp_bet_amt
             self.opp_raise_history[street_index] = self.opp_raise_history[street_index] + 1
         if my_raises > self.my_raises:
+            self.my_raises += 1
             self.my_raise_history[street_index] = self.my_raise_history[street_index] + 1
 
 

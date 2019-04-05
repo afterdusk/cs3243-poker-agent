@@ -18,11 +18,11 @@ testing = 0
 
 def init(taskmaster, boardName):
     # CONFIGURATIONS
-    AGENT_CLASS = ThetaPlayer
+    AGENT_CLASS = LambdaPlayer
     LEADERBOARD_FILENAME = [boardName] #Import boardname for continuity
     LEAGUE_MIN_SIZE = 256
     GENERATIONS_PER_CYCLE = 300 # Limit on number of generations per training
-    SHRINK_RATE = 60 # League shrink per generation
+    SHRINK_RATE = 100 # League shrink per generation
     SHRINK_MAG = 1 # factor of shrink eqn
     NUM_GAMES = 3
     NUM_ROUNDS = 1000
