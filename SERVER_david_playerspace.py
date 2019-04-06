@@ -21,10 +21,10 @@ def init(taskmaster, boardName):
     # CONFIGURATIONS
     AGENT_CLASS = LambdaPlayer
     LEADERBOARD_FILENAME = [boardName] #Import boardname for continuity
-    LEAGUE_MIN_SIZE = 256
+    LEAGUE_MIN_SIZE = 128
     GENERATIONS_PER_CYCLE = 300 # Limit on number of generations per training
-    SHRINK_RATE = 100 # League shrink per generation
-    SHRINK_MAG = 1.5 # factor of shrink eqn
+    SHRINK_RATE = 90 # League shrink per generation
+    SHRINK_MAG = 2 # factor of shrink eqn
     NUM_GAMES = 3
     NUM_ROUNDS = 1000
     CHAMPION_BUFFER = 80
