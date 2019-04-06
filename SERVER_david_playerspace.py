@@ -21,9 +21,9 @@ def init(taskmaster, boardName):
     # CONFIGURATIONS
     AGENT_CLASS = LambdaPlayer
     LEADERBOARD_FILENAME = [boardName] #Import boardname for continuity
-    LEAGUE_MIN_SIZE = 128
+    LEAGUE_MIN_SIZE = 100
     GENERATIONS_PER_CYCLE = 300 # Limit on number of generations per training
-    SHRINK_RATE = 90 # League shrink per generation
+    SHRINK_RATE = 80 # League shrink per generation
     SHRINK_MAG = 2 # factor of shrink eqn
     NUM_GAMES = 3
     NUM_ROUNDS = 1000
@@ -166,7 +166,8 @@ def init(taskmaster, boardName):
                 if exists:
                     try:
                         print("Reading from leaderboard!",LEADERBOARD_FILENAME[0])
-                        LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
+                        LEADERBOARD, gens[0], cachedSize = cacheLeaderboard(LEADERBOARD_FILENAME[0])
+                        CURR_LEAGUE_SIZE[0] = min(CURR_LEAGUE_SIZE[0],cachedSize)
                         print("Read success!")
                     except:
                         print("Problem reading leaderboard!\nGENERATING NEW LEADERBOARD",LEADERBOARD_FILENAME[0])
@@ -220,7 +221,8 @@ def init(taskmaster, boardName):
     makeStatFile()
 
     try:
-        LEADERBOARD, gens[0], CURR_LEAGUE_SIZE[0] = cacheLeaderboard(LEADERBOARD_FILENAME[0])
+        LEADERBOARD, gens[0], cachedSize = cacheLeaderboard(LEADERBOARD_FILENAME[0])
+        CURR_LEAGUE_SIZE[0] = min(CURR_LEAGUE_SIZE[0],cachedSize)
         print("FOUND LEADERBOARD",LEADERBOARD_FILENAME[0])
     except:
         print("GENERATING LEADERBOARD",LEADERBOARD_FILENAME[0])
