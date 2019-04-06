@@ -248,7 +248,7 @@ def updateLeaderboardPerf(incubator, goodOnes, badOnes, leaderboard, minBots):
     # CLone top 3%
     limit = min(int(minBots/33),4)
     for bot in goodOnes[:limit]:
-        if len(leaderboard) > int(1.5*minBots):
+        if len(leaderboard) > int(1.2*minBots):
             # Prevent super overpopulation
             break
         incubator.makeClone(bot, leaderboard)
