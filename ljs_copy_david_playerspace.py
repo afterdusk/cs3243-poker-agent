@@ -130,7 +130,7 @@ def init(taskmaster, boardName):
         INCUBATE_FREQUENCY = queuedMatches[0]
         outcome = stacks[0] > stacks[1]
 
-        print("\n============ LJ Training progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "============")
+        print("\n******* LJ Training progress: " + str(matchCountArr[0]) + "/" + str(queuedMatches[0]) + "****************")
 
         winnerName = sentJob[2][1-outcome]
         loserName = sentJob[2][outcome]
