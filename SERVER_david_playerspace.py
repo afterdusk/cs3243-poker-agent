@@ -21,16 +21,17 @@ def init(taskmaster, boardName):
     # CONFIGURATIONS
     AGENT_CLASS = LambdaPlayer
     LEADERBOARD_FILENAME = [boardName] #Import boardname for continuity
-    LEAGUE_MIN_SIZE = 100
+    LEAGUE_MIN_SIZE = 256
     GENERATIONS_PER_CYCLE = 300 # Limit on number of generations per training
-    SHRINK_RATE = 80 # League shrink per generation
+    SHRINK_RATE = 75 # League shrink per generation
     SHRINK_MAG = 2 # factor of shrink eqn
     NUM_GAMES = 3
     NUM_ROUNDS = 1000
-    CHAMPION_BUFFER = 80
+    CHAMPION_BUFFER = 100
+    QUICK_BUFFER = 32
+    Q_NR = 201
     PLATEAU_EVAL = [1]
     MY_INCUBATOR = Incubator(AGENT_CLASS)
-    MY_INCUBATOR.enableStdPlayers()
 
     if testing:
         LEAGUE_MIN_SIZE = 30
@@ -146,6 +147,7 @@ def init(taskmaster, boardName):
         matchCountArr[0] = matchCountArr[0] + 1
 
         if matchCountArr[0] >= INCUBATE_FREQUENCY:
+            # AT the end of a generation
             matchCountArr[0] = 1
             gens[0] = gens[0] + 1
 
@@ -203,7 +205,12 @@ def init(taskmaster, boardName):
         botOne = composeBot(agentOneName)
         botTwo = composeBot(agentTwoName)
 
-        training_regime = (NUM_GAMES,NUM_ROUNDS)
+        if gens[0] < QUICK_BUFFER:
+            rounds = Q_NR
+        else:
+            MY_INCUBATOR.enableStdPlayers()
+            rounds = NUM_ROUNDS
+        training_regime = (NUM_GAMES,rounds)
         # ((b1,b2), (ng,nr), (name1,name2))
         matchup_job = ((botOne, botTwo),training_regime,(agentOneName,agentTwoName))
 

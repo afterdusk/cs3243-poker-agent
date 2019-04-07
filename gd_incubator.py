@@ -105,27 +105,22 @@ class Incubator():
     def makeClone(self, pName, board):
         parentW = getWeights(pName,board)
         MOVEMENT = 0.05
-        # Creates 4 clones
+        # Gradient descent?
+        # Creates 2*W clones
         i = 0
-        for i in range(4):
-            childW = copy.copy(getWeights(pName,board))
-            childW = self.mutateWeights(childW,0.05)
-            childName = pName + "^" + str(i+1)
-            addAgent(childName, childW, board)
+        numWeights = len(parentW)
+        while i < numWeights:
+            childUW = copy.copy(getWeights(pName,board))
+            childDW = copy.copy(getWeights(pName,board))
 
-        # numWeights = len(parentW)
-        # while i < numWeights:
-        #     childUW = copy.copy(getWeights(pName,board))
-        #     childDW = copy.copy(getWeights(pName,board))
-        #
-        #     childUW[i] = float(childUW[i]) + MOVEMENT
-        #     childName = pName + "^" + str(i+1)
-        #     addAgent(childName, childUW, board)
-        #
-        #     childDW[i] = float(childDW[i]) - MOVEMENT
-        #     childName = pName + "^" + str(i+numWeights+1)
-        #     addAgent(childName, childDW, board)
-        #     i += 1
+            childUW[i] = float(childUW[i]) + MOVEMENT
+            childName = pName + "^" + str(i+1)
+            addAgent(childName, childUW, board)
+
+            childDW[i] = float(childDW[i]) - MOVEMENT
+            childName = pName + "^" + str(i+numWeights+1)
+            addAgent(childName, childDW, board)
+            i += 1
 
     def makeChildFromParents(self, botAName, botBName, leaderboard):
         # Makes a child weight that takes the average of two parents and applies [+/-0.1] mutation
@@ -222,7 +217,7 @@ def updateLeaderboardPerf(incubator, goodOnes, badOnes, leaderboard, minBots):
 
     # &&&&&&&&&&&&&&&&&&&&&&&&&& Cull weak players &&&&&&&&&&&&&&&&&&&&&&&&&&
     # If pop too high, gotta kill some goodOnes
-    if totalPlayers > 1.5*minBots:
+    if totalPlayers > 1.3*minBots:
         cull = int(len(goodOnes)//5)
         goodOnes = goodOnes[:cull] # Shorten goodOnes
         badOnes.extend(goodOnes[cull:])
@@ -250,38 +245,14 @@ def updateLeaderboardPerf(incubator, goodOnes, badOnes, leaderboard, minBots):
     totalPlayers = len(leaderboard)
 
     # &&&&&&&&&&&&&&&&&&&&&&&&&& Reward good players &&&&&&&&&&&&&&&&&&&&&&&&&&
-    # CLone top 3%
-    limit = min(int(minBots/33),4)
+    # CLone top 5% or top 4
+    limit = min(int(minBots/20),4)
     for bot in goodOnes[:limit]:
         if len(leaderboard) > int(1.2*minBots):
             # Prevent super overpopulation
             break
         incubator.makeClone(bot, leaderboard)
 
-
-    # Limit
-    rewardLimit = int(min(minBots/3, len(goodOnes)))
-    #Extra Reward for 50% of good ones
-    extraReward = int(len(goodOnes)//2)
-
-    for bot in goodOnes[:rewardLimit]:
-        if len(leaderboard) > int(1.5*minBots):
-            # Prevent super overpopulation
-            break
-        stats = getStats(bot,leaderboard)
-        performace = float(stats[2]) + 1
-        # Extra reward
-        if bot in goodOnes[:extraReward]:
-            performace += 1
-
-        if performace >= CHILD_THRESHOLD:
-            partner = random.choice(goodOnes)
-            while partner == bot:
-                partner = random.choice(goodOnes)
-            incubator.makeChildFromParents(bot, partner, leaderboard)
-            performace = 0
-
-        writeStats(bot,leaderboard,perf=performace)
 
     return leaderboard
 

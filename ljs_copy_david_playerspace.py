@@ -25,6 +25,8 @@ def init(taskmaster, boardName):
     SHRINK_MAG = 1 # factor of shrink eqn
     NUM_GAMES = 1
     NUM_ROUNDS = 501
+    QUICK_BUFFER = 30
+    Q_NR = 201
     CHAMPION_BUFFER = 100
     PLATEAU_EVAL = [1]
     MY_INCUBATOR = Incubator(AGENT_CLASS)
@@ -196,8 +198,12 @@ def init(taskmaster, boardName):
     def arrangeMatch(agentOneName, agentTwoName):
         botOne = composeBot(agentOneName)
         botTwo = composeBot(agentTwoName)
-
-        training_regime = (NUM_GAMES,NUM_ROUNDS)
+        
+        if gens[0] < QUICK_BUFFER:
+            rounds = Q_NR
+        else:
+            rounds = NUM_ROUNDS
+        training_regime = (NUM_GAMES,rounds)
         # ((b1,b2), (ng,nr), (name1,name2))
         matchup_job = ((botOne, botTwo),training_regime,(agentOneName,agentTwoName))
 
