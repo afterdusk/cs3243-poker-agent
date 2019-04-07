@@ -104,12 +104,12 @@ class Incubator():
 
     def makeClone(self, pName, board):
         parentW = getWeights(pName,board)
-        MOVEMENT = 0.05
+        MOVEMENT = 0.1
         # Creates 4 clones
         i = 0
         for i in range(4):
             childW = copy.copy(getWeights(pName,board))
-            childW = self.mutateWeights(childW,0.05)
+            childW = self.mutateWeights(childW,MOVEMENT)
             childName = pName + "^" + str(i+1)
             addAgent(childName, childW, board)
 
@@ -135,8 +135,8 @@ class Incubator():
                 # Takes the average of both parents
                 childWeights.append((pAWeights[i]+pBWeights[i])/2)
 
-            #Muatate the weights by +/- 0.05
-            self.mutateWeights(childWeights,0.05)
+            #Muatate the weights by +/- 0.07
+            self.mutateWeights(childWeights,0.07)
             return childWeights
 
         parentAWeights = getWeights(botAName,leaderboard)
@@ -250,8 +250,8 @@ def updateLeaderboardPerf(incubator, goodOnes, badOnes, leaderboard, minBots):
     totalPlayers = len(leaderboard)
 
     # &&&&&&&&&&&&&&&&&&&&&&&&&& Reward good players &&&&&&&&&&&&&&&&&&&&&&&&&&
-    # CLone top 3%
-    limit = min(int(minBots/33),4)
+    # CLone top 4% or 4
+    limit = min(int(minBots/25),4)
     for bot in goodOnes[:limit]:
         if len(leaderboard) > int(1.2*minBots):
             # Prevent super overpopulation
@@ -327,7 +327,7 @@ def evaluateBoard(board):
 
 def checkPlateau(board, numWeights):
     # average Standard deviation
-    PLATEAU_THRESHOLD = 0.007
+    PLATEAU_THRESHOLD = 0.009
 
     boardStats = evaluateBoard(board)
     stdDevSum = 0
@@ -359,10 +359,9 @@ def addStandardPlayers(board, incubator):
 
     STANDARDPLAYERS = {}
     # SANITY CHECK
-    STANDARDPLAYERS['Raiz'] = parseTPWeights(0.4,0.05,0.05,-0.05,-0.05,0,0,0,-0.8,-0.8,0,0.5,0,0)
+    STANDARDPLAYERS['Raiz'] = parseTPWeights(0.4,0.05,0.05,-0.05,-0.05,-0.1,0,0,-0.8,-0.8,0.1,0.6,0,0)
 
     if champs:
-
         # Epsilon Ported
         STANDARDPLAYERS['Acnd'] = parseTPWeights(0.45854458*2,-0.010288565,0.023143473,0.003357603,-0.045208527,-0.291372468,0.012108953,-0.14727149,0.456158875,-0.156368715,-0.575275254*2,0.717262457,0,0)
         STANDARDPLAYERS['Cal9'] = parseTPWeights(0.027780254*2,-0.006881324,-0.02755483,0.052425943,-0.247408722,-0.343405448,-0.092064001,-0.114631729,0.367807581,-0.466988527,-0.449206837*2,0.577756734,0,0)
@@ -371,13 +370,13 @@ def addStandardPlayers(board, incubator):
         # Theta
         STANDARDPLAYERS['Omeg'] = parseTPWeights(0.4634,-0.021305,-0.02627,0.029645,-0.013075,-0.34785,-0.06516,-0.09723,0.410035,-0.095695,-0.550825,0.71539,0.039705,-0.02993)
         STANDARDPLAYERS['WrtH'] = parseTPWeights(0.457495,-0.03758,-0.010125,-0.04319,-0.050635,-0.327235,-0.05119,-0.11063,0.420975,-0.08234,-0.54522,0.737925,-0.016405,0.04441)
-        STANDARDPLAYERS['OmX2'] = parseTPWeights(0.457895,0.0253075,0.01069,0.0101225,0.0025675,-0.34887,-0.01472,-0.10998,0.3922275,-0.1183975,-0.5474175,0.7205655,0.0253325,-0.05307)
+        #STANDARDPLAYERS['OmX2'] = parseTPWeights(0.457895,0.0253075,0.01069,0.0101225,0.0025675,-0.34887,-0.01472,-0.10998,0.3922275,-0.1183975,-0.5474175,0.7205655,0.0253325,-0.05307)
         STANDARDPLAYERS['Pr1D'] = parseTPWeights(0.48393,-0.0370925,-0.03515,0.0109875,-0.0227425,-0.350185,-0.0771,-0.07662,0.4209825,-0.1094175,-0.5335175,0.719145,0.0159975,-0.01311)
         STANDARDPLAYERS['MG3d'] = parseTPWeights(0.85901144,-0.007261118,0.0045653,0.005953146,-0.037009216,-0.275107076,-0.062463787,-0.031791646,0.577145867,0.043871836,-0.71042045,0.718634854,0.0198525,-0.014965)
     else:
-        STANDARDPLAYERS['Hnst'] = parseTPWeights(0.3,0,0,0,0,0,0,0,0.4,0.2,-0.4,0.85,0,0.02)
-        STANDARDPLAYERS['Call'] = parseTPWeights(0.1,0,0,0,0,0,0,0,0.8,-0.8,-0.4,0.3,0,0.02)
-        STANDARDPLAYERS['Grdy'] = parseTPWeights(0.8,0,0,0,0,0,0,0,0.6,0.1,-0.2,0.5,0,0.02)
+        STANDARDPLAYERS['Hnst'] = parseTPWeights(0.5,0,0,0,0,-0.1,0,0,0.4,0.2,-0.2,0.8,0,0.02)
+        STANDARDPLAYERS['Call'] = parseTPWeights(0.2,0,0,0,0,-0.1,0,0,0.8,-0.8,-0.2,0.5,0,0.02)
+        STANDARDPLAYERS['Grdy'] = parseTPWeights(0.8,0,0,0,0,-0.1,0,0,0.5,0.2,-0.2,0.6,0,0.02)
 
     for name in STANDARDPLAYERS:
         if not name in board:

@@ -21,24 +21,27 @@ def init(taskmaster, boardName):
     # CONFIGURATIONS
     AGENT_CLASS = LambdaPlayer
     LEADERBOARD_FILENAME = [boardName] #Import boardname for continuity
-    LEAGUE_MIN_SIZE = 256
+    LEAGUE_MIN_SIZE = 300
     GENERATIONS_PER_CYCLE = 300 # Limit on number of generations per training
     SHRINK_RATE = 75 # League shrink per generation
-    SHRINK_MAG = 2 # factor of shrink eqn
+    SHRINK_MAG = 1.5 # factor of shrink eqn
     NUM_GAMES = 3
     NUM_ROUNDS = 1000
-    CHAMPION_BUFFER = 100
-    QUICK_BUFFER = 32
-    Q_NR = 201
+    CHAMPION_BUFFER = 200
+    QUICK_BUFFER = 40
+    Q_NR = 301
     PLATEAU_EVAL = [1]
     BEST_SO_FAR = [0.02]
     MY_INCUBATOR = Incubator(AGENT_CLASS)
+    divergeCount = [0]
 
     if testing:
         LEAGUE_MIN_SIZE = 30
         NUM_GAMES = 1
-        NUM_ROUNDS = 10
+        NUM_ROUNDS = 1000
         GENERATIONS_PER_CYCLE = 5
+        MY_INCUBATOR.enableStdPlayers()
+        MY_INCUBATOR.enableChamps()
         #SHRINK_RATE = 16
         #CHAMPION_BUFFER = 3
 
@@ -47,10 +50,17 @@ def init(taskmaster, boardName):
     TASKMASTER = taskmaster
 
     def writeToBest(plateauVal):
-        if plateauVal < BEST_SO_FAR[0]:
+        if plateauVal <= 0.95*BEST_SO_FAR[0]:
+            divergeCount[0] = 0
             BEST_SO_FAR[0] = plateauVal
             filename = LEADERBOARD_FILENAME[0] + "_G" + str(gens[0])
             writeToLeaderboardFile(LEADERBOARD, filename, CURR_LEAGUE_SIZE[0], gens[0], plateauVal)
+        else:
+            if plateauVal > 1.5*BEST_SO_FAR[0]:
+                divergeCount[0] = divergeCount[0] + 1
+
+    def checkDiverge():
+        return divergeCount[0] > 20
 
     def updateAgentsLeaderboardStats(winAgentName, loseAgentName):
         #updates the LEADERBOARD
@@ -116,13 +126,14 @@ def init(taskmaster, boardName):
         PLATEAU_EVAL[0] = plateauVal
         writeToBest(plateauVal)
         writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0], CURR_LEAGUE_SIZE[0], gens[0], plateauVal)
+        diverge = checkDiverge()
 
         with open(folderize(LEADERBOARD_FILENAME[0] + "_stats"),'a') as csvfile:
             row = ((str(gens[0]), str(PLATEAU_EVAL[0])),)
             writer = csv.writer(csvfile)
             writer.writerows(row)
 
-        return plateauBool
+        return plateauBool or diverge
 
     #************================================************
     #         Server-Client communication functions
