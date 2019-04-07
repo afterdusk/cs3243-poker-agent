@@ -16,6 +16,9 @@ function finish {
 }
 trap finish EXIT
 
+export TMPDIR=/temp/e-liang/nodetmp
+mkdir -p $TMPDIR || unset TMPDIR
+
 ~/.linuxbrew/sbin/mosquitto -c mosquitto_client_cluster_broker.conf &
 
 sleep 5
