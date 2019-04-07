@@ -31,6 +31,7 @@ def init(taskmaster, boardName):
     QUICK_BUFFER = 32
     Q_NR = 201
     PLATEAU_EVAL = [1]
+    BEST_SO_FAR = [0.02]
     MY_INCUBATOR = Incubator(AGENT_CLASS)
 
     if testing:
@@ -44,6 +45,12 @@ def init(taskmaster, boardName):
     global LEADERBOARD
     CURR_LEAGUE_SIZE = [LEAGUE_MIN_SIZE]
     TASKMASTER = taskmaster
+
+    def writeToBest(plateauVal):
+        if plateauVal < BEST_SO_FAR[0]:
+            BEST_SO_FAR[0] = plateauVal
+            filename = LEADERBOARD_FILENAME[0] + "_G" + str(gens[0])
+            writeToLeaderboardFile(LEADERBOARD, filename, CURR_LEAGUE_SIZE[0], gens[0], plateauVal)
 
     def updateAgentsLeaderboardStats(winAgentName, loseAgentName):
         #updates the LEADERBOARD
@@ -107,6 +114,7 @@ def init(taskmaster, boardName):
 
         LEADERBOARD, plateauBool, plateauVal = MY_INCUBATOR.incubate(LEADERBOARD, CURR_LEAGUE_SIZE[0])
         PLATEAU_EVAL[0] = plateauVal
+        writeToBest(plateauVal)
         writeToLeaderboardFile(LEADERBOARD, LEADERBOARD_FILENAME[0], CURR_LEAGUE_SIZE[0], gens[0], plateauVal)
 
         with open(folderize(LEADERBOARD_FILENAME[0] + "_stats"),'a') as csvfile:
