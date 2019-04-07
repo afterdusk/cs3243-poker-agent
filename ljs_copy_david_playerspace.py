@@ -24,12 +24,12 @@ def init(taskmaster, boardName):
     SHRINK_RATE = 70 # League shrink per generation
     SHRINK_MAG = 1 # factor of shrink eqn
     NUM_GAMES = 1
-    NUM_ROUNDS = 501
+    NUM_ROUNDS = 801
     QUICK_BUFFER = 30
     Q_NR = 201
     CHAMPION_BUFFER = 100
     PLATEAU_EVAL = [1]
-    BEST_SO_FAR = [0.02]
+    BEST_SO_FAR = [0.05]
     MY_INCUBATOR = Incubator(AGENT_CLASS)
 
     if testing:
@@ -45,7 +45,7 @@ def init(taskmaster, boardName):
     TASKMASTER = taskmaster
 
     def writeToBest(plateauVal):
-        if plateauVal < BEST_SO_FAR[0]:
+        if plateauVal < 0.95*BEST_SO_FAR[0]:
             BEST_SO_FAR[0] = plateauVal
             filename = LEADERBOARD_FILENAME[0] + "_G" + str(gens[0])
             writeToLeaderboardFile(LEADERBOARD, filename, CURR_LEAGUE_SIZE[0], gens[0], plateauVal)
