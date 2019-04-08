@@ -178,7 +178,8 @@ def init(taskmaster, boardName):
                 gens[0] = 1
                 # New incubator
                 MY_INCUBATOR = Incubator(AGENT_CLASS)
-                MY_INCUBATOR.enableStdPlayers()
+                MY_INCUBATOR.SPF = False
+                MY_INCUBATOR.champs = False
 
                 LEADERBOARD_FILENAME[0] = LEADERBOARD_FILENAME[0] + "I"
                 exists = os.path.isfile(folderize(LEADERBOARD_FILENAME[0]))
