@@ -33,7 +33,7 @@ def init(taskmaster, boardName):
     PLATEAU_EVAL = [1]
     BEST_SO_FAR = [0.05]
     MY_INCUBATOR = Incubator(AGENT_CLASS)
-    divergeCount = [0]
+    divergeCount = [-30]
 
     if testing:
         LEAGUE_MIN_SIZE = 30
@@ -56,11 +56,11 @@ def init(taskmaster, boardName):
             filename = LEADERBOARD_FILENAME[0] + "_G" + str(gens[0])
             writeToLeaderboardFile(LEADERBOARD, filename, CURR_LEAGUE_SIZE[0], gens[0], plateauVal)
         else:
-            if plateauVal > 1.8*BEST_SO_FAR[0]:
+            if plateauVal > 2*BEST_SO_FAR[0]:
                 divergeCount[0] = divergeCount[0] + 1
 
     def checkDiverge():
-        return divergeCount[0] > 30
+        return divergeCount[0] > 20
 
     def updateAgentsLeaderboardStats(winAgentName, loseAgentName):
         #updates the LEADERBOARD
@@ -180,8 +180,8 @@ def init(taskmaster, boardName):
                 MY_INCUBATOR = Incubator(AGENT_CLASS)
                 MY_INCUBATOR.SPF = False
                 MY_INCUBATOR.champs = False
-                divergeCount[0] = 0
-                BEST_SO_FAR[0] = 0.02
+                divergeCount[0] = -30
+                BEST_SO_FAR[0] = 0.05
 
                 LEADERBOARD_FILENAME[0] = LEADERBOARD_FILENAME[0] + "I"
                 exists = os.path.isfile(folderize(LEADERBOARD_FILENAME[0]))
