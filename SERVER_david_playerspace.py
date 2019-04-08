@@ -31,7 +31,7 @@ def init(taskmaster, boardName):
     QUICK_BUFFER = 40
     Q_NR = 301
     PLATEAU_EVAL = [1]
-    BEST_SO_FAR = [0.02]
+    BEST_SO_FAR = [0.05]
     MY_INCUBATOR = Incubator(AGENT_CLASS)
     divergeCount = [0]
 
@@ -56,11 +56,11 @@ def init(taskmaster, boardName):
             filename = LEADERBOARD_FILENAME[0] + "_G" + str(gens[0])
             writeToLeaderboardFile(LEADERBOARD, filename, CURR_LEAGUE_SIZE[0], gens[0], plateauVal)
         else:
-            if plateauVal > 1.5*BEST_SO_FAR[0]:
+            if plateauVal > 1.8*BEST_SO_FAR[0]:
                 divergeCount[0] = divergeCount[0] + 1
 
     def checkDiverge():
-        return divergeCount[0] > 20
+        return divergeCount[0] > 30
 
     def updateAgentsLeaderboardStats(winAgentName, loseAgentName):
         #updates the LEADERBOARD
