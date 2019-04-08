@@ -180,6 +180,8 @@ def init(taskmaster, boardName):
                 MY_INCUBATOR = Incubator(AGENT_CLASS)
                 MY_INCUBATOR.SPF = False
                 MY_INCUBATOR.champs = False
+                divergeCount[0] = 0
+                BEST_SO_FAR[0] = 0.02
 
                 LEADERBOARD_FILENAME[0] = LEADERBOARD_FILENAME[0] + "I"
                 exists = os.path.isfile(folderize(LEADERBOARD_FILENAME[0]))
