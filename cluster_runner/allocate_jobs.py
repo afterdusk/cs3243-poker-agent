@@ -72,4 +72,4 @@ if __name__ == "__main__":
             if num_jobs > 0:
                 f.write(f"{node_hostname}\n{num_jobs}\n")
 
-    print(f"Allocated {total_jobs} jobs on {total_actual_free_cores}/{total_free_cores}/{total_cores} free cores on {len(node_hostnames)} nodes.")
+    print(f"Allocated {total_jobs} clients on {total_actual_free_cores}+{total_jerlim_jobs}/{total_free_cores}/{total_cores} free cores on {len(node_hostnames)} nodes.")
