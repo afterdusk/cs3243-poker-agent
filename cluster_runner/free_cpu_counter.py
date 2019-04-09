@@ -8,6 +8,5 @@ from os import getloadavg
 from math import ceil
 
 if __name__ == "__main__":
-    raw_free_count = cpu_count() - ceil(getloadavg()[0])
-    print(max(0, raw_free_count))
+    print(ceil(getloadavg()[0]))
     print(cpu_count())

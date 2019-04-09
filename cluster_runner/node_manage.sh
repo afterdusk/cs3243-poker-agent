@@ -12,7 +12,7 @@ if [ "$1" = "countcpu" ]; then
     rm -rf free_core_data
     mkdir free_core_data
     # Count cores
-    python3 cluster_specs.py whitelistedhostnames | parallel -j300 -u "ssh -oBatchMode=yes -oStrictHostKeyChecking=no {} -t \"cd cs3243-poker-agent/cluster_runner; python3 free_cpu_counter.py\" > free_core_data/{}" 2> /dev/null
+    python3 cluster_specs.py whitelistedhostnames | parallel -j300 -u "ssh -oBatchMode=yes -oStrictHostKeyChecking=no {} -t \"cd cs3243-poker-agent/cluster_runner; pstree jerlim | head -1; python3 free_cpu_counter.py\" > free_core_data/{}" 2> /dev/null
 
     # Generate job allocations from gathered data
     python3 allocate_jobs.py
