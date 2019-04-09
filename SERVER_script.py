@@ -24,7 +24,7 @@ def createPlayerSpaces(taskmaster):
         [[-1, 1]] * 14,
         20,
         1000,
-        60 * 5)
+        60 * 15)
 
     #  CMA2PlayerSpace(
         #  taskmaster,
