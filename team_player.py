@@ -24,8 +24,12 @@ def parseTPWeights(*weights):
     #print(weights)
     lambda_w = []
     lambda_w.extend(weights[:5])
+    # Bias
     lambda_w.append(weights[7]+weights[12])
+
     lambda_w.extend(weights[8:12])
+
+    # Raise responses
     lambda_w.extend(4*[weights[5],])
     lambda_w.extend(4*[weights[6],])
     #print(len(lambda_w))
@@ -43,11 +47,12 @@ class TeamPlayer(BasePokerPlayer):
     lion_w = (0.472384782*2,-0.013161448,0.025753558,0.006890752,-0.040231418,-0.293013775,0.014284528,-0.153108951,0.464752312,-0.170325176,-0.574609741*2,0.734561248,0,0)
     PLAYERBASE['lion'] = parseTPWeights(lion_w)
     call_w = (0.02778*2,-0.00688,-0.02755,0.052426,-0.2474,-0.34341,-0.09206,-0.11463,0.37808,-0.46699,-0.44921*2,0.577757,0,0)
-    PLAYERBASE['callpolice'] = parseTPWeights(call_w)
+    PLAYERBASE['call9996'] = parseTPWeights(call_w)
     ascend_w = (0.45854458*2,-0.010288565,0.023143473,0.003357603,-0.045208527,-0.291372468,0.012108953,-0.14727149,0.456158875,-0.156368715,-0.575275254*2,0.717262457,0,0)
     PLAYERBASE['ascend'] = parseTPWeights(ascend_w)
     PLAYERBASE['pride2'] = (0.41856,-0.04605,-0.0508,-0.07398,-0.10022,-0.07048,0.31181,-0.15511,-0.52646,0.70109,-0.36287,-0.48434,-0.42068,-0.28957,0.03635,-0.03503,-0.15601,-0.10615)
-
+    PLAYERBASE['ltx'] = (0.28748,0.05839,0.14166,0.08104,0.0291,-0.07817,0.69236,0.1612,-0.32584,0.74436,-0.21646,-0.58813,-0.5167,-0.5043,0.09655,0.05093,0.15939,-0.34775)
+    PLAYERBASE['liomega'] = (0.4634,-0.021305,-0.02627,0.029645,-0.013075,-0.34785,-0.06516,-0.09723,0.410035,-0.095695,-0.550825,0.71539,0.039705,-0.02993)
     def __init__(self, playernames):
 
         self.team = []
@@ -235,12 +240,12 @@ class TeamPlayer(BasePokerPlayer):
         my_bet_amt, my_raises, opp_bet_amt, opp_raises = history
         street_index = street_as_int(self.current_street)
         if opp_raises > self.opp_raises:
-            self.opp_raises += 1
+            self.opp_raises = opp_raises
             diff = opp_bet_amt - self.opp_bet
             self.opp_bet = opp_bet_amt
             self.opp_raise_history[street_index] = self.opp_raise_history[street_index] + 1
         if my_raises > self.my_raises:
-            self.my_raises += 1
+            self.my_raises = my_raises
             self.my_raise_history[street_index] = self.my_raise_history[street_index] + 1
 
     @staticmethod

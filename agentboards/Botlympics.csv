@@ -14,11 +14,12 @@ CMA2TP1,ThetaPlayer,CMA2TP1,,,Weights:,0.233146522,-0.332563799,0.398475577,-0.1
 APR07 LambdaBoard Post-ChampionLambdaPlayer,LambdaPlayer,Pr2de,,,Weights:,0.41856,-0.04605,-0.0508,-0.07398,-0.10022,-0.07048,0.31181,-0.15511,-0.52646,0.70109,-0.36287,-0.48434,-0.42068,-0.28957,0.03635,-0.03503,-0.15601,-0.10615
 APR07 LJTraining CONVERGE,MinimaxV2Player,Minmax1,,,Weights:,0.405349021,0.045963426,0.169285631,0.127099172,-0.231639102,-0.126540016,-0.114880674,-0.045995445,0.800110469,,,,,,,,,
 APR07 LJTraining FINAL,MinimaxV2Player,Minmax2,,,Weights:,0.74627,-0.54995,-0.02521,0.78675,-0.30548,-0.53049,0.01883,-0.58648,0.64693,,,,,,,,,
-go team,TeamPlayer,TeamAll,,,Weights:,callpolice,pride2,ascend,lion,megagreed,,,,,,,,,,,,,
-go team,TeamPlayer,TeamEp,,,Weights:,lion,ascend,callpolice,,,,,,,,,,,,,,,
-go team,TeamPlayer,TeamNew,,,Weights:,pride2,megagreed,fulc,,,,,,,,,,,,,,,
+go team,TeamPlayer,TeamAll,,,Weights:,ltx,ascend,liomega,megagreed,,,,,,,,,,,,,,
+go team,TeamPlayer,TeamLambda,,,Weights:,ltx,liomega,pride2,,,,,,,,,,,,,,,
+go team,TeamPlayer,TeamNew,,,Weights:,ltx,pride2,fulc,,,,,,,,,,,,,,,
 go team,TeamPlayer,SmallTeam,,,Weights:,lion,fulc,,,,,,,,,,,,,,,,
-go team,TeamPlayer,TeamB,,,Weights:,megagreed,pride2,ascend,,,,,,,,,,,,,,,
+go team,TeamPlayer,SmallTeam2,,,Weights:,ltx,ascend,,,,,,,,,,,,,,,,
+go team,TeamPlayer,TeamB,,,Weights:,lion,pride2,ascend,,,,,,,,,,,,,,,
 APR10 LJTrain,MinimaxV2Player,Minmax3,,,Weights:,0.706522833,0.374717115,-0.848381506,0.888046448,-0.815084807,-0.517733505,0.003723446,0.018900202,0.916363475,,,,,,,,,
 APR09 LambdaBoard,LambdaPlayer,LTXW,,,Weights:,0.124048855,0.112704493,0.274792076,0.162478695,0.036262792,-0.097084087,0.848983211,0.307150018,0.013884158,0.878733397,-0.215474327,-0.739364458,-0.858934594,-0.581222463,0.458913063,0.246341095,0.392669148,-0.480229021
 APR09 LambdaBoard PC,LambdaPlayer,Wrth-LTXW1,,,Weights:,0.270309372,0.034075943,0.101739518,0.06710815,0.012442873,-0.115426906,0.640177676,0.124438363,-0.358400911,0.826461614,-0.276241618,-0.547552184,-0.600565597,-0.46342232,0.155087124,0.069294902,0.141114308,-0.24159733
