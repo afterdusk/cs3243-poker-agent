@@ -1,6 +1,5 @@
 Remarks,Bot Class,Bot Name,Wins,Losses,,,,,,,,,,,,,,,,,,,
 Mar 27 6036,EpsilonPlayer,Call9996,,,Weights:,0.027780254,-0.006881324,-0.02755483,0.052425943,-0.247408722,-0.343405448,-0.092064001,-0.114631729,0.367807581,-0.466988527,-0.449206837,0.577756734,,,,,,
-Clone of Call9996,LambdaPlayer,LmbCall9996,,,Weights:,0.055560508,-0.006881324,-0.02755483,0.052425943,-0.247408722,-0.114631729,0.367807581,-0.466988527,-0.898413674,0.577756734,-0.343405448,-0.343405448,-0.343405448,-0.343405448,-0.092064001,-0.092064001,-0.092064001,-0.092064001
 APR03 I think,LambdaPlayer,Omega,,,Weights:,0.4634,-0.021305,-0.02627,0.029645,-0.013075,-0.057525,0.410035,-0.095695,-0.550825,0.71539,-0.34785,-0.34785,-0.34785,-0.34785,-0.06516,-0.06516,-0.06516,-0.06516
 MAR29 ChampPlat,EpsilonPlayer,Ascendant,,,Weights:,0.45854458,-0.010288565,0.023143473,0.003357603,-0.045208527,-0.291372468,0.012108953,-0.14727149,0.456158875,-0.156368715,-0.575275254,0.717262457,,,,,,
 MAR21 WisePlayer_Board,WisePlayer,RNGenius,,,Weights:,0.895,-0.713,0.86,0.007,-0.362,-0.699,0.535,0.022,-0.744,-0.767,0.79,,,,,,,
@@ -14,15 +13,17 @@ CMA2TP1,ThetaPlayer,CMA2TP1,,,Weights:,0.233146522,-0.332563799,0.398475577,-0.1
 APR07 LambdaBoard Post-ChampionLambdaPlayer,LambdaPlayer,Pr2de,,,Weights:,0.41856,-0.04605,-0.0508,-0.07398,-0.10022,-0.07048,0.31181,-0.15511,-0.52646,0.70109,-0.36287,-0.48434,-0.42068,-0.28957,0.03635,-0.03503,-0.15601,-0.10615
 APR07 LJTraining CONVERGE,MinimaxV2Player,Minmax1,,,Weights:,0.405349021,0.045963426,0.169285631,0.127099172,-0.231639102,-0.126540016,-0.114880674,-0.045995445,0.800110469,,,,,,,,,
 APR07 LJTraining FINAL,MinimaxV2Player,Minmax2,,,Weights:,0.74627,-0.54995,-0.02521,0.78675,-0.30548,-0.53049,0.01883,-0.58648,0.64693,,,,,,,,,
-go team,TeamPlayer,TeamAll,,,Weights:,ltx,ascend,liomega,megagreed,,,,,,,,,,,,,,
-go team,TeamPlayer,TeamLambda,,,Weights:,ltx,liomega,pride2,,,,,,,,,,,,,,,
-go team,TeamPlayer,TeamNew,,,Weights:,ltx,pride2,fulc,,,,,,,,,,,,,,,
-go team,TeamPlayer,SmallTeam,,,Weights:,lion,fulc,,,,,,,,,,,,,,,,
-go team,TeamPlayer,SmallTeam2,,,Weights:,ltx,ascend,,,,,,,,,,,,,,,,
-go team,TeamPlayer,TeamB,,,Weights:,lion,pride2,ascend,,,,,,,,,,,,,,,
 APR10 LJTrain,MinimaxV2Player,Minmax3,,,Weights:,0.706522833,0.374717115,-0.848381506,0.888046448,-0.815084807,-0.517733505,0.003723446,0.018900202,0.916363475,,,,,,,,,
 APR09 LambdaBoard,LambdaPlayer,LTXW,,,Weights:,0.124048855,0.112704493,0.274792076,0.162478695,0.036262792,-0.097084087,0.848983211,0.307150018,0.013884158,0.878733397,-0.215474327,-0.739364458,-0.858934594,-0.581222463,0.458913063,0.246341095,0.392669148,-0.480229021
 APR09 LambdaBoard PC,LambdaPlayer,Wrth-LTXW1,,,Weights:,0.270309372,0.034075943,0.101739518,0.06710815,0.012442873,-0.115426906,0.640177676,0.124438363,-0.358400911,0.826461614,-0.276241618,-0.547552184,-0.600565597,-0.46342232,0.155087124,0.069294902,0.141114308,-0.24159733
 APR09 LambdaBoard PC,LambdaPlayer,Wrth-LTXW2,,,Weights:,0.28748,0.05839,0.14166,0.08104,0.0291,-0.07817,0.69236,0.1612,-0.32584,0.74436,-0.21646,-0.58813,-0.5167,-0.5043,0.09655,0.05093,0.15939,-0.34775
 APR10 LJTrainII_G145,MinimaxV2Player,Minmax4,,,Weights:,0.706522833,0.374717115,-0.848381506,0.888046448,-0.815084807,-0.517733505,0.003723446,0.018900202,0.916363475,,,,,,,,,
 APR10 LJTrainI_G183,MinimaxV2Player,Minmax2.5,,,Weights:,0.030043458,0.078077966,0.215043362,0.138525668,-0.232043769,-0.230025828,-0.229097844,0.10013909,0.551517035,,,,,,,,,
+go team,TeamPlayer,Ateam,,0,Weights:,wrthx,liomega,pride2,mggd,,,,,,,,,,,,,,
+go team,TeamPlayer,TeamNew,1,1,Weights:,wrthx,pride2,fulc,ltx,,,,,,,,,,,,,,
+go team,TeamPlayer,TeamBest,1,1,Weights:,call9996,wrthx,pride2,,,,,,,,,,,,,,,
+go team,TeamPlayer,TeamLambda,0,2,Weights:,ltx,liomega,pride2,,,,,,,,,,,,,,,
+PLS,TeamPlayer,TeamEp2,1,1,Weights:,call9996,ascend,,,,,,,,,,,,,,,,
+go team,TeamPlayer,SmallTeam2,0,2,Weights:,ltx,ascend,,,,,,,,,,,,,,,,
+go team,TeamPlayer,SmallTeam,0,2,Weights:,lion,fulc,,,,,,,,,,,,,,,,
+go team,TeamPlayer,Team5,0,2,Weights:,liomega,wrthx,pride2,mggd,ascend,fulc,,,,,,,,,,,,
