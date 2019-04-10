@@ -174,7 +174,8 @@ class TeamPlayer(BasePokerPlayer):
         swap = lossbool or greedbool
 
         if swap:
-            print("DELTA",self.earnings_delta, "ROUNDS PLAYED",self.num_rounds_passed, "ratio",ratio)
+            if DEBUG:
+                print("DELTA",self.earnings_delta, "ROUNDS PLAYED",self.num_rounds_passed, "ratio",ratio)
             self.nextBetterPlayer()
             self.earnings_delta = 0
             self.num_rounds_passed = 0
