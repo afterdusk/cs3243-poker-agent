@@ -59,7 +59,10 @@ def cacheBLboard(boardFileName):
             botClass = row[1]
             stats = (0,0,0) # win, loss, perf
             rawWeights = row[6:]
-            weights = list(map(lambda e: float(e), filter(lambda w: not w == '', rawWeights)))
+            try:
+                weights = list(map(lambda e: float(e), filter(lambda w: not w == '', rawWeights)))
+            except:
+                weights = list(filter(lambda w: not w == '', rawWeights))
             remark = row[0]
             leaderboard[name] = [stats, weights, botClass, remark]
     return leaderboard
