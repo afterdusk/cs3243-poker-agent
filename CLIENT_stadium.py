@@ -6,6 +6,7 @@ from theta_isolated_player import ThetaIsolatedPlayer
 from minimaxv2player import MinimaxV2Player
 from wise_player import WisePlayer
 from lambda_player import LambdaPlayer
+from team_player import TeamPlayer
 
 # CLIENT SIDE
 # This will be run on each thread aka each core processor.
@@ -64,7 +65,7 @@ PLAYER_LIBRARY['ThetaPlayer'] = lambda w: ThetaPlayer(w)
 PLAYER_LIBRARY['ThetaIsolatedPlayer'] = lambda w: ThetaIsolatedPlayer(w)
 PLAYER_LIBRARY['WisePlayer'] = lambda w: WisePlayer(w)
 PLAYER_LIBRARY['LambdaPlayer'] = lambda w: LambdaPlayer(w)
-
+PLAYER_LIBRARY['TeamPlayer'] = lambda w: TeamPlayer(w)
 
 
 # A job is {{bot1,bot2}, {training_regime}, {...extra info...}}
