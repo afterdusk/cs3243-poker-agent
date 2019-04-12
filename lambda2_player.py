@@ -322,4 +322,4 @@ def constant_to_string(constant):
     return constant
 
 def setup_ai():
-    return LambdaPlayer()
+    return Lambda2Player()
