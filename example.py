@@ -6,6 +6,7 @@ from Group23Player import Group23Player
 from epsilon_player import EpsilonPlayer
 from theta_player import ThetaPlayer
 from lambda_player import LambdaPlayer
+from lambda2_player import Lambda2Player
 from team_player import TeamPlayer
 from minimaxv2player import MinimaxV2Player
 
@@ -13,14 +14,13 @@ def parseTPWeights(*weights):
     # Parse ThetaPlayer weights
     if len(weights) == 1:
         weights = weights[0]
-    #print(weights)
     lambda_w = []
     lambda_w.extend(weights[:5])
     lambda_w.append(weights[7]+weights[12])
     lambda_w.extend(weights[8:12])
     lambda_w.extend(4*[weights[5],])
     lambda_w.extend(4*[weights[6],])
-    #print(len(lambda_w))
+    #print(lambda_w)
     return lambda_w
 
 #TODO:config the config as our wish
@@ -31,10 +31,12 @@ RGIO = EpsilonPlayer(RGIO_W)
 # good_player = WisePlayer(zwup)
 
 callw = (0.02778,-0.00688,-0.02755,0.052426,-0.2474,-0.34341,-0.09206,-0.11463,0.37808,-0.46699,-0.44921,0.577757)
-call_player = EpsilonPlayer(callw)
+call9996 = EpsilonPlayer(callw)
 tcallw = (0.02778*2,-0.00688,-0.02755,0.052426,-0.2474,-0.34341,-0.09206,-0.11463,0.37808,-0.46699,-0.44921*2,0.577757,0,0)
+tcallwx = (0.02778*2,-0.00688,-0.02755,0.052426,-0.2474,-0.34341,-0.09206,-0.11463,0.37808,-0.46699,-0.44921*2,0.577757,0,0)
+
 tcall_player = ThetaPlayer(tcallw)
-LCALL = LambdaPlayer(parseTPWeights(tcallw))
+LCALL = LambdaPlayer(parseTPWeights(tcallwx))
 Z = (0.472384782,-0.013161448,0.025753558,0.006890752,-0.040231418,-0.293013775,0.014284528,-0.153108951,0.464752312,-0.170325176,-0.574609741,0.734561248)
 
 zLion = EpsilonPlayer(Z)
@@ -78,17 +80,37 @@ G85 = LambdaPlayer(G85w)
 wrathsir_w = (0.297629292,0.049786245,0.122967539,0.08292289,-0.009234498,-0.117881087,0.635055951,0.109258146,-0.283136289,0.825488242,-0.261617786,-0.555953195,-0.592919143,-0.449949836,0.185070994,0.073960997,0.1608546,-0.270086074)
 numsir_w = (0.124048855,0.112704493,0.274792076,0.162478695,0.036262792,-0.097084087,0.848983211,0.307150018,0.013884158,0.878733397,-0.215474327,-0.739364458,-0.858934594,-0.581222463,0.458913063,0.246341095,0.392669148,-0.480229021)
 numsir2_w = (0.122996207,0.125085439,0.29225711,0.180102474,0.039180472,-0.121139926,0.857361954,0.323843001,0.014234181,0.881308427,-0.218497454,-0.667937497,-0.754606684,-0.573963344,0.448674516,0.226791482,0.394057881,-0.4692406)
-wrathsir = LambdaPlayer(wrathsir_w)
+wrathsir = Lambda2Player(wrathsir_w)
 numsir = LambdaPlayer(numsir2_w)
+
+omegaraiz_w = (0.49084,-0.16197,-0.12233,-0.02797,-0.02721,-0.04489,-0.54901,-0.33323,-0.59433,0.79867,-0.21012,-0.22641,-0.34368,-0.37032,0.00799,-0.18964,-0.1107,-0.10976)
+omegaRaiz = LambdaPlayer(omegaraiz_w)
 
 #tp = minmax
 # tp = gdplay
 # tp = prideV2
 # tp = wrathsir
-tp = TeamPlayer(('megagreed','pride2','callpolice','ascend'))
+
+
+# team = ('pride2','cma1','call9996','wrthx')
+team = ('wrthx','call9996','lion','wrthx')
+# tp = TeamPlayer(team)
+# tp = TeamPlayer(('cma1','cma1'))
+
+tp = wrathsir
 
 print("BEGIN")
-print("TESTING Lambda")
+print("TESTING Lambda2Player")
+
+i = 6
+while i < 5:
+    config = setup_config(max_round=2000, initial_stack=20000, small_blind_amount=10)
+    config.register_player(name="Call9996", algorithm = call9996)
+    config.register_player(name="Lambda Call", algorithm=LCALL)
+    game_result = start_poker(config, verbose=0)
+    print(game_result)
+    i+= 1
+
 
 config = setup_config(max_round=500, initial_stack=20000, small_blind_amount=10)
 config.register_player(name="Testing", algorithm = tp)
@@ -102,31 +124,41 @@ print(game_result)
 # game_result = start_poker(config, verbose=0)
 # print(game_result)
 
-config = setup_config(max_round=1000, initial_stack=20000, small_blind_amount=10)
+ROUNDS = 1000
+# tp = TeamPlayer(team)
+config = setup_config(max_round=ROUNDS, initial_stack=20000, small_blind_amount=10)
 config.register_player(name="Testing", algorithm = tp)
 config.register_player(name="Razor", algorithm = Razor)
 game_result = start_poker(config, verbose=0)
 print(game_result)
 
-config = setup_config(max_round=1000, initial_stack=20000, small_blind_amount=10)
+# tp = TeamPlayer(team)
+config = setup_config(max_round=ROUNDS, initial_stack=20000, small_blind_amount=10)
 config.register_player(name="Testing", algorithm = tp)
 config.register_player(name="Ascend", algorithm = greedcaller)
 game_result = start_poker(config, verbose=0)
 print(game_result)
-# exit()
 
-config = setup_config(max_round=1000, initial_stack=20000, small_blind_amount=10)
+# tp = TeamPlayer(team)
+config = setup_config(max_round=ROUNDS, initial_stack=20000, small_blind_amount=10)
 config.register_player(name="Testing", algorithm = tp)
 config.register_player(name="ZLion", algorithm = zLion)
 game_result = start_poker(config, verbose=0)
 print(game_result)
 
-config = setup_config(max_round=1000, initial_stack=20000, small_blind_amount=10)
+# tp = TeamPlayer(team)
+config = setup_config(max_round=ROUNDS, initial_stack=20000, small_blind_amount=10)
 config.register_player(name="Testing", algorithm = tp)
-config.register_player(name="CallPolice", algorithm=call_player)
+config.register_player(name="CallPolice", algorithm=call9996)
 game_result = start_poker(config, verbose=0)
 print(game_result)
 
+# tp = TeamPlayer(team)
+config = setup_config(max_round=ROUNDS, initial_stack=20000, small_blind_amount=10)
+config.register_player(name="Testing", algorithm = tp)
+config.register_player(name="wrth-ltx", algorithm=wrathsir)
+game_result = start_poker(config, verbose=0)
+print(game_result)
 #config.register_player(name="RGIO", algorithm = RGIO)
 #config.register_player(name="T_Call_Killer", algorithm = tCall)
 #config.register_player(name="T_Call_Killer2", algorithm = tCall)
