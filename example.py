@@ -84,6 +84,8 @@ wrathsir = Lambda2Player(wrathsir_w)
 lp_wrathsir = LambdaPlayer(wrathsir_w)
 numsir = LambdaPlayer(numsir2_w)
 
+liomega_w = (0.4634,-0.021305,-0.02627,0.029645,-0.013075,-0.34785,-0.06516,-0.09723,0.410035,-0.095695,-0.550825,0.71539,0.039705,-0.02993)
+
 omegaraiz_w = (0.49084,-0.16197,-0.12233,-0.02797,-0.02721,-0.04489,-0.54901,-0.33323,-0.59433,0.79867,-0.21012,-0.22641,-0.34368,-0.37032,0.00799,-0.18964,-0.1107,-0.10976)
 omegaRaiz = LambdaPlayer(omegaraiz_w)
 
@@ -99,6 +101,7 @@ team = ('wrthx','call9996','lion','wrthx')
 # tp = TeamPlayer(('cma1','cma1'))
 
 tp = wrathsir
+#tp = Lambda2Player(parseTPWeights(liomega_w))
 
 print("BEGIN")
 print("TESTING Lambda2Player")
@@ -121,8 +124,13 @@ print(game_result)
 
 if game_result['players'][0]['stack'] < 20000: exit()
 
-ROUNDS = 3000
+ROUNDS = 2000
 
+config = setup_config(max_round=ROUNDS, initial_stack=20000, small_blind_amount=10)
+config.register_player(name="Testing", algorithm = tp)
+config.register_player(name="Pr2de", algorithm=prideV2)
+# game_result = start_poker(config, verbose=0)
+# print(game_result)
 
 config = setup_config(max_round=ROUNDS, initial_stack=20000, small_blind_amount=10)
 config.register_player(name="Testing", algorithm = tp)
@@ -157,6 +165,7 @@ config.register_player(name="Testing", algorithm = tp)
 config.register_player(name="CallPolice", algorithm=call9996)
 game_result = start_poker(config, verbose=0)
 print(game_result)
+
 
 #config.register_player(name="RGIO", algorithm = RGIO)
 #config.register_player(name="T_Call_Killer", algorithm = tCall)

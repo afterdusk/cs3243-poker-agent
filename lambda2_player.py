@@ -157,13 +157,14 @@ class Lambda2Player(BasePokerPlayer):
 
     def getAggroEval(self):
         def spread(val):
-            return ((1+val)**2)/4
+            val *= 10
+            return ((val-5)**3)/250 + 0.5
         # 0.12, 2.1
         # 0.15, 2.67
-        b_aggro_w = 0.4
-        c_aggro_w = 0.25
-        bully_aggro = 0.8/4
-        counter_aggro = 1.5/4
+        b_aggro_w = 0.1
+        c_aggro_w = 0.28
+        bully_aggro = 1.2/4
+        counter_aggro = 2.0/4
         # print("Aggro val",self.opp_aggro)
         aggro_o = 0
         if self.opp_aggro > counter_aggro:
