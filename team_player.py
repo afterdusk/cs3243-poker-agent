@@ -26,9 +26,7 @@ def parseTPWeights(*weights):
     lambda_w.extend(weights[:5])
     # Bias
     lambda_w.append(weights[7]+weights[12])
-
     lambda_w.extend(weights[8:12])
-
     # Raise responses
     lambda_w.extend(4*[weights[5],])
     lambda_w.extend(4*[weights[6],])
@@ -41,7 +39,8 @@ class TeamPlayer(BasePokerPlayer):
     # Static variable
     number_of_weights = 18
     PLAYERBASE = {}
-
+    PLAYERBASE['raise'] = (0.0,-0.04605,-0.0508,-0.07398,-0.10022,-0.07048,-0.8,-0.99,-0.5,0.70109,0,0,0,0,0,0,0,0)
+    PLAYERBASE['cma1'] = parseTPWeights((0.233146522,-0.332563799,0.398475577,-0.159397509,0.121140771,0.582387326,0.290256057,0.075762472,-0.821883688,-0.398452019,0.150734361,0.265066024,0.19285167,0.147527983))
     PLAYERBASE['mggd'] = parseTPWeights((0.85901144,-0.007261118,0.0045653,0.005953146,-0.037009216,-0.275107076,-0.062463787,-0.031791646,0.577145867,0.043871836,-0.71042045,0.718634854,0.0198525,-0.014965))
     PLAYERBASE['fulc'] = (0.117994414,0.05,0.23,0.02,0,-0.3,0.175032389,-0.235125649,0.54,0.749183248,-0.073978396,-0.407671667,-0.372985906,-0.325279514,0.376030346,-0.044681863,-0.148404011,-0.043494767)
     lion_w = (0.472384782*2,-0.013161448,0.025753558,0.006890752,-0.040231418,-0.293013775,0.014284528,-0.153108951,0.464752312,-0.170325176,-0.574609741*2,0.734561248,0,0)
@@ -54,6 +53,7 @@ class TeamPlayer(BasePokerPlayer):
     PLAYERBASE['wrthx'] = (0.28748,0.05839,0.14166,0.08104,0.0291,-0.07817,0.69236,0.1612,-0.32584,0.74436,-0.21646,-0.58813,-0.5167,-0.5043,0.09655,0.05093,0.15939,-0.34775)
     PLAYERBASE['ltx'] = (0.124048855,0.112704493,0.274792076,0.162478695,0.036262792,-0.097084087,0.848983211,0.307150018,0.013884158,0.878733397,-0.215474327,-0.739364458,-0.858934594,-0.581222463,0.458913063,0.246341095,0.392669148,-0.480229021)
     PLAYERBASE['liomega'] = parseTPWeights((0.4634,-0.021305,-0.02627,0.029645,-0.013075,-0.34785,-0.06516,-0.09723,0.410035,-0.095695,-0.550825,0.71539,0.039705,-0.02993))
+
     def __init__(self, playernames):
 
         self.team = []
@@ -73,7 +73,7 @@ class TeamPlayer(BasePokerPlayer):
         self.earnings_delta = float(0)
         self.num_rounds_passed = 0
         # Ratio of earnings delta over games played. I.e. Avg Net earning per round
-        self.loss_threshold = 400
+        self.loss_threshold = 600
         self.greed_threshold = 1
         self.currentPlayer = 0
         self.initNameWeights(self.team[0])
@@ -150,8 +150,9 @@ class TeamPlayer(BasePokerPlayer):
         # initalize stacks
         self.my_stack = game_info['rule']['initial_stack']
         self.num_rounds_passed = 0
-        self.round_buffer = max(game_info['rule']['max_round']/25,20)
+        self.round_buffer = max(game_info['rule']['max_round']/20,20)
         self.earnings_delta = float(0)
+        self.loss_threshold = game_info['rule']['initial_stack']/40
 
     def receive_round_start_message(self, round_count, hole_card, seats):
         self.initRound()
@@ -211,7 +212,7 @@ class TeamPlayer(BasePokerPlayer):
 
     def evaluateHand(self, hole_cards, common_cards):
         # print(self.old_street, self.current_street)
-        NUM_SIMULATIONS = 400
+        NUM_SIMULATIONS = 500
         hole = [Card.from_str(c).to_id() for c in hole_cards]
         community = [Card.from_str(c).to_id() for c in common_cards]
 
