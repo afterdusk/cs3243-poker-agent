@@ -75,6 +75,7 @@ class EpsilonPlayer(BasePokerPlayer):
             community = [Card.from_str(c).to_id() for c in common_cards]
 
             NUM_SIMULATIONS = 150
+
             if len(common_cards) == 0:
                 self.curr_card_wr = win_rate_estimates.estimates[hole[0] - 1][hole[1] - 1]
             else:
@@ -91,13 +92,19 @@ class EpsilonPlayer(BasePokerPlayer):
         pot_o = self.pot_w*(pot_amount/MAX_POT_AMOUNT)
         turn_o = self.STREET_DICT[self.current_street]
         history_o = (self.self_raise_w*self_raises/4) + (self.opp_raise_w*opp_raises/4)
+
         output =  hand_o + pot_o + payout_o + turn_o + history_o + self.overall_bias
+        if DEBUG:
+            print(self.hand_w,hand_o,pot_o,payout_o,turn_o,history_o,self.overall_bias)
+            print(output, self.raise_threshold, self.call_threshold)
 
         # Activation bounds [-1, 1]
         return activation_functions.logistic(0, 2, 4, -1)(output)
 
     def make_move(self, valid_actions, hole, community, pot_amount, my_raise, opp_raise):
         confidence = self.linear_eval(hole, community, pot_amount, my_raise, opp_raise)
+        if DEBUG:
+            print("confidence",confidence)
         valid_action_strings = list(map(lambda a: a['action'],valid_actions))
 
         if confidence > self.raise_threshold and "raise" in valid_action_strings:

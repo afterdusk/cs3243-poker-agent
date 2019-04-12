@@ -78,10 +78,15 @@ class LambdaPlayer(BasePokerPlayer):
         raises_o = self.getRaiseEval()
         output =  hand_o + pot_o + payout_o + turn_o + raises_o + self.overall_bias
         # Activation bounds [-1, 1]
+        if DEBUG:
+            print(self.hand_w,hand_o,pot_o,payout_o,turn_o,raises_o,self.overall_bias)
+            print(output, self.raise_threshold, self.call_threshold)
         return activation_functions.logistic(0, 2, 4, -1)(output)
 
     def make_move(self, valid_actions, hole, community, pot_amount):
         confidence = self.linear_eval(hole, community, pot_amount)
+        if DEBUG:
+            print("confidence",confidence)
         valid_action_strings = list(map(lambda a: a['action'],valid_actions))
 
         if confidence > self.raise_threshold and "raise" in valid_action_strings:
@@ -140,6 +145,7 @@ class LambdaPlayer(BasePokerPlayer):
     def evaluateHand(self, hole_cards, common_cards):
         # print(self.old_street, self.current_street)
         NUM_SIMULATIONS = 400
+
         hole = [Card.from_str(c).to_id() for c in hole_cards]
         community = [Card.from_str(c).to_id() for c in common_cards]
 
@@ -169,12 +175,12 @@ class LambdaPlayer(BasePokerPlayer):
         my_bet_amt, my_raises, opp_bet_amt, opp_raises = history
         street_index = street_as_int(self.current_street)
         if opp_raises > self.opp_raises:
-            self.opp_raises += 1
+            self.opp_raises += opp_raises
             diff = opp_bet_amt - self.opp_bet
             self.opp_bet = opp_bet_amt
             self.opp_raise_history[street_index] = self.opp_raise_history[street_index] + 1
         if my_raises > self.my_raises:
-            self.my_raises += 1
+            self.my_raises += my_raises
             self.my_raise_history[street_index] = self.my_raise_history[street_index] + 1
 
 

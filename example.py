@@ -81,6 +81,7 @@ wrathsir_w = (0.297629292,0.049786245,0.122967539,0.08292289,-0.009234498,-0.117
 numsir_w = (0.124048855,0.112704493,0.274792076,0.162478695,0.036262792,-0.097084087,0.848983211,0.307150018,0.013884158,0.878733397,-0.215474327,-0.739364458,-0.858934594,-0.581222463,0.458913063,0.246341095,0.392669148,-0.480229021)
 numsir2_w = (0.122996207,0.125085439,0.29225711,0.180102474,0.039180472,-0.121139926,0.857361954,0.323843001,0.014234181,0.881308427,-0.218497454,-0.667937497,-0.754606684,-0.573963344,0.448674516,0.226791482,0.394057881,-0.4692406)
 wrathsir = Lambda2Player(wrathsir_w)
+lp_wrathsir = LambdaPlayer(wrathsir_w)
 numsir = LambdaPlayer(numsir2_w)
 
 omegaraiz_w = (0.49084,-0.16197,-0.12233,-0.02797,-0.02721,-0.04489,-0.54901,-0.33323,-0.59433,0.79867,-0.21012,-0.22641,-0.34368,-0.37032,0.00799,-0.18964,-0.1107,-0.10976)
@@ -115,22 +116,26 @@ while i < 5:
 config = setup_config(max_round=500, initial_stack=20000, small_blind_amount=10)
 config.register_player(name="Testing", algorithm = tp)
 config.register_player(name="Raiseplayer", algorithm=RaisedPlayer())
-
 game_result = start_poker(config, verbose=0)
 print(game_result)
-# if game_result['players'][0]['stack'] < 20000: exit()
-# game_result = start_poker(config, verbose=0)
-# print(game_result)
-# game_result = start_poker(config, verbose=0)
-# print(game_result)
 
-ROUNDS = 1000
+if game_result['players'][0]['stack'] < 20000: exit()
+
+ROUNDS = 3000
+
+
+config = setup_config(max_round=ROUNDS, initial_stack=20000, small_blind_amount=10)
+config.register_player(name="Testing", algorithm = tp)
+config.register_player(name="original wrth-ltx", algorithm=lp_wrathsir)
+game_result = start_poker(config, verbose=0)
+print(game_result)
+
 # tp = TeamPlayer(team)
 config = setup_config(max_round=ROUNDS, initial_stack=20000, small_blind_amount=10)
 config.register_player(name="Testing", algorithm = tp)
 config.register_player(name="Razor", algorithm = Razor)
-game_result = start_poker(config, verbose=0)
-print(game_result)
+# game_result = start_poker(config, verbose=0)
+# print(game_result)
 
 # tp = TeamPlayer(team)
 config = setup_config(max_round=ROUNDS, initial_stack=20000, small_blind_amount=10)
@@ -153,12 +158,6 @@ config.register_player(name="CallPolice", algorithm=call9996)
 game_result = start_poker(config, verbose=0)
 print(game_result)
 
-# tp = TeamPlayer(team)
-config = setup_config(max_round=ROUNDS, initial_stack=20000, small_blind_amount=10)
-config.register_player(name="Testing", algorithm = tp)
-config.register_player(name="wrth-ltx", algorithm=wrathsir)
-game_result = start_poker(config, verbose=0)
-print(game_result)
 #config.register_player(name="RGIO", algorithm = RGIO)
 #config.register_player(name="T_Call_Killer", algorithm = tCall)
 #config.register_player(name="T_Call_Killer2", algorithm = tCall)
