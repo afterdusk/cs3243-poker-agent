@@ -74,7 +74,7 @@ class TeamPlayer(BasePokerPlayer):
         self.num_rounds_passed = 0
         # Ratio of earnings delta over games played. I.e. Avg Net earning per round
         self.loss_threshold = 600
-        self.greed_threshold = 1
+        self.greed_threshold = 0.5
         self.currentPlayer = 0
         self.initNameWeights(self.team[0])
 

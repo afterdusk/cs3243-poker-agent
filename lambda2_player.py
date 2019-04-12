@@ -154,8 +154,9 @@ class Lambda2Player(BasePokerPlayer):
         return eval
 
     def getAggroEval(self):
-        aggro_w = 0.15
-        aggro_bias = -aggro_w/2.2
+        # 0.12
+        aggro_w = 0.11
+        aggro_bias = -aggro_w/2.1
         # print("Aggro val",self.opp_aggro)
         return (aggro_w*self.opp_aggro) + aggro_bias
 
