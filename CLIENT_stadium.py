@@ -6,6 +6,7 @@ from theta_isolated_player import ThetaIsolatedPlayer
 from minimaxv2player import MinimaxV2Player
 from wise_player import WisePlayer
 from lambda_player import LambdaPlayer
+from lambda2_player import Lambda2Player
 from team_player import TeamPlayer
 
 # CLIENT SIDE
@@ -65,6 +66,7 @@ PLAYER_LIBRARY['ThetaPlayer'] = lambda w: ThetaPlayer(w)
 PLAYER_LIBRARY['ThetaIsolatedPlayer'] = lambda w: ThetaIsolatedPlayer(w)
 PLAYER_LIBRARY['WisePlayer'] = lambda w: WisePlayer(w)
 PLAYER_LIBRARY['LambdaPlayer'] = lambda w: LambdaPlayer(w)
+PLAYER_LIBRARY['Lambda2Player'] = lambda w: Lambda2Player(w)
 PLAYER_LIBRARY['TeamPlayer'] = lambda w: TeamPlayer(w)
 
 
