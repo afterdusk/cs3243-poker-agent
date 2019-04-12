@@ -105,7 +105,8 @@ class Lambda2Player(BasePokerPlayer):
         self.my_index = round_state['next_player']
         smallblind_index = round_state['small_blind_pos']
         hist = self.parse_history(round_state['action_histories'], self.my_index == smallblind_index)
-        self.recordHistory(hist)
+        self.enemy_turns = hist[4]
+        self.recordHistory(hist[:4])
         decision = self.make_move(valid_actions,hole_card,community_cards, pot_amount)
 
         if DEBUG:
@@ -115,10 +116,8 @@ class Lambda2Player(BasePokerPlayer):
     def receive_game_start_message(self, game_info):
         self.initGame()
 
-
     def receive_round_start_message(self, round_count, hole_card, seats):
         self.initRound()
-
 
     def receive_street_start_message(self, street, round_state):
         pass
@@ -131,10 +130,12 @@ class Lambda2Player(BasePokerPlayer):
         self.rounds_elapsed += 1
 
     def recordAggro(self):
-        delta_aggro = self.opp_raises/MAX_RAISES
+        delta_aggro = float(self.opp_raises)/min(max(1,self.enemy_turns),MAX_RAISES)
+        # print("raises",self.opp_raises,"/",self.enemy_turns,self.opp_aggro,"delta",delta_aggro)
+
         old_aggro = self.opp_aggro
-        print(self.rounds_elapsed,self.opp_raises)
         self.opp_aggro = (old_aggro*self.rounds_elapsed + delta_aggro)/(self.rounds_elapsed+1)
+
 
     def initRound(self):
         self.opp_raise_history = [0,0,0,0]
@@ -159,10 +160,10 @@ class Lambda2Player(BasePokerPlayer):
             return ((1+val)**2)/4
         # 0.12, 2.1
         # 0.15, 2.67
-        b_aggro_w = 0.3
-        c_aggro_w = 0.15
+        b_aggro_w = 0.4
+        c_aggro_w = 0.25
         bully_aggro = 0.8/4
-        counter_aggro = 2.5/4
+        counter_aggro = 1.5/4
         # print("Aggro val",self.opp_aggro)
         aggro_o = 0
         if self.opp_aggro > counter_aggro:
@@ -171,7 +172,7 @@ class Lambda2Player(BasePokerPlayer):
 
         elif self.opp_aggro < bully_aggro:
             aggro_o = b_aggro_w*spread((bully_aggro-self.opp_aggro)/bully_aggro)
-            print("bully",self.opp_aggro,aggro_o)
+            #print("bully",self.opp_aggro,aggro_o)
 
         return aggro_o
 
@@ -208,7 +209,7 @@ class Lambda2Player(BasePokerPlayer):
         my_bet_amt, my_raises, opp_bet_amt, opp_raises = history
         street_index = street_as_int(self.current_street)
         if opp_raises > self.opp_raises:
-            self.opp_raises = opp_raises
+            self.opp_raises = min(opp_raises,MAX_RAISES)
             diff = opp_bet_amt - self.opp_bet
             self.opp_bet = opp_bet_amt
             self.opp_raise_history[street_index] = self.opp_raise_history[street_index] + 1
@@ -228,6 +229,7 @@ class Lambda2Player(BasePokerPlayer):
         my_num_raises = 0
         enemy_num_raises = 0
         flat_list = [i for street in history.values() for i in street]
+        enemy_turns = 0
         for i in flat_list:
             if DEBUG: print i
             if i['action'] == "SMALLBLIND" or i['action'] == "BIGBLIND":
@@ -236,10 +238,11 @@ class Lambda2Player(BasePokerPlayer):
                 my_amount_bet += i['paid']
                 my_num_raises += (i['action'] == 'RAISE')
             else:
+                enemy_turns += 1
                 enemy_amount_bet += i['paid']
                 enemy_num_raises += (i['action'] == 'RAISE')
             my_turn = not my_turn
-        return my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises
+        return my_amount_bet, my_num_raises, enemy_amount_bet, enemy_num_raises, enemy_turns
 
     @staticmethod
     def get_valid_moves(amount_left, num_raises, street, pot_amount):
