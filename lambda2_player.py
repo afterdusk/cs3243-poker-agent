@@ -133,6 +133,7 @@ class Lambda2Player(BasePokerPlayer):
     def recordAggro(self):
         delta_aggro = self.opp_raises/MAX_RAISES
         old_aggro = self.opp_aggro
+        print(self.rounds_elapsed,self.opp_raises)
         self.opp_aggro = (old_aggro*self.rounds_elapsed + delta_aggro)/(self.rounds_elapsed+1)
 
     def initRound(self):
@@ -154,11 +155,25 @@ class Lambda2Player(BasePokerPlayer):
         return eval
 
     def getAggroEval(self):
-        # 0.12
-        aggro_w = 0.11
-        aggro_bias = -aggro_w/2.1
+        def spread(val):
+            return ((1+val)**2)/4
+        # 0.12, 2.1
+        # 0.15, 2.67
+        b_aggro_w = 0.3
+        c_aggro_w = 0.15
+        bully_aggro = 0.8/4
+        counter_aggro = 2.5/4
         # print("Aggro val",self.opp_aggro)
-        return (aggro_w*self.opp_aggro) + aggro_bias
+        aggro_o = 0
+        if self.opp_aggro > counter_aggro:
+            aggro_o = c_aggro_w*spread(self.opp_aggro)
+            # print("counter",self.opp_aggro,aggro_o)
+
+        elif self.opp_aggro < bully_aggro:
+            aggro_o = b_aggro_w*spread((bully_aggro-self.opp_aggro)/bully_aggro)
+            print("bully",self.opp_aggro,aggro_o)
+
+        return aggro_o
 
     def evaluateHand(self, hole_cards, common_cards):
         # print(self.old_street, self.current_street)
@@ -193,12 +208,12 @@ class Lambda2Player(BasePokerPlayer):
         my_bet_amt, my_raises, opp_bet_amt, opp_raises = history
         street_index = street_as_int(self.current_street)
         if opp_raises > self.opp_raises:
-            self.opp_raises += opp_raises
+            self.opp_raises = opp_raises
             diff = opp_bet_amt - self.opp_bet
             self.opp_bet = opp_bet_amt
             self.opp_raise_history[street_index] = self.opp_raise_history[street_index] + 1
         if my_raises > self.my_raises:
-            self.my_raises += my_raises
+            self.my_raises = my_raises
             self.my_raise_history[street_index] = self.my_raise_history[street_index] + 1
 
 

@@ -175,12 +175,12 @@ class LambdaPlayer(BasePokerPlayer):
         my_bet_amt, my_raises, opp_bet_amt, opp_raises = history
         street_index = street_as_int(self.current_street)
         if opp_raises > self.opp_raises:
-            self.opp_raises += opp_raises
+            self.opp_raises = opp_raises
             diff = opp_bet_amt - self.opp_bet
             self.opp_bet = opp_bet_amt
             self.opp_raise_history[street_index] = self.opp_raise_history[street_index] + 1
         if my_raises > self.my_raises:
-            self.my_raises += my_raises
+            self.my_raises = my_raises
             self.my_raise_history[street_index] = self.my_raise_history[street_index] + 1
 
 
