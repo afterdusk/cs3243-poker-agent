@@ -19,21 +19,12 @@ def createPlayerSpaces(taskmaster):
 
     CMA2PlayerSpace(
         taskmaster,
-        'theta_player_train_1',
-        'ThetaPlayer',
-        [[-1, 1]] * 14,
+        'lambda_player_train_1',
+        'LambdaPlayer',
+        [[-1, 1]] * 18,
         20,
         1000,
         60 * 15)
-
-    #  CMA2PlayerSpace(
-        #  taskmaster,
-        #  'theta_isolated_player_train_1',
-        #  'ThetaIsolatedPlayer',
-        #  [[-1, 1]] * 12,
-        #  20,
-        #  1000,
-        #  60 * 5)
 
 class TrainerServer:
     def __init__(self, client_id=None):
