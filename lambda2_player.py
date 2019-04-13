@@ -30,15 +30,20 @@ class Lambda2Player(BasePokerPlayer):
 
         if len(weights) == 18:
             #LambdaPlayer
-            ext = (0,0,0,0,0,0)
-            w2 = weights.extend(ext)
+            w2 = list(weights)
+            ext = [0,0,0,0,0,0]
+            w2.extend(ext)
             self.initWeights(w2)
+            print("initalized extension")
 
-        if len(weights) == self.number_of_weights:
+
+        elif len(weights) == self.number_of_weights:
             self.initWeights(weights)
+            print("initalized normally")
+
 
         else:
-            print("Bad number of weights. Expected " +str(self.number_of_weights) + " weights but got: " + str(weights))
+            print("Bad number of weights. Expected " +str(self.number_of_weights) + " weights but got: " + str(len(weights)))
             exit()
 
         self.old_street = ""
@@ -146,6 +151,9 @@ class Lambda2Player(BasePokerPlayer):
         self.rounds_elapsed += 1
 
     def recordAggro(self):
+        if DEBUG:
+            print("recording aggro")
+            print(self.opp_raises,min(max(1,self.enemy_turns),MAX_RAISES))
         delta_aggro = float(self.opp_raises)/min(max(1,self.enemy_turns),MAX_RAISES)
         # print("raises",self.opp_raises,"/",self.enemy_turns,self.opp_aggro,"delta",delta_aggro)
 
@@ -159,6 +167,7 @@ class Lambda2Player(BasePokerPlayer):
         self.my_raises = 0
         self.opp_raises = 0
         self.opp_bet = 0
+        self.enemy_turns = 0
 
     def initGame(self):
         self.opp_aggro = float(0)
@@ -268,7 +277,7 @@ class Lambda2Player(BasePokerPlayer):
         flat_list = [i for street in history.values() for i in street]
         enemy_turns = 0
         for i in flat_list:
-            if DEBUG: print i
+            # if DEBUG: print i
             if i['action'] == "SMALLBLIND" or i['action'] == "BIGBLIND":
                 continue
             if my_turn:

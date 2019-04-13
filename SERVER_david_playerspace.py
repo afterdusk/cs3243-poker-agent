@@ -19,7 +19,7 @@ testing = 0
 
 def init(taskmaster, boardName):
     # CONFIGURATIONS
-    AGENT_CLASS = LambdaPlayer
+    AGENT_CLASS = Lambda2Player
     LEADERBOARD_FILENAME = [boardName] #Import boardname for continuity
     LEAGUE_MIN_SIZE = 300
     GENERATIONS_PER_CYCLE = 500 # Limit on number of generations per training
@@ -38,7 +38,8 @@ def init(taskmaster, boardName):
     if testing:
         LEAGUE_MIN_SIZE = 30
         NUM_GAMES = 1
-        NUM_ROUNDS = 1000
+        NUM_ROUNDS = 20
+        Q_NR = 20
         GENERATIONS_PER_CYCLE = 5
         MY_INCUBATOR.enableStdPlayers()
         MY_INCUBATOR.enableChamps()
