@@ -36,11 +36,9 @@ class Lambda2Player(BasePokerPlayer):
             self.initWeights(w2)
             print("initalized extension")
 
-
         elif len(weights) == self.number_of_weights:
             self.initWeights(weights)
-            print("initalized normally")
-
+            # print("initalized normally")
 
         else:
             print("Bad number of weights. Expected " +str(self.number_of_weights) + " weights but got: " + str(len(weights)))
