@@ -14,17 +14,17 @@ from profile_player_space import ProfilePlayerSpace
 def createPlayerSpaces(taskmaster):
     #botlympics.init(taskmaster)
 
-    lj_playerspace.init(taskmaster, "070419_LJ_Training")
-    david_playerspace.init(taskmaster, "0804_Lambda_Board")
+    # lj_playerspace.init(taskmaster, "070419_LJ_Training")
+    david_playerspace.init(taskmaster, "1304_Lambda2_Board")
 
-    CMA2PlayerSpace(
-        taskmaster,
-        'lambda_player_train_1',
-        'LambdaPlayer',
-        [[-1, 1]] * 18,
-        20,
-        1000,
-        60 * 15)
+    # CMA2PlayerSpace(
+    #     taskmaster,
+    #     'lambda_player_train_1',
+    #     'LambdaPlayer',
+    #     [[-1, 1]] * 18,
+    #     20,
+    #     1000,
+    #     60 * 15)
 
 class TrainerServer:
     def __init__(self, client_id=None):

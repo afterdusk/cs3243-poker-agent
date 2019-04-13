@@ -6,7 +6,7 @@ from collections import deque
 #from wise_player import WisePlayer
 #from epsilon_player import EpsilonPlayer
 from theta_player import ThetaPlayer
-from lambda_player import LambdaPlayer
+from lambda2_player import Lambda2Player
 from CLIENT_stadium import train_bots
 from SERVER_incubator import Incubator
 from david_file_utils import *
@@ -22,18 +22,18 @@ def init(taskmaster, boardName):
     AGENT_CLASS = LambdaPlayer
     LEADERBOARD_FILENAME = [boardName] #Import boardname for continuity
     LEAGUE_MIN_SIZE = 300
-    GENERATIONS_PER_CYCLE = 300 # Limit on number of generations per training
+    GENERATIONS_PER_CYCLE = 500 # Limit on number of generations per training
     SHRINK_RATE = 75 # League shrink per generation
     SHRINK_MAG = 1.5 # factor of shrink eqn
     NUM_GAMES = 3
-    NUM_ROUNDS = 1000
-    CHAMPION_BUFFER = 200
-    QUICK_BUFFER = 40
-    Q_NR = 301
+    NUM_ROUNDS = 1200
+    CHAMPION_BUFFER = 275
+    QUICK_BUFFER = 48
+    Q_NR = 501
     PLATEAU_EVAL = [1]
-    BEST_SO_FAR = [0.05]
+    BEST_SO_FAR = [0.03]
     MY_INCUBATOR = Incubator(AGENT_CLASS)
-    divergeCount = [-30]
+    divergeCount = [-50]
 
     if testing:
         LEAGUE_MIN_SIZE = 30
@@ -50,7 +50,7 @@ def init(taskmaster, boardName):
     TASKMASTER = taskmaster
 
     def writeToBest(plateauVal):
-        if plateauVal <= 0.95*BEST_SO_FAR[0]:
+        if plateauVal <= 0.98*BEST_SO_FAR[0]:
             divergeCount[0] = 0
             BEST_SO_FAR[0] = plateauVal
             filename = LEADERBOARD_FILENAME[0] + "_G" + str(gens[0])
@@ -60,7 +60,7 @@ def init(taskmaster, boardName):
                 divergeCount[0] = divergeCount[0] + 1
 
     def checkDiverge():
-        return divergeCount[0] > 20
+        return divergeCount[0] > 30
 
     def updateAgentsLeaderboardStats(winAgentName, loseAgentName):
         #updates the LEADERBOARD

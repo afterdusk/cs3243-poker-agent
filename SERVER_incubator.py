@@ -353,6 +353,15 @@ def addStandardPlayers(board, incubator):
         lambda_w.extend(4*[weights[6],])
         return lambda_w
 
+    def ensureNumWeights(w):
+        diff =  self.numWeights- len(w)
+        if diff:
+            new_w = w
+            ext = [0,]*diff
+            new_w.extend(ext)
+            return new_w
+        return w
+
     champs = incubator.champs
     if not incubator.SPF:
         return
@@ -380,7 +389,7 @@ def addStandardPlayers(board, incubator):
 
     for name in STANDARDPLAYERS:
         if not name in board:
-            w = STANDARDPLAYERS[name]
+            w = ensureNumWeights(STANDARDPLAYERS[name])
             addAgent(name,w, board)
 
 if __name__ == "__main__":

@@ -16,16 +16,23 @@ DEBUG = 0
 SMALL_BLIND = 10
 MAX_RAISES = 4
 MAX_POT_AMOUNT = 320*2
+FOLD_QUEUE = 50
 
 # The second successor to EpsilonPlayer, now considers raises wrt STREET
 class Lambda2Player(BasePokerPlayer):
 
     # Static variable
-    number_of_weights = 18
+    number_of_weights = 24
 
     def __init__(self, weights):
         self.STREET_DICT = {'preflop':0, 'flop':0, 'river':0, 'turn':0 }
         self.my_index = 0
+
+        if len(weights) == 18:
+            #LambdaPlayer
+            ext = (0,0,0,0,0,0)
+            w2 = weights.extend(ext)
+            self.initWeights(w2)
 
         if len(weights) == self.number_of_weights:
             self.initWeights(weights)
@@ -65,6 +72,13 @@ class Lambda2Player(BasePokerPlayer):
         self.pot_w = data[8]
         self.hand_w = data[9]
 
+        self.b_aggro_w = data[18]
+        self.c_aggro_w = data[19]
+        self.b_thresh_w = data[20]
+        self.c_thresh_w = data[21]
+        self.fold_freq_thresh = data[22]
+        self.fold_freq_bias = data[22]
+
         return self
 
     def linear_eval(self, hole_cards, community_cards, pot_amount):
@@ -96,6 +110,7 @@ class Lambda2Player(BasePokerPlayer):
         if confidence > self.call_threshold and "call" in valid_action_strings:
             return "call"
 
+        self.countFold(1)
         return "fold"
 
     def declare_action(self, valid_actions, hole_card, round_state):
@@ -127,6 +142,7 @@ class Lambda2Player(BasePokerPlayer):
 
     def receive_round_result_message(self, winners, hand_info, round_state):
         self.recordAggro()
+        self.countFold(0)
         self.rounds_elapsed += 1
 
     def recordAggro(self):
@@ -147,6 +163,7 @@ class Lambda2Player(BasePokerPlayer):
     def initGame(self):
         self.opp_aggro = float(0)
         self.rounds_elapsed = 1
+        self.foldCount = [0]
 
     def getRaiseEval(self):
         eval = float(0)
@@ -157,25 +174,44 @@ class Lambda2Player(BasePokerPlayer):
 
     def getAggroEval(self):
         def spread(val):
-            val *= 10
-            return ((val-5)**3)/250 + 0.5
+            return float(val)
+            # val *= 10
+            # return ((val-5)**3)/250 + 0.5
+
+        def getFoldFreq():
+            sum = 0
+            for i in self.foldCount:
+                sum+=i
+            #print("FF", sum, self.foldCount)
+            return float(sum)/len(self.foldCount)
         # 0.12, 2.1
         # 0.15, 2.67
-        b_aggro_w = 0.1
-        c_aggro_w = 0.28
-        bully_aggro = 1.2/4
-        counter_aggro = 2.0/4
-        # print("Aggro val",self.opp_aggro)
-        aggro_o = 0
-        if self.opp_aggro > counter_aggro:
-            aggro_o = c_aggro_w*spread(self.opp_aggro)
-            # print("counter",self.opp_aggro,aggro_o)
+        b_aggro_w = self.b_aggro_w
+        bully_thresh = self.b_thresh_w*4.0
 
-        elif self.opp_aggro < bully_aggro:
-            aggro_o = b_aggro_w*spread((bully_aggro-self.opp_aggro)/bully_aggro)
-            #print("bully",self.opp_aggro,aggro_o)
+        c_aggro_w = self.c_aggro_w
+        counter_thresh = self.c_thresh_w*4.0
+        fold_freq = getFoldFreq()
+        # print("Aggro val",self.opp_aggro)
+
+
+        aggro_o = 0
+        if self.opp_aggro > counter_thresh:
+            aggro_o = c_aggro_w*spread(self.opp_aggro)
+            #print("counter",fold_freq,self.opp_aggro,"final",aggro_o)
+
+        elif self.opp_aggro < bully_thresh:
+            aggro_o = b_aggro_w*spread((1-self.opp_aggro))
+
+        if fold_freq > self.fold_freq_thresh:
+            aggro_o += self.fold_freq_bias
 
         return aggro_o
+
+    def countFold(self,fold):
+        self.foldCount.insert(0,fold)
+        if len(self.foldCount) > FOLD_QUEUE:
+            self.foldCount.pop()
 
     def evaluateHand(self, hole_cards, common_cards):
         # print(self.old_street, self.current_street)
