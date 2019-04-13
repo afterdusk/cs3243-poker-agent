@@ -34,10 +34,14 @@ def num_jobs_for_node(node_hostname):
     spite = False
     if num_free_cores < 3:
         num_jobs = 0
-    # If server is basically idle, commandeer WITH SPITE
+    # If server is basically idle, commandeer
     elif num_free_cores > num_cores - 3:
-        num_jobs = num_free_cores * 2
-        spite = True
+        if jerlim_num_jobs == 0:
+            num_jobs = num_free_cores
+        else:
+            # SPITE if jerlim is dominating this machine
+            num_jobs = num_free_cores * 2
+            spite = True
     # Otherwise only allocate num free cores - 2. Give chance
     else:
         num_jobs = num_free_cores - 2
