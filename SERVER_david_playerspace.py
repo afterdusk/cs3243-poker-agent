@@ -22,13 +22,13 @@ def init(taskmaster, boardName):
     AGENT_CLASS = Lambda2Player
     LEADERBOARD_FILENAME = [boardName] #Import boardname for continuity
     LEAGUE_MIN_SIZE = 300
-    GENERATIONS_PER_CYCLE = 500 # Limit on number of generations per training
+    GENERATIONS_PER_CYCLE = 350 # Limit on number of generations per training
     SHRINK_RATE = 75 # League shrink per generation
     SHRINK_MAG = 1.5 # factor of shrink eqn
     NUM_GAMES = 3
     NUM_ROUNDS = 1200
-    CHAMPION_BUFFER = 275
-    QUICK_BUFFER = 48
+    CHAMPION_BUFFER = 100
+    QUICK_BUFFER = 32
     Q_NR = 501
     PLATEAU_EVAL = [1]
     BEST_SO_FAR = [0.03]
@@ -61,7 +61,7 @@ def init(taskmaster, boardName):
                 divergeCount[0] = divergeCount[0] + 1
 
     def checkDiverge():
-        return divergeCount[0] > 30
+        return divergeCount[0] > 35
 
     def updateAgentsLeaderboardStats(winAgentName, loseAgentName):
         #updates the LEADERBOARD

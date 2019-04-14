@@ -80,7 +80,7 @@ class Lambda2Player(BasePokerPlayer):
         self.b_thresh_w = data[20]
         self.c_thresh_w = data[21]
         self.fold_freq_thresh = data[22]
-        self.fold_freq_bias = data[22]
+        self.fold_freq_bias = data[23]
 
         return self
 
@@ -211,7 +211,7 @@ class Lambda2Player(BasePokerPlayer):
             aggro_o = b_aggro_w*spread((1-self.opp_aggro))
 
         if fold_freq > self.fold_freq_thresh:
-            aggro_o += self.fold_freq_bias
+            aggro_o += (1-fold_freq)*self.fold_freq_bias
 
         return aggro_o
 
