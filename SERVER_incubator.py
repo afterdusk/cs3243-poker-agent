@@ -327,7 +327,7 @@ def evaluateBoard(board):
 
 def checkPlateau(board, numWeights):
     # average Standard deviation
-    PLATEAU_THRESHOLD = 0.009
+    PLATEAU_THRESHOLD = 0.005
 
     boardStats = evaluateBoard(board)
     stdDevSum = 0
@@ -368,7 +368,7 @@ def addStandardPlayers(board, incubator):
 
     STANDARDPLAYERS = {}
     # SANITY CHECK
-    STANDARDPLAYERS['Rais'] = parseTPWeights(0.4,0.05,0.05,-0.05,-0.05,-0.1,0,0,-0.8,-0.8,-0.1,0.6,-0.2,0)
+    STANDARDPLAYERS['Rais'] = parseTPWeights(0.4,0.05,0.05,-0.05,-0.05,-0.1,0,0,-0.8,-0.8,-0.1,0.6,-0.1,0)
 
     if champs:
         # Epsilon Ported
@@ -396,7 +396,7 @@ def addStandardPlayers(board, incubator):
 
 if __name__ == "__main__":
     class dud:
-        number_of_weights = 18
+        number_of_weights = 24
     IB = Incubator(dud)
     IB.enableStdPlayers()
     def parse():
@@ -408,10 +408,10 @@ if __name__ == "__main__":
     #leaderboard = IB.generateLeaderboard(bn, 255)
     leaderboard, gens, players = cacheLeaderboard(bn)
     newBoard, plateauBool, platVal = IB.incubate(leaderboard, 200)
-    # IB.enableChamps()
-    # newBoard, plateauBool, platVal = IB.incubate(newBoard, 200)
-    # IB.enableChamps()
-    # newBoard, plateauBool, platVal = IB.incubate(newBoard, 200)
+    IB.enableStdPlayers()
+    newBoard, plateauBool, platVal = IB.incubate(newBoard, 200)
+    IB.enableChamps()
+    newBoard, plateauBool, platVal = IB.incubate(newBoard, 200)
 
     # print("NEWBOARD LEN", len(newBoard))
     # print(plateauBool)
