@@ -8,29 +8,29 @@ import os
 import activation_functions
 
 class ProfilePlayerSpace:
-    def __init__(self, taskmaster, name, player_class, num_profiles, weight_ranges, evaluations_per_particle, samples_per_evaluation, transitivity_checks, num_games, num_rounds, timeout):
-        self.name = name
+    def __init__(self, taskmaster, player_class, weights_file_path, weight_ranges, evaluations_per_weight, num_games, num_rounds, timeout):
         self.taskmaster = taskmaster
         self.player_class = player_class
-        self.num_profiles = num_profiles
         self.dimensions = len(weight_ranges)
         self.weight_ranges = weight_ranges
-        self.evaluations_per_particle = evaluations_per_particle
-        self.samples_per_evaluation = samples_per_evaluation
-        self.transitivity_checks = transitivity_checks
+        self.evaluations_per_weight = evaluations_per_weight
         self.num_games = num_games
         self.num_rounds = num_rounds
         self.timeout = timeout
-        self.output_dir = './cma_output/' + self.name + '/'
-        self.output_state_path = self.output_dir + 'state.txt'
-        self.output_log_path = self.output_dir + 'log.txt'
+        self.output_path = weights_file_path + '.output'
         self.count = 0
+        self.weights = []
 
-        if not os.path.exists(self.output_dir):
-            os.makedirs(self.output_dir)
+        with open(weights_file_path, 'r') as weights_file:
+            for line in weights_file:
+                line = line.rstrip('\n').rstrip('\r')
+                splitted = line.split(' ')
+                self.weights += [(
+                        splitted[0],
+                        [float(v) for v in splitted[1:]])]
 
         self.begin()
-    
+
     def activation(self, i, x):
         return float(self.weight_ranges[i][0]) + (float(self.weight_ranges[i][1] - self.weight_ranges[i][0])) * (float(x) - (-1)) / 2
 
@@ -41,7 +41,7 @@ class ProfilePlayerSpace:
         return [self.activation(i, x) for (i, x) in enumerate(particle)]
 
     def begin(self):
-        if self.count >= self.num_profiles:
+        if self.count >= len(self.weights):
             return
 
         jobs = [] 
@@ -49,42 +49,15 @@ class ProfilePlayerSpace:
         print('Generating jobs...')
 
         # Evaluation test
-        evaluation_particle = self.sample()
-        evaluation_other_particles = [self.sample() for _ in xrange(self.evaluations_per_particle * self.samples_per_evaluation)]
+        evaluation_other_particles = [self.sample() for _ in xrange(self.evaluations_per_weight)]
         for other_particle in evaluation_other_particles:
             jobs += [[
                 (
-                    (self.player_class, self.get_weights(evaluation_particle)), 
+                    (self.player_class, self.weights[self.count][1]), 
                     (self.player_class, self.get_weights(other_particle))
                 ), 
                 (self.num_games, self.num_rounds), 
-                ('Evaluation',)]]
-
-        # Transitivity test
-        for i in xrange(self.transitivity_checks):
-            transitivity_particles = [self.sample() for _ in xrange(3)]
-            jobs += [[
-                (
-                    (self.player_class, self.get_weights(transitivity_particles[0])),
-                    (self.player_class, self.get_weights(transitivity_particles[1]))
-                ),
-                (self.num_games, self.num_rounds),
-                ('Transitivity', i, 0)]]
-            jobs += [[
-                (
-                    (self.player_class, self.get_weights(transitivity_particles[1])),
-                    (self.player_class, self.get_weights(transitivity_particles[2]))
-                ),
-                (self.num_games, self.num_rounds),
-                ('Transitivity', i, 1)]]
-            jobs += [[
-                (
-                    (self.player_class, self.get_weights(transitivity_particles[2])),
-                    (self.player_class, self.get_weights(transitivity_particles[0]))
-                ),
-                (self.num_games, self.num_rounds),
-                ('Transitivity', i, 2)]]
-        
+                ()]]
 
         print('Running jobs...')
         completed_jobs = []
@@ -96,27 +69,11 @@ class ProfilePlayerSpace:
         if len(completed_jobs) < len(jobs):
             return
 
-        print('Calculating statistics...')
-        evaluation_jobs = [j for j in completed_jobs if j[0][2][0] == 'Evaluation']
+        wins = sum(1 for j in completed_jobs if j[1][0] >= j[1][1])
+        winrate = float(wins) / len(completed_jobs)
+
+        with open(self.output_path, 'a') as output_file:
+            output_file.write(self.weights[self.count][0] + ' ' + str(winrate) + '\n')
         
-        evaluation_outcomes = [j[1] for j in evaluation_jobs]
-        evaluations = [float(sum(evaluation_outcomes[i * self.samples_per_evaluation : (i + 1) * self.samples_per_evaluation])) / self.samples_per_evaluation for i in xrange(self.evaluations_per_particle)]
-
-        transitivity_jobs = [j for j in completed_jobs if j[0][2][0] == 'Transitivity']
-        pass_count = 0
-        for i in xrange(self.transitivity_checks):
-            case_jobs = [j for j in transitivity_jobs if j[0][2][1] == i]
-            case_jobs = sorted(case_jobs, key=lambda j: j[0][2][2])
-            if case_jobs[0][1] == case_jobs[1][1] and case_jobs[1][1] == case_jobs[2][1]:
-                pass_count += 0
-            else:
-                pass_count += 1
-
-        print('Logging...')
-        with open(self.output_log_path, 'a') as log_file:
-            log_file.write('Evaluation = ' + ' '.join([str(x) for x in evaluations]) + '\n')
-            log_file.write('Transitivity = ' + str(float(pass_count) / self.transitivity_checks) + '\n')
-            log_file.write('\n')
-
         self.count += 1
         self.begin()
