@@ -57,11 +57,11 @@ def init(taskmaster, boardName):
             filename = LEADERBOARD_FILENAME[0] + "_G" + str(gens[0])
             writeToLeaderboardFile(LEADERBOARD, filename, CURR_LEAGUE_SIZE[0], gens[0], plateauVal)
         else:
-            if plateauVal > 2*BEST_SO_FAR[0]:
+            if plateauVal > 2.5*BEST_SO_FAR[0]:
                 divergeCount[0] = divergeCount[0] + 1
 
     def checkDiverge():
-        return divergeCount[0] > 35
+        return divergeCount[0] > 40
 
     def updateAgentsLeaderboardStats(winAgentName, loseAgentName):
         #updates the LEADERBOARD
