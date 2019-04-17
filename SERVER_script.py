@@ -17,15 +17,15 @@ def createPlayerSpaces(taskmaster):
     # lj_playerspace.init(taskmaster, "070419_LJ_Training")
     david_playerspace.init(taskmaster, "1304_Lambda2_BoardIII")
 
-    # ProfilePlayerSpace(
-    #         taskmaster,
-    #         'LambdaPlayer',
-    #         'profile/0804_LambdaBoard History.txt',
-    #         [[-1, 1]] * 18,
-    #         10000,
-    #         4,
-    #         1000,
-    #         60 * 5)
+    ProfilePlayerSpace(
+            taskmaster,
+            'Lambda2Player',
+            '1304_Lambda2_BoardI History.txt',
+            [[-1, 1]] * 24,
+            10000,
+            4,
+            1000,
+            60 * 5)
 
     # CMA2PlayerSpace(
     #     taskmaster,
