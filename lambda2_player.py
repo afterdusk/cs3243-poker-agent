@@ -15,7 +15,7 @@ DEBUG = 0
 # Game rules
 SMALL_BLIND = 10
 MAX_RAISES = 4
-MAX_POT_AMOUNT = 320*2
+MAX_POT_AMOUNT = 640 # Assuming small blind is 10
 FOLD_QUEUE = 50
 
 # The second successor to EpsilonPlayer, now considers raises wrt STREET
@@ -132,7 +132,7 @@ class Lambda2Player(BasePokerPlayer):
         return decision  # action returned here is sent to the poker engine
 
     def receive_game_start_message(self, game_info):
-        self.initGame()
+        self.initGame(game_info['rule'])
 
     def receive_round_start_message(self, round_count, hole_card, seats):
         self.initRound()
@@ -167,7 +167,10 @@ class Lambda2Player(BasePokerPlayer):
         self.opp_bet = 0
         self.enemy_turns = 0
 
-    def initGame(self):
+    def initGame(self, rules):
+        global MAX_POT_AMOUNT
+        small_blind_amt = int(rules['small_blind_amount'])
+        MAX_POT_AMOUNT = 64*small_blind_amt
         self.opp_aggro = float(0)
         self.rounds_elapsed = 1
         self.foldCount = [0]
