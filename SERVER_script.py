@@ -20,7 +20,7 @@ def createPlayerSpaces(taskmaster):
     ProfilePlayerSpace(
             taskmaster,
             'Lambda2Player',
-            '1304_Lambda2_BoardI History.txt',
+            'profile/1304_Lambda2_BoardI History.txt',
             [[-1, 1]] * 24,
             10000,
             4,
