@@ -1,12 +1,7 @@
 # Ignore data
-cluster_runner/free_core_data
-cluster_runner/allocated_jobs.txt
-agentboards/evalboard\.csv
-cma_output/
-data-yiyuan/
-david_player-seeds/
 paho/
 paho-mqtt/
+data-yiyuan/2/cma_state_neural_player_test_1.txt
 
 # Created by https://www.gitignore.io/api/vim,macos,linux,python,windows,visualstudiocode,intellij+all
 # Edit at https://www.gitignore.io/?templates=vim,macos,linux,python,windows,visualstudiocode,intellij+all
