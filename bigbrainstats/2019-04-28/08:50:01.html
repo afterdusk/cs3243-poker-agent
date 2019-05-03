@@ -1,0 +1,4287 @@
+<!doctype html>
+<html>
+<head>
+	<title> CS3243 - Poker Project </title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<link rel="stylesheet" href="style.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+
+</head>
+<body>
+
+	<div class="jumbotron text-center">
+		
+		 <div class="alert alert-success">
+  <strong>Note!</strong> The second round of the final tournament has started. <strong>Martin</strong>.
+</div>
+
+		<h1> <a title="Nyks [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0/)]" 
+			href="https://commons.wikimedia.org/wiki/File:Poker-fuenf-verdeckte-karten.jpg">
+			<img width="256" alt="Poker-fuenf-verdeckte-karten" 
+			src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Poker-fuenf-verdeckte-karten.jpg/256px-Poker-fuenf-verdeckte-karten.jpg"></a>
+		CS3243 - Poker Project</h1>
+	</div>
+	
+	<div class="wrapper">
+		<nav id="sidebar" class="col-md-2 d-none d-md-block bg-light sidebar">
+			<div class="sidebar-sticky">
+				<ul class="nav flex-column">
+					<li class="active">
+						<a href="/">Upload agent</a>
+					</li>
+					<li >
+						<a href="/upload">Upload additional files</a>
+					</li>
+					<li>
+						<a href="/ranking">Tournament</a>
+					</li>
+					<li>
+						<a href="/finalTournament" class="alert alert-success">  <strong> Final Tournament </strong>  </a>
+					</li>
+					<li>
+						<a href="/user">Change password</a>
+					</li>
+					<li>
+						<a href="/accounts/logout/?next=/">Logout</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+		<div id="content" class="col-md-10" style="overflow-x: scroll;">
+
+			
+<div class="container">
+	<div class="row">
+		<table class="table">
+			<tbody>
+				<tr><td> <b>Average money won: </b></td> <td> 6527 </td> </tr>
+				<tr><td> <b>Your current rank: </b></td> <td>3/43  </td> </tr>
+				<tr><td> <b>Current best: </b></td> <td>Group42  </td> </tr>
+				<tr><td> <b> Settings: </b></td> <td> <b>   </b></td> </tr>
+				<tr><td> Number of games:</td> <td>  1  </td> </tr>
+				<tr><td> Maximal number of rounds: </td> <td>  500  </td> </tr>
+				<tr><td> Initial stack: </td> <td>  10000  </td> </tr>
+				<tr><td> Small blind amount: </td> <td>  20  </td> </tr>
+			</tbody>
+		</table>
+		
+		<h2> Current ranking </h2>
+		<div style=" height:1000px; overflow:auto; position: relative; " >
+			<table class="table table-dark" >
+				<thead class="thead-dark" style="position: sticky; top: 0; background-color: #f2f2f2;">
+					<tr>
+						<th > Rank  </th>
+						<th>  Group </th>
+						<th>  Av. money per game </th> 
+						<th>  Number of games</th>
+					</tr>
+				</thead>
+				<tbody>
+					
+					<tr>
+						<td>1</td> <td>Group49</td> <td>7787</td> <td>112</td>
+					</tr>
+					
+					<tr>
+						<td>2</td> <td>Group22</td> <td>6669</td> <td>87</td>
+					</tr>
+					
+					<tr>
+						<td>3</td> <td>Group23</td> <td>6527</td> <td>115</td>
+					</tr>
+					
+					<tr>
+						<td>4</td> <td>Group32</td> <td>6450</td> <td>70</td>
+					</tr>
+					
+					<tr>
+						<td>5</td> <td>Group08</td> <td>6166</td> <td>145</td>
+					</tr>
+					
+					<tr>
+						<td>6</td> <td>Group44</td> <td>6002</td> <td>128</td>
+					</tr>
+					
+					<tr>
+						<td>7</td> <td>Group48</td> <td>5971</td> <td>146</td>
+					</tr>
+					
+					<tr>
+						<td>8</td> <td>Group17</td> <td>5354</td> <td>111</td>
+					</tr>
+					
+					<tr>
+						<td>9</td> <td>Group50</td> <td>5225</td> <td>132</td>
+					</tr>
+					
+					<tr>
+						<td>10</td> <td>Group27</td> <td>4885</td> <td>130</td>
+					</tr>
+					
+					<tr>
+						<td>11</td> <td>Group12</td> <td>4016</td> <td>122</td>
+					</tr>
+					
+					<tr>
+						<td>12</td> <td>Group35</td> <td>3550</td> <td>113</td>
+					</tr>
+					
+					<tr>
+						<td>13</td> <td>Group31</td> <td>3238</td> <td>145</td>
+					</tr>
+					
+					<tr>
+						<td>14</td> <td>Group01</td> <td>1932</td> <td>50</td>
+					</tr>
+					
+					<tr>
+						<td>15</td> <td>Group26</td> <td>1570</td> <td>94</td>
+					</tr>
+					
+					<tr>
+						<td>16</td> <td>Group06</td> <td>1565</td> <td>71</td>
+					</tr>
+					
+					<tr>
+						<td>17</td> <td>Group16</td> <td>1090</td> <td>80</td>
+					</tr>
+					
+					<tr>
+						<td>18</td> <td>Group14</td> <td>305</td> <td>246</td>
+					</tr>
+					
+					<tr>
+						<td>19</td> <td>Group45</td> <td>214</td> <td>100</td>
+					</tr>
+					
+					<tr>
+						<td>20</td> <td>Group28</td> <td>-6</td> <td>117</td>
+					</tr>
+					
+					<tr>
+						<td>21</td> <td>Group40</td> <td>-990</td> <td>85</td>
+					</tr>
+					
+					<tr>
+						<td>22</td> <td>Group05</td> <td>-1088</td> <td>180</td>
+					</tr>
+					
+					<tr>
+						<td>23</td> <td>Group13</td> <td>-1195</td> <td>188</td>
+					</tr>
+					
+					<tr>
+						<td>24</td> <td>Group20</td> <td>-1401</td> <td>121</td>
+					</tr>
+					
+					<tr>
+						<td>25</td> <td>Group02</td> <td>-1700</td> <td>95</td>
+					</tr>
+					
+					<tr>
+						<td>26</td> <td>Group36</td> <td>-1929</td> <td>133</td>
+					</tr>
+					
+					<tr>
+						<td>27</td> <td>Group04</td> <td>-2150</td> <td>166</td>
+					</tr>
+					
+					<tr>
+						<td>28</td> <td>Group09</td> <td>-2200</td> <td>144</td>
+					</tr>
+					
+					<tr>
+						<td>29</td> <td>Group15</td> <td>-2353</td> <td>129</td>
+					</tr>
+					
+					<tr>
+						<td>30</td> <td>Group30</td> <td>-2502</td> <td>135</td>
+					</tr>
+					
+					<tr>
+						<td>31</td> <td>Group07</td> <td>-2672</td> <td>78</td>
+					</tr>
+					
+					<tr>
+						<td>32</td> <td>Group47</td> <td>-3162</td> <td>110</td>
+					</tr>
+					
+					<tr>
+						<td>33</td> <td>Group33</td> <td>-3320</td> <td>127</td>
+					</tr>
+					
+					<tr>
+						<td>34</td> <td>Group21</td> <td>-3491</td> <td>66</td>
+					</tr>
+					
+					<tr>
+						<td>35</td> <td>Group11</td> <td>-3797</td> <td>63</td>
+					</tr>
+					
+					<tr>
+						<td>36</td> <td>Group42</td> <td>-3842</td> <td>92</td>
+					</tr>
+					
+					<tr>
+						<td>37</td> <td>Group19</td> <td>-3864</td> <td>98</td>
+					</tr>
+					
+					<tr>
+						<td>38</td> <td>Group10</td> <td>-4254</td> <td>187</td>
+					</tr>
+					
+					<tr>
+						<td>39</td> <td>Group46</td> <td>-6288</td> <td>90</td>
+					</tr>
+					
+					<tr>
+						<td>40</td> <td>Group25</td> <td>-6375</td> <td>140</td>
+					</tr>
+					
+					<tr>
+						<td>41</td> <td>Group03</td> <td>-7232</td> <td>92</td>
+					</tr>
+					
+					<tr>
+						<td>42</td> <td>Group24</td> <td>-8786</td> <td>89</td>
+					</tr>
+					
+					<tr>
+						<td>43</td> <td>Group18</td> <td>-9009</td> <td>80</td>
+					</tr>
+					
+				</tbody>
+			</table>
+		</div>
+		<h2>All fights </h2>
+		<div style="width:100%; height:500px; overflow:auto; position: relative; " >
+			<table class="table table-dark" >
+				<thead class="thead-dark" style="position: sticky; top: 0; background-color: #f2f2f2;">
+					<tr>
+						<th >  </th>
+						
+						<th>Group01</th>
+						
+						<th>Group02</th>
+						
+						<th>Group03</th>
+						
+						<th>Group04</th>
+						
+						<th>Group05</th>
+						
+						<th>Group06</th>
+						
+						<th>Group07</th>
+						
+						<th>Group08</th>
+						
+						<th>Group09</th>
+						
+						<th>Group10</th>
+						
+						<th>Group11</th>
+						
+						<th>Group12</th>
+						
+						<th>Group13</th>
+						
+						<th>Group14</th>
+						
+						<th>Group15</th>
+						
+						<th>Group16</th>
+						
+						<th>Group17</th>
+						
+						<th>Group18</th>
+						
+						<th>Group19</th>
+						
+						<th>Group20</th>
+						
+						<th>Group21</th>
+						
+						<th>Group22</th>
+						
+						<th>Group23</th>
+						
+						<th>Group24</th>
+						
+						<th>Group25</th>
+						
+						<th>Group26</th>
+						
+						<th>Group27</th>
+						
+						<th>Group28</th>
+						
+						<th>Group30</th>
+						
+						<th>Group31</th>
+						
+						<th>Group32</th>
+						
+						<th>Group33</th>
+						
+						<th>Group35</th>
+						
+						<th>Group36</th>
+						
+						<th>Group40</th>
+						
+						<th>Group42</th>
+						
+						<th>Group44</th>
+						
+						<th>Group45</th>
+						
+						<th>Group46</th>
+						
+						<th>Group47</th>
+						
+						<th>Group48</th>
+						
+						<th>Group49</th>
+						
+						<th>Group50</th>
+						
+					</tr>
+				</thead>
+				<tbody>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group01</th>
+						
+						<td>N.A.</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>640</td>
+						
+						<td>-4500</td>
+						
+						<td>9980</td>
+						
+						<td>8500</td>
+						
+						<td>2960</td>
+						
+						<td>-3460</td>
+						
+						<td>-1200</td>
+						
+						<td>10000</td>
+						
+						<td>-1180</td>
+						
+						<td>-8160</td>
+						
+						<td>10000</td>
+						
+						<td>8820</td>
+						
+						<td>9980</td>
+						
+						<td>1560</td>
+						
+						<td>-7300</td>
+						
+						<td>-10000</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>-5680</td>
+						
+						<td>-1500</td>
+						
+						<td>-1520</td>
+						
+						<td>9980</td>
+						
+						<td>-3280</td>
+						
+						<td>-8000</td>
+						
+						<td>3860</td>
+						
+						<td>-1940</td>
+						
+						<td>10000</td>
+						
+						<td>3700</td>
+						
+						<td>-640</td>
+						
+						<td>-8020</td>
+						
+						<td>-8020</td>
+						
+						<td>7940</td>
+						
+						<td>880</td>
+						
+						<td>-4260</td>
+						
+						<td>-5140</td>
+						
+						<td>-7480</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group02</th>
+						
+						<td>-9980</td>
+						
+						<td>N.A.</td>
+						
+						<td>10000</td>
+						
+						<td>5860</td>
+						
+						<td>-320</td>
+						
+						<td>-10000</td>
+						
+						<td>-840</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>4540</td>
+						
+						<td>6400</td>
+						
+						<td>-6600</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-7700</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>9980</td>
+						
+						<td>9820</td>
+						
+						<td>-3080</td>
+						
+						<td>-9980</td>
+						
+						<td>9980</td>
+						
+						<td>-720</td>
+						
+						<td>620</td>
+						
+						<td>-8360</td>
+						
+						<td>9980</td>
+						
+						<td>340</td>
+						
+						<td>-10000</td>
+						
+						<td>-2760</td>
+						
+						<td>5260</td>
+						
+						<td>-10000</td>
+						
+						<td>-5180</td>
+						
+						<td>-1400</td>
+						
+						<td>-820</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>6960</td>
+						
+						<td>3380</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-8020</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group03</th>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-6700</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-2900</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>9980</td>
+						
+						<td>-2300</td>
+						
+						<td>-5480</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-8540</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-4540</td>
+						
+						<td>-9980</td>
+						
+						<td>9980</td>
+						
+						<td>2820</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group04</th>
+						
+						<td>-10000</td>
+						
+						<td>-5860</td>
+						
+						<td>10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>6020</td>
+						
+						<td>-3060</td>
+						
+						<td>-4360</td>
+						
+						<td>-10000</td>
+						
+						<td>-8020</td>
+						
+						<td>-3300</td>
+						
+						<td>1360</td>
+						
+						<td>-3360</td>
+						
+						<td>-2580</td>
+						
+						<td>9980</td>
+						
+						<td>-100</td>
+						
+						<td>10000</td>
+						
+						<td>-7200</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-3040</td>
+						
+						<td>9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>9980</td>
+						
+						<td>7680</td>
+						
+						<td>-8500</td>
+						
+						<td>-7160</td>
+						
+						<td>-9340</td>
+						
+						<td>10000</td>
+						
+						<td>-6120</td>
+						
+						<td>-10000</td>
+						
+						<td>6260</td>
+						
+						<td>-10000</td>
+						
+						<td>-1880</td>
+						
+						<td>-5280</td>
+						
+						<td>-660</td>
+						
+						<td>-10000</td>
+						
+						<td>-1800</td>
+						
+						<td>3800</td>
+						
+						<td>-1640</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-3200</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group05</th>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-6020</td>
+						
+						<td>N.A.</td>
+						
+						<td>-1720</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-2560</td>
+						
+						<td>-2360</td>
+						
+						<td>-1400</td>
+						
+						<td>-9980</td>
+						
+						<td>-940</td>
+						
+						<td>-560</td>
+						
+						<td>9980</td>
+						
+						<td>-9020</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-6000</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-2360</td>
+						
+						<td>9980</td>
+						
+						<td>6820</td>
+						
+						<td>10000</td>
+						
+						<td>-4800</td>
+						
+						<td>-10000</td>
+						
+						<td>9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-2080</td>
+						
+						<td>-2340</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-1260</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>3880</td>
+						
+						<td>1040</td>
+						
+						<td>-8640</td>
+						
+						<td>-10000</td>
+						
+						<td>-7580</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group06</th>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>3060</td>
+						
+						<td>-1120</td>
+						
+						<td>N.A.</td>
+						
+						<td>2080</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-9180</td>
+						
+						<td>-9980</td>
+						
+						<td>-7240</td>
+						
+						<td>9980</td>
+						
+						<td>3900</td>
+						
+						<td>-3080</td>
+						
+						<td>9900</td>
+						
+						<td>7560</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>-6300</td>
+						
+						<td>-10000</td>
+						
+						<td>9980</td>
+						
+						<td>-4060</td>
+						
+						<td>10000</td>
+						
+						<td>-3220</td>
+						
+						<td>9980</td>
+						
+						<td>9980</td>
+						
+						<td>20</td>
+						
+						<td>-620</td>
+						
+						<td>6920</td>
+						
+						<td>-10000</td>
+						
+						<td>6900</td>
+						
+						<td>6540</td>
+						
+						<td>10000</td>
+						
+						<td>-2960</td>
+						
+						<td>1500</td>
+						
+						<td>4580</td>
+						
+						<td>10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-8000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group07</th>
+						
+						<td>-9980</td>
+						
+						<td>-3580</td>
+						
+						<td>9980</td>
+						
+						<td>-3540</td>
+						
+						<td>-2400</td>
+						
+						<td>-2080</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>1720</td>
+						
+						<td>800</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-4640</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-8160</td>
+						
+						<td>9980</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-1600</td>
+						
+						<td>-8420</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-2900</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>4720</td>
+						
+						<td>-2680</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group08</th>
+						
+						<td>-640</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>-2740</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-6800</td>
+						
+						<td>-7880</td>
+						
+						<td>7040</td>
+						
+						<td>10000</td>
+						
+						<td>6100</td>
+						
+						<td>5860</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>5360</td>
+						
+						<td>-740</td>
+						
+						<td>-9980</td>
+						
+						<td>9980</td>
+						
+						<td>9720</td>
+						
+						<td>-3240</td>
+						
+						<td>8400</td>
+						
+						<td>6940</td>
+						
+						<td>10000</td>
+						
+						<td>-2540</td>
+						
+						<td>-8820</td>
+						
+						<td>9980</td>
+						
+						<td>-220</td>
+						
+						<td>9980</td>
+						
+						<td>5160</td>
+						
+						<td>10000</td>
+						
+						<td>-3620</td>
+						
+						<td>-920</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>-200</td>
+						
+						<td>9980</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group09</th>
+						
+						<td>4500</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>-2400</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-6180</td>
+						
+						<td>N.A.</td>
+						
+						<td>-1020</td>
+						
+						<td>-1260</td>
+						
+						<td>-7240</td>
+						
+						<td>-3620</td>
+						
+						<td>-2780</td>
+						
+						<td>-4040</td>
+						
+						<td>-2860</td>
+						
+						<td>-10000</td>
+						
+						<td>8600</td>
+						
+						<td>5100</td>
+						
+						<td>-1600</td>
+						
+						<td>4260</td>
+						
+						<td>-8820</td>
+						
+						<td>-10000</td>
+						
+						<td>9120</td>
+						
+						<td>5600</td>
+						
+						<td>-7860</td>
+						
+						<td>-7960</td>
+						
+						<td>-9980</td>
+						
+						<td>-800</td>
+						
+						<td>-9980</td>
+						
+						<td>-7200</td>
+						
+						<td>-2240</td>
+						
+						<td>-10000</td>
+						
+						<td>-1200</td>
+						
+						<td>-820</td>
+						
+						<td>1880</td>
+						
+						<td>-9980</td>
+						
+						<td>-7700</td>
+						
+						<td>6320</td>
+						
+						<td>-3480</td>
+						
+						<td>-2940</td>
+						
+						<td>-10000</td>
+						
+						<td>-4360</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group10</th>
+						
+						<td>-9980</td>
+						
+						<td>-4540</td>
+						
+						<td>6700</td>
+						
+						<td>3300</td>
+						
+						<td>-6440</td>
+						
+						<td>-10000</td>
+						
+						<td>-1720</td>
+						
+						<td>-10000</td>
+						
+						<td>1020</td>
+						
+						<td>N.A.</td>
+						
+						<td>1240</td>
+						
+						<td>-1920</td>
+						
+						<td>-9120</td>
+						
+						<td>-5520</td>
+						
+						<td>1560</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-2660</td>
+						
+						<td>-10000</td>
+						
+						<td>-1200</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>9980</td>
+						
+						<td>7140</td>
+						
+						<td>-10000</td>
+						
+						<td>-7980</td>
+						
+						<td>-4760</td>
+						
+						<td>1360</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-6320</td>
+						
+						<td>-1320</td>
+						
+						<td>-10000</td>
+						
+						<td>-2320</td>
+						
+						<td>-10000</td>
+						
+						<td>-3980</td>
+						
+						<td>4520</td>
+						
+						<td>-5440</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group11</th>
+						
+						<td>-8500</td>
+						
+						<td>-6400</td>
+						
+						<td>9980</td>
+						
+						<td>-1360</td>
+						
+						<td>-7240</td>
+						
+						<td>-10000</td>
+						
+						<td>-800</td>
+						
+						<td>-10000</td>
+						
+						<td>-960</td>
+						
+						<td>-1240</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+						<td>-4680</td>
+						
+						<td>-10000</td>
+						
+						<td>1220</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>N.A.</td>
+						
+						<td>4800</td>
+						
+						<td>-1140</td>
+						
+						<td>540</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>9980</td>
+						
+						<td>4820</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-4380</td>
+						
+						<td>-880</td>
+						
+						<td>-10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>-920</td>
+						
+						<td>-9980</td>
+						
+						<td>-2100</td>
+						
+						<td>-10000</td>
+						
+						<td>-3300</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>3200</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group12</th>
+						
+						<td>-2960</td>
+						
+						<td>6600</td>
+						
+						<td>10000</td>
+						
+						<td>-1860</td>
+						
+						<td>-6800</td>
+						
+						<td>9180</td>
+						
+						<td>9980</td>
+						
+						<td>-80</td>
+						
+						<td>-2880</td>
+						
+						<td>1920</td>
+						
+						<td>10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>10000</td>
+						
+						<td>2040</td>
+						
+						<td>8120</td>
+						
+						<td>-1720</td>
+						
+						<td>10000</td>
+						
+						<td>3600</td>
+						
+						<td>10000</td>
+						
+						<td>5360</td>
+						
+						<td>10000</td>
+						
+						<td>-5300</td>
+						
+						<td>1520</td>
+						
+						<td>9980</td>
+						
+						<td>9820</td>
+						
+						<td>4260</td>
+						
+						<td>-1360</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-1660</td>
+						
+						<td>-3420</td>
+						
+						<td>1880</td>
+						
+						<td>-4100</td>
+						
+						<td>-620</td>
+						
+						<td>2300</td>
+						
+						<td>-3140</td>
+						
+						<td>-480</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>-720</td>
+						
+						<td>9980</td>
+						
+						<td>-4200</td>
+						
+						<td>-9600</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group13</th>
+						
+						<td>3460</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-4600</td>
+						
+						<td>9980</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>-4480</td>
+						
+						<td>3620</td>
+						
+						<td>9120</td>
+						
+						<td>4680</td>
+						
+						<td>-10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>2200</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>5380</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>1080</td>
+						
+						<td>-260</td>
+						
+						<td>-9980</td>
+						
+						<td>-240</td>
+						
+						<td>-6700</td>
+						
+						<td>10000</td>
+						
+						<td>-4460</td>
+						
+						<td>-3260</td>
+						
+						<td>4360</td>
+						
+						<td>-2120</td>
+						
+						<td>6060</td>
+						
+						<td>9980</td>
+						
+						<td>5160</td>
+						
+						<td>-8020</td>
+						
+						<td>-7400</td>
+						
+						<td>-120</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group14</th>
+						
+						<td>1200</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-6020</td>
+						
+						<td>7240</td>
+						
+						<td>-3440</td>
+						
+						<td>-7040</td>
+						
+						<td>-4680</td>
+						
+						<td>5520</td>
+						
+						<td>10000</td>
+						
+						<td>-2040</td>
+						
+						<td>-2200</td>
+						
+						<td>N.A.</td>
+						
+						<td>-320</td>
+						
+						<td>-4580</td>
+						
+						<td>-4560</td>
+						
+						<td>5020</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-5720</td>
+						
+						<td>-1460</td>
+						
+						<td>-10000</td>
+						
+						<td>1860</td>
+						
+						<td>9140</td>
+						
+						<td>-420</td>
+						
+						<td>-2900</td>
+						
+						<td>10000</td>
+						
+						<td>4580</td>
+						
+						<td>-5380</td>
+						
+						<td>-9400</td>
+						
+						<td>-2200</td>
+						
+						<td>-2980</td>
+						
+						<td>-2400</td>
+						
+						<td>10000</td>
+						
+						<td>7760</td>
+						
+						<td>-560</td>
+						
+						<td>-600</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-2700</td>
+						
+						<td>-2960</td>
+						
+						<td>-7060</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group15</th>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>9980</td>
+						
+						<td>-4360</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>4040</td>
+						
+						<td>-1560</td>
+						
+						<td>-1220</td>
+						
+						<td>-8120</td>
+						
+						<td>10000</td>
+						
+						<td>-5420</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-5480</td>
+						
+						<td>-7320</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>9980</td>
+						
+						<td>7800</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-3100</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-1520</td>
+						
+						<td>-10000</td>
+						
+						<td>-3900</td>
+						
+						<td>-7240</td>
+						
+						<td>-460</td>
+						
+						<td>-10000</td>
+						
+						<td>-3500</td>
+						
+						<td>2060</td>
+						
+						<td>-3420</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group16</th>
+						
+						<td>1180</td>
+						
+						<td>7700</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-3900</td>
+						
+						<td>-9700</td>
+						
+						<td>-6100</td>
+						
+						<td>-760</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>1720</td>
+						
+						<td>10000</td>
+						
+						<td>-820</td>
+						
+						<td>10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>-6540</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-7240</td>
+						
+						<td>-4920</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>9000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>6800</td>
+						
+						<td>-9980</td>
+						
+						<td>-2780</td>
+						
+						<td>2080</td>
+						
+						<td>-920</td>
+						
+						<td>10000</td>
+						
+						<td>-2380</td>
+						
+						<td>4640</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-4820</td>
+						
+						<td>N.A.</td>
+						
+						<td>-4620</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group17</th>
+						
+						<td>8160</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>7200</td>
+						
+						<td>-680</td>
+						
+						<td>3080</td>
+						
+						<td>-10000</td>
+						
+						<td>-5860</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-4420</td>
+						
+						<td>10000</td>
+						
+						<td>6540</td>
+						
+						<td>N.A.</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-6120</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>5600</td>
+						
+						<td>-2940</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-2520</td>
+						
+						<td>N.A.</td>
+						
+						<td>10000</td>
+						
+						<td>4340</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-4540</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>-7060</td>
+						
+						<td>-10000</td>
+						
+						<td>5200</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group18</th>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-9900</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-8600</td>
+						
+						<td>-10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>-3600</td>
+						
+						<td>-5380</td>
+						
+						<td>-5020</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>N.A.</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>-6340</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+						<td>-5440</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>N.A.</td>
+						
+						<td>N.A.</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group19</th>
+						
+						<td>-8820</td>
+						
+						<td>-9980</td>
+						
+						<td>9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-7560</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-5100</td>
+						
+						<td>2660</td>
+						
+						<td>-4800</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>5480</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>9980</td>
+						
+						<td>N.A.</td>
+						
+						<td>-2480</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>6820</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-8580</td>
+						
+						<td>-1280</td>
+						
+						<td>-4140</td>
+						
+						<td>-9980</td>
+						
+						<td>560</td>
+						
+						<td>-240</td>
+						
+						<td>-10000</td>
+						
+						<td>-1180</td>
+						
+						<td>10000</td>
+						
+						<td>-1120</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group20</th>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-1600</td>
+						
+						<td>-9980</td>
+						
+						<td>4640</td>
+						
+						<td>-10000</td>
+						
+						<td>1600</td>
+						
+						<td>10000</td>
+						
+						<td>1140</td>
+						
+						<td>-5360</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>7320</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>10000</td>
+						
+						<td>2480</td>
+						
+						<td>N.A.</td>
+						
+						<td>10000</td>
+						
+						<td>-9980</td>
+						
+						<td>1560</td>
+						
+						<td>9980</td>
+						
+						<td>2800</td>
+						
+						<td>9980</td>
+						
+						<td>-5140</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-4400</td>
+						
+						<td>-10000</td>
+						
+						<td>-3040</td>
+						
+						<td>-10000</td>
+						
+						<td>880</td>
+						
+						<td>4720</td>
+						
+						<td>-9980</td>
+						
+						<td>-6660</td>
+						
+						<td>-10000</td>
+						
+						<td>-5180</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group21</th>
+						
+						<td>-1560</td>
+						
+						<td>-9820</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-5360</td>
+						
+						<td>-4260</td>
+						
+						<td>-120</td>
+						
+						<td>-540</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>5720</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>-7440</td>
+						
+						<td>-10000</td>
+						
+						<td>9980</td>
+						
+						<td>7220</td>
+						
+						<td>-6320</td>
+						
+						<td>-10000</td>
+						
+						<td>3080</td>
+						
+						<td>-10000</td>
+						
+						<td>-280</td>
+						
+						<td>-10000</td>
+						
+						<td>320</td>
+						
+						<td>-6300</td>
+						
+						<td>-9080</td>
+						
+						<td>-10000</td>
+						
+						<td>-1400</td>
+						
+						<td>-3240</td>
+						
+						<td>-10000</td>
+						
+						<td>4960</td>
+						
+						<td>-2560</td>
+						
+						<td>-9020</td>
+						
+						<td>-4360</td>
+						
+						<td>-10000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group22</th>
+						
+						<td>7300</td>
+						
+						<td>3080</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>6300</td>
+						
+						<td>10000</td>
+						
+						<td>-3900</td>
+						
+						<td>8820</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-1860</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>7240</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>7440</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>620</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>2180</td>
+						
+						<td>2740</td>
+						
+						<td>8280</td>
+						
+						<td>4800</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>2240</td>
+						
+						<td>10000</td>
+						
+						<td>9000</td>
+						
+						<td>10000</td>
+						
+						<td>4100</td>
+						
+						<td>-7360</td>
+						
+						<td>-100</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group23</th>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-7000</td>
+						
+						<td>10000</td>
+						
+						<td>8160</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>-1520</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>4920</td>
+						
+						<td>6120</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-1560</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>-760</td>
+						
+						<td>1140</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-3800</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>7280</td>
+						
+						<td>10000</td>
+						
+						<td>6800</td>
+						
+						<td>1620</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-760</td>
+						
+						<td>3520</td>
+						
+						<td>4980</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group24</th>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-9120</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-1080</td>
+						
+						<td>-1860</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>N.A.</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>N.A.</td>
+						
+						<td>-7080</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-5040</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>0</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group25</th>
+						
+						<td>-10000</td>
+						
+						<td>-2940</td>
+						
+						<td>-1540</td>
+						
+						<td>-7680</td>
+						
+						<td>-6820</td>
+						
+						<td>4060</td>
+						
+						<td>-9980</td>
+						
+						<td>-9720</td>
+						
+						<td>-5600</td>
+						
+						<td>-7140</td>
+						
+						<td>-4820</td>
+						
+						<td>-9820</td>
+						
+						<td>260</td>
+						
+						<td>-9140</td>
+						
+						<td>-7800</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>6340</td>
+						
+						<td>-10000</td>
+						
+						<td>-2800</td>
+						
+						<td>-7220</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>7080</td>
+						
+						<td>N.A.</td>
+						
+						<td>-5320</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-5640</td>
+						
+						<td>-5580</td>
+						
+						<td>-3080</td>
+						
+						<td>-5820</td>
+						
+						<td>-3260</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>4720</td>
+						
+						<td>-4980</td>
+						
+						<td>-8860</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group26</th>
+						
+						<td>5680</td>
+						
+						<td>-620</td>
+						
+						<td>-10000</td>
+						
+						<td>8500</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-480</td>
+						
+						<td>-2140</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-4260</td>
+						
+						<td>9980</td>
+						
+						<td>-920</td>
+						
+						<td>-10000</td>
+						
+						<td>-9000</td>
+						
+						<td>-5600</td>
+						
+						<td>10000</td>
+						
+						<td>-6820</td>
+						
+						<td>-9980</td>
+						
+						<td>6320</td>
+						
+						<td>-10000</td>
+						
+						<td>-320</td>
+						
+						<td>10000</td>
+						
+						<td>5320</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+						<td>5840</td>
+						
+						<td>-9980</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>5540</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>2260</td>
+						
+						<td>10000</td>
+						
+						<td>5780</td>
+						
+						<td>-4020</td>
+						
+						<td>6780</td>
+						
+						<td>10000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group27</th>
+						
+						<td>1500</td>
+						
+						<td>8360</td>
+						
+						<td>10000</td>
+						
+						<td>7160</td>
+						
+						<td>4800</td>
+						
+						<td>3220</td>
+						
+						<td>10000</td>
+						
+						<td>-8400</td>
+						
+						<td>-80</td>
+						
+						<td>7980</td>
+						
+						<td>10000</td>
+						
+						<td>1360</td>
+						
+						<td>-1440</td>
+						
+						<td>-7060</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-5520</td>
+						
+						<td>10000</td>
+						
+						<td>-620</td>
+						
+						<td>-1140</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>5320</td>
+						
+						<td>10000</td>
+						
+						<td>-3100</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-2720</td>
+						
+						<td>9960</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-4140</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>-2360</td>
+						
+						<td>-3340</td>
+						
+						<td>-7660</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group28</th>
+						
+						<td>1520</td>
+						
+						<td>-9980</td>
+						
+						<td>10000</td>
+						
+						<td>9340</td>
+						
+						<td>10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-6940</td>
+						
+						<td>-100</td>
+						
+						<td>4760</td>
+						
+						<td>4380</td>
+						
+						<td>-10000</td>
+						
+						<td>6700</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-3080</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>-5840</td>
+						
+						<td>-5320</td>
+						
+						<td>N.A.</td>
+						
+						<td>10000</td>
+						
+						<td>2040</td>
+						
+						<td>-9980</td>
+						
+						<td>2960</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>8040</td>
+						
+						<td>-760</td>
+						
+						<td>-2520</td>
+						
+						<td>9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-5900</td>
+						
+						<td>-4040</td>
+						
+						<td>-9980</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group30</th>
+						
+						<td>-9980</td>
+						
+						<td>-340</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-920</td>
+						
+						<td>-10000</td>
+						
+						<td>-5680</td>
+						
+						<td>-1360</td>
+						
+						<td>880</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-4580</td>
+						
+						<td>-6760</td>
+						
+						<td>-6800</td>
+						
+						<td>-10000</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-2100</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+						<td>-5400</td>
+						
+						<td>-120</td>
+						
+						<td>9980</td>
+						
+						<td>-10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group31</th>
+						
+						<td>3280</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>6120</td>
+						
+						<td>9980</td>
+						
+						<td>-20</td>
+						
+						<td>10000</td>
+						
+						<td>-6500</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-2100</td>
+						
+						<td>-1920</td>
+						
+						<td>-1640</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>-8980</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>280</td>
+						
+						<td>-2180</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-3380</td>
+						
+						<td>-2040</td>
+						
+						<td>10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>-6000</td>
+						
+						<td>10000</td>
+						
+						<td>-2860</td>
+						
+						<td>9980</td>
+						
+						<td>4860</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-4720</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-380</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group32</th>
+						
+						<td>8000</td>
+						
+						<td>2760</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-2780</td>
+						
+						<td>620</td>
+						
+						<td>10000</td>
+						
+						<td>-820</td>
+						
+						<td>7200</td>
+						
+						<td>10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>3420</td>
+						
+						<td>-3880</td>
+						
+						<td>-4600</td>
+						
+						<td>10000</td>
+						
+						<td>2780</td>
+						
+						<td>N.A.</td>
+						
+						<td>N.A.</td>
+						
+						<td>8580</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-2740</td>
+						
+						<td>3800</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>6000</td>
+						
+						<td>N.A.</td>
+						
+						<td>4380</td>
+						
+						<td>7880</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>8280</td>
+						
+						<td>7680</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>5000</td>
+						
+						<td>6820</td>
+						
+						<td>9980</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group33</th>
+						
+						<td>-3860</td>
+						
+						<td>-5260</td>
+						
+						<td>8540</td>
+						
+						<td>-6260</td>
+						
+						<td>-1480</td>
+						
+						<td>-6920</td>
+						
+						<td>-4160</td>
+						
+						<td>-9980</td>
+						
+						<td>2240</td>
+						
+						<td>-10000</td>
+						
+						<td>920</td>
+						
+						<td>-1880</td>
+						
+						<td>-4360</td>
+						
+						<td>-2800</td>
+						
+						<td>1520</td>
+						
+						<td>-2080</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-2760</td>
+						
+						<td>10000</td>
+						
+						<td>-320</td>
+						
+						<td>-8280</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>5640</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-2960</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-4380</td>
+						
+						<td>N.A.</td>
+						
+						<td>-7700</td>
+						
+						<td>-3740</td>
+						
+						<td>-2480</td>
+						
+						<td>860</td>
+						
+						<td>-10000</td>
+						
+						<td>-7200</td>
+						
+						<td>4600</td>
+						
+						<td>1520</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group35</th>
+						
+						<td>1940</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-60</td>
+						
+						<td>2340</td>
+						
+						<td>10000</td>
+						
+						<td>8420</td>
+						
+						<td>-4240</td>
+						
+						<td>-1400</td>
+						
+						<td>6320</td>
+						
+						<td>9980</td>
+						
+						<td>4100</td>
+						
+						<td>-3780</td>
+						
+						<td>-7420</td>
+						
+						<td>10000</td>
+						
+						<td>920</td>
+						
+						<td>-4340</td>
+						
+						<td>5440</td>
+						
+						<td>4140</td>
+						
+						<td>10000</td>
+						
+						<td>6300</td>
+						
+						<td>-4800</td>
+						
+						<td>-10000</td>
+						
+						<td>5040</td>
+						
+						<td>5580</td>
+						
+						<td>-5540</td>
+						
+						<td>2720</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>-7100</td>
+						
+						<td>-7880</td>
+						
+						<td>7700</td>
+						
+						<td>N.A.</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>4780</td>
+						
+						<td>-5540</td>
+						
+						<td>10000</td>
+						
+						<td>5800</td>
+						
+						<td>9980</td>
+						
+						<td>-2420</td>
+						
+						<td>-10000</td>
+						
+						<td>4040</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group36</th>
+						
+						<td>-10000</td>
+						
+						<td>-4300</td>
+						
+						<td>10000</td>
+						
+						<td>-1600</td>
+						
+						<td>-3840</td>
+						
+						<td>-6900</td>
+						
+						<td>10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-2980</td>
+						
+						<td>-600</td>
+						
+						<td>-1140</td>
+						
+						<td>-4680</td>
+						
+						<td>-6060</td>
+						
+						<td>-10000</td>
+						
+						<td>-260</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>-10000</td>
+						
+						<td>9080</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>10000</td>
+						
+						<td>3080</td>
+						
+						<td>-10000</td>
+						
+						<td>-9960</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+						<td>3740</td>
+						
+						<td>-10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>N.A.</td>
+						
+						<td>4900</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>4920</td>
+						
+						<td>-1560</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group40</th>
+						
+						<td>-3700</td>
+						
+						<td>1400</td>
+						
+						<td>10000</td>
+						
+						<td>-3160</td>
+						
+						<td>10000</td>
+						
+						<td>-6540</td>
+						
+						<td>10000</td>
+						
+						<td>-5160</td>
+						
+						<td>820</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-2300</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>7240</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-560</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-7280</td>
+						
+						<td>10000</td>
+						
+						<td>5820</td>
+						
+						<td>10000</td>
+						
+						<td>-2000</td>
+						
+						<td>9980</td>
+						
+						<td>-9980</td>
+						
+						<td>-4860</td>
+						
+						<td>-10000</td>
+						
+						<td>2480</td>
+						
+						<td>-10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>N.A.</td>
+						
+						<td>1840</td>
+						
+						<td>-10000</td>
+						
+						<td>9980</td>
+						
+						<td>4860</td>
+						
+						<td>10000</td>
+						
+						<td>-2840</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group42</th>
+						
+						<td>640</td>
+						
+						<td>-1540</td>
+						
+						<td>4540</td>
+						
+						<td>-940</td>
+						
+						<td>1260</td>
+						
+						<td>-10000</td>
+						
+						<td>2900</td>
+						
+						<td>-10000</td>
+						
+						<td>-1880</td>
+						
+						<td>-1440</td>
+						
+						<td>3300</td>
+						
+						<td>-3900</td>
+						
+						<td>-5160</td>
+						
+						<td>-7760</td>
+						
+						<td>460</td>
+						
+						<td>-4640</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-3760</td>
+						
+						<td>3040</td>
+						
+						<td>1400</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>3260</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-8040</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-860</td>
+						
+						<td>-4780</td>
+						
+						<td>-4900</td>
+						
+						<td>-1840</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+						<td>-6140</td>
+						
+						<td>4480</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-9220</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group44</th>
+						
+						<td>8020</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-1680</td>
+						
+						<td>10000</td>
+						
+						<td>-9420</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-5440</td>
+						
+						<td>-2860</td>
+						
+						<td>-5040</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-400</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>3240</td>
+						
+						<td>-2240</td>
+						
+						<td>-6800</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-1860</td>
+						
+						<td>-1840</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-8280</td>
+						
+						<td>10000</td>
+						
+						<td>5540</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>-4060</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>1780</td>
+						
+						<td>-720</td>
+						
+						<td>10000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group45</th>
+						
+						<td>8020</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>1800</td>
+						
+						<td>-10000</td>
+						
+						<td>-1500</td>
+						
+						<td>-10000</td>
+						
+						<td>-5200</td>
+						
+						<td>-140</td>
+						
+						<td>3980</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>7400</td>
+						
+						<td>-3840</td>
+						
+						<td>3500</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>9980</td>
+						
+						<td>-7020</td>
+						
+						<td>-880</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-1620</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-2260</td>
+						
+						<td>-10000</td>
+						
+						<td>-2240</td>
+						
+						<td>-5880</td>
+						
+						<td>4720</td>
+						
+						<td>-7680</td>
+						
+						<td>7200</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>6140</td>
+						
+						<td>4060</td>
+						
+						<td>N.A.</td>
+						
+						<td>8340</td>
+						
+						<td>-1820</td>
+						
+						<td>-9980</td>
+						
+						<td>-440</td>
+						
+						<td>-10000</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group46</th>
+						
+						<td>-7940</td>
+						
+						<td>-6960</td>
+						
+						<td>-2820</td>
+						
+						<td>-3800</td>
+						
+						<td>-3880</td>
+						
+						<td>-4580</td>
+						
+						<td>-4720</td>
+						
+						<td>-9980</td>
+						
+						<td>-6320</td>
+						
+						<td>-4520</td>
+						
+						<td>-3200</td>
+						
+						<td>-9980</td>
+						
+						<td>-3140</td>
+						
+						<td>-10000</td>
+						
+						<td>-2060</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+						<td>-4720</td>
+						
+						<td>-4960</td>
+						
+						<td>-9000</td>
+						
+						<td>-10000</td>
+						
+						<td>0</td>
+						
+						<td>-4720</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-1480</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-4600</td>
+						
+						<td>-5800</td>
+						
+						<td>-4920</td>
+						
+						<td>-4860</td>
+						
+						<td>-4480</td>
+						
+						<td>-10000</td>
+						
+						<td>-8340</td>
+						
+						<td>N.A.</td>
+						
+						<td>-4680</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-9980</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group47</th>
+						
+						<td>-880</td>
+						
+						<td>-3380</td>
+						
+						<td>9980</td>
+						
+						<td>-1060</td>
+						
+						<td>-1040</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>3480</td>
+						
+						<td>-760</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+						<td>9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>N.A.</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>2560</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>4980</td>
+						
+						<td>-5780</td>
+						
+						<td>-9980</td>
+						
+						<td>-2040</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-1520</td>
+						
+						<td>-9980</td>
+						
+						<td>-1220</td>
+						
+						<td>-10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+						<td>1820</td>
+						
+						<td>4680</td>
+						
+						<td>N.A.</td>
+						
+						<td>-9980</td>
+						
+						<td>-10000</td>
+						
+						<td>-9980</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group48</th>
+						
+						<td>-6680</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>8640</td>
+						
+						<td>-300</td>
+						
+						<td>10000</td>
+						
+						<td>-9980</td>
+						
+						<td>2940</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-9980</td>
+						
+						<td>9980</td>
+						
+						<td>2700</td>
+						
+						<td>9980</td>
+						
+						<td>4820</td>
+						
+						<td>-3280</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>6660</td>
+						
+						<td>9020</td>
+						
+						<td>-4100</td>
+						
+						<td>-8900</td>
+						
+						<td>10000</td>
+						
+						<td>8860</td>
+						
+						<td>4020</td>
+						
+						<td>-3860</td>
+						
+						<td>5900</td>
+						
+						<td>-10000</td>
+						
+						<td>-2880</td>
+						
+						<td>-5000</td>
+						
+						<td>10000</td>
+						
+						<td>2420</td>
+						
+						<td>10000</td>
+						
+						<td>2840</td>
+						
+						<td>10000</td>
+						
+						<td>-1780</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>N.A.</td>
+						
+						<td>-10000</td>
+						
+						<td>9980</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group49</th>
+						
+						<td>5140</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-2260</td>
+						
+						<td>10000</td>
+						
+						<td>200</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>-880</td>
+						
+						<td>9980</td>
+						
+						<td>2960</td>
+						
+						<td>10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>4360</td>
+						
+						<td>7360</td>
+						
+						<td>-3520</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-6780</td>
+						
+						<td>3340</td>
+						
+						<td>4040</td>
+						
+						<td>N.A.</td>
+						
+						<td>10000</td>
+						
+						<td>-6820</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>720</td>
+						
+						<td>440</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>N.A.</td>
+						
+						<td>N.A.</td>
+						
+					</tr>
+					
+					<tr>
+						<th style="position: sticky; left: 0 ;background-color: #f2f2f2;">Group50</th>
+						
+						<td>7480</td>
+						
+						<td>8020</td>
+						
+						<td>10000</td>
+						
+						<td>3200</td>
+						
+						<td>-1520</td>
+						
+						<td>8000</td>
+						
+						<td>9980</td>
+						
+						<td>-9980</td>
+						
+						<td>4360</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-760</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>-2860</td>
+						
+						<td>-5200</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>5180</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-4980</td>
+						
+						<td>10000</td>
+						
+						<td>10000</td>
+						
+						<td>-10000</td>
+						
+						<td>-3140</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>-5880</td>
+						
+						<td>-9980</td>
+						
+						<td>10000</td>
+						
+						<td>-4040</td>
+						
+						<td>9980</td>
+						
+						<td>10000</td>
+						
+						<td>9220</td>
+						
+						<td>-10000</td>
+						
+						<td>10000</td>
+						
+						<td>9980</td>
+						
+						<td>9980</td>
+						
+						<td>-9980</td>
+						
+						<td>N.A.</td>
+						
+						<td>N.A.</td>
+						
+					</tr>
+					
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+</div>
+
+
+
+		</div>
+	</div>
+	
+</div>
+
+
+</body>
+</html>
