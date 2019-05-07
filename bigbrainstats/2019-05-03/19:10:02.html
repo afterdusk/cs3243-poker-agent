@@ -1,0 +1,2163 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="robots" content="NONE,NOARCHIVE">
+  <title>IndexError at /finalTournament/</title>
+  <style type="text/css">
+    html * { padding:0; margin:0; }
+    body * { padding:10px 20px; }
+    body * * { padding:0; }
+    body { font:small sans-serif; }
+    body>div { border-bottom:1px solid #ddd; }
+    h1 { font-weight:normal; }
+    h2 { margin-bottom:.8em; }
+    h2 span { font-size:80%; color:#666; font-weight:normal; }
+    h3 { margin:1em 0 .5em 0; }
+    h4 { margin:0 0 .5em 0; font-weight: normal; }
+    code, pre { font-size: 100%; white-space: pre-wrap; }
+    table { border:1px solid #ccc; border-collapse: collapse; width:100%; background:white; }
+    tbody td, tbody th { vertical-align:top; padding:2px 3px; }
+    thead th {
+      padding:1px 6px 1px 3px; background:#fefefe; text-align:left;
+      font-weight:normal; font-size:11px; border:1px solid #ddd;
+    }
+    tbody th { width:12em; text-align:right; color:#666; padding-right:.5em; }
+    table.vars { margin:5px 0 2px 40px; }
+    table.vars td, table.req td { font-family:monospace; }
+    table td.code { width:100%; }
+    table td.code pre { overflow:hidden; }
+    table.source th { color:#666; }
+    table.source td { font-family:monospace; white-space:pre; border-bottom:1px solid #eee; }
+    ul.traceback { list-style-type:none; color: #222; }
+    ul.traceback li.frame { padding-bottom:1em; color:#666; }
+    ul.traceback li.user { background-color:#e0e0e0; color:#000 }
+    div.context { padding:10px 0; overflow:hidden; }
+    div.context ol { padding-left:30px; margin:0 10px; list-style-position: inside; }
+    div.context ol li { font-family:monospace; white-space:pre; color:#777; cursor:pointer; padding-left: 2px; }
+    div.context ol li pre { display:inline; }
+    div.context ol.context-line li { color:#505050; background-color:#dfdfdf; padding: 3px 2px; }
+    div.context ol.context-line li span { position:absolute; right:32px; }
+    .user div.context ol.context-line li { background-color:#bbb; color:#000; }
+    .user div.context ol li { color:#666; }
+    div.commands { margin-left: 40px; }
+    div.commands a { color:#555; text-decoration:none; }
+    .user div.commands a { color: black; }
+    #summary { background: #ffc; }
+    #summary h2 { font-weight: normal; color: #666; }
+    #explanation { background:#eee; }
+    #template, #template-not-exist { background:#f6f6f6; }
+    #template-not-exist ul { margin: 0 0 10px 20px; }
+    #template-not-exist .postmortem-section { margin-bottom: 3px; }
+    #unicode-hint { background:#eee; }
+    #traceback { background:#eee; }
+    #requestinfo { background:#f6f6f6; padding-left:120px; }
+    #summary table { border:none; background:transparent; }
+    #requestinfo h2, #requestinfo h3 { position:relative; margin-left:-100px; }
+    #requestinfo h3 { margin-bottom:-1em; }
+    .error { background: #ffc; }
+    .specific { color:#cc3300; font-weight:bold; }
+    h2 span.commands { font-size:.7em;}
+    span.commands a:link {color:#5E5694;}
+    pre.exception_value { font-family: sans-serif; color: #666; font-size: 1.5em; margin: 10px 0 10px 0; }
+    .append-bottom { margin-bottom: 10px; }
+  </style>
+  
+  <script type="text/javascript">
+  //<!--
+    function getElementsByClassName(oElm, strTagName, strClassName){
+        // Written by Jonathan Snook, http://www.snook.ca/jon; Add-ons by Robert Nyman, http://www.robertnyman.com
+        var arrElements = (strTagName == "*" && document.all)? document.all :
+        oElm.getElementsByTagName(strTagName);
+        var arrReturnElements = new Array();
+        strClassName = strClassName.replace(/\-/g, "\\-");
+        var oRegExp = new RegExp("(^|\\s)" + strClassName + "(\\s|$)");
+        var oElement;
+        for(var i=0; i<arrElements.length; i++){
+            oElement = arrElements[i];
+            if(oRegExp.test(oElement.className)){
+                arrReturnElements.push(oElement);
+            }
+        }
+        return (arrReturnElements)
+    }
+    function hideAll(elems) {
+      for (var e = 0; e < elems.length; e++) {
+        elems[e].style.display = 'none';
+      }
+    }
+    window.onload = function() {
+      hideAll(getElementsByClassName(document, 'table', 'vars'));
+      hideAll(getElementsByClassName(document, 'ol', 'pre-context'));
+      hideAll(getElementsByClassName(document, 'ol', 'post-context'));
+      hideAll(getElementsByClassName(document, 'div', 'pastebin'));
+    }
+    function toggle() {
+      for (var i = 0; i < arguments.length; i++) {
+        var e = document.getElementById(arguments[i]);
+        if (e) {
+          e.style.display = e.style.display == 'none' ? 'block': 'none';
+        }
+      }
+      return false;
+    }
+    function varToggle(link, id) {
+      toggle('v' + id);
+      var s = link.getElementsByTagName('span')[0];
+      var uarr = String.fromCharCode(0x25b6);
+      var darr = String.fromCharCode(0x25bc);
+      s.textContent = s.textContent == uarr ? darr : uarr;
+      return false;
+    }
+    function switchPastebinFriendly(link) {
+      s1 = "Switch to copy-and-paste view";
+      s2 = "Switch back to interactive view";
+      link.textContent = link.textContent.trim() == s1 ? s2: s1;
+      toggle('browserTraceback', 'pastebinTraceback');
+      return false;
+    }
+    //-->
+  </script>
+  
+</head>
+<body>
+<div id="summary">
+  <h1>IndexError at /finalTournament/</h1>
+  <pre class="exception_value">index 43 is out of bounds for axis 0 with size 43</pre>
+  <table class="meta">
+
+    <tr>
+      <th>Request Method:</th>
+      <td>GET</td>
+    </tr>
+    <tr>
+      <th>Request URL:</th>
+      <td>http://ddstratcollab01.d2.comp.nus.edu.sg/finalTournament/</td>
+    </tr>
+
+    <tr>
+      <th>Django Version:</th>
+      <td>1.11.18</td>
+    </tr>
+
+    <tr>
+      <th>Exception Type:</th>
+      <td>IndexError</td>
+    </tr>
+
+
+    <tr>
+      <th>Exception Value:</th>
+      <td><pre>index 43 is out of bounds for axis 0 with size 43</pre></td>
+    </tr>
+
+
+    <tr>
+      <th>Exception Location:</th>
+      <td>/home/martin/cs3243project/kingOfTheHill/views.py in final_tournament_view, line 184</td>
+    </tr>
+
+    <tr>
+      <th>Python Executable:</th>
+      <td>/home/martin/cs3243project/cs3243projectenv/bin/python</td>
+    </tr>
+    <tr>
+      <th>Python Version:</th>
+      <td>2.7.15</td>
+    </tr>
+    <tr>
+      <th>Python Path:</th>
+      <td><pre>[&#39;/home/martin/cs3243project&#39;,
+ &#39;/home/martin/cs3243project/cs3243projectenv/bin&#39;,
+ &#39;/home/martin/cs3243project/cs3243projectenv/lib/python2.7&#39;,
+ &#39;/home/martin/cs3243project/cs3243projectenv/lib/python2.7/plat-x86_64-linux-gnu&#39;,
+ &#39;/home/martin/cs3243project/cs3243projectenv/lib/python2.7/lib-tk&#39;,
+ &#39;/home/martin/cs3243project/cs3243projectenv/lib/python2.7/lib-old&#39;,
+ &#39;/home/martin/cs3243project/cs3243projectenv/lib/python2.7/lib-dynload&#39;,
+ &#39;/opt/anaconda/lib/python2.7&#39;,
+ &#39;/opt/anaconda/lib/python2.7/lib-tk&#39;,
+ &#39;/home/martin/cs3243project/cs3243projectenv/lib/python2.7/site-packages&#39;]</pre></td>
+    </tr>
+    <tr>
+      <th>Server time:</th>
+      <td>Fri, 3 May 2019 19:10:03 +0800</td>
+    </tr>
+  </table>
+</div>
+
+
+
+
+<div id="traceback">
+  <h2>Traceback <span class="commands"><a href="#" onclick="return switchPastebinFriendly(this);">
+    Switch to copy-and-paste view</a></span>
+  </h2>
+  <div id="browserTraceback">
+    <ul class="traceback">
+      
+        
+        <li class="frame django">
+          <code>/home/martin/cs3243project/cs3243projectenv/lib/python2.7/site-packages/django/core/handlers/exception.py</code> in <code>inner</code>
+
+          
+            <div class="context" id="c140476066338288">
+              
+                <ol start="34" class="pre-context" id="pre140476066338288">
+                
+                  <li onclick="toggle('pre140476066338288', 'post140476066338288')"><pre>    This decorator is automatically applied to all middleware to ensure that</pre></li>
+                
+                  <li onclick="toggle('pre140476066338288', 'post140476066338288')"><pre>    no middleware leaks an exception and that the next middleware in the stack</pre></li>
+                
+                  <li onclick="toggle('pre140476066338288', 'post140476066338288')"><pre>    can rely on getting a response instead of an exception.</pre></li>
+                
+                  <li onclick="toggle('pre140476066338288', 'post140476066338288')"><pre>    &quot;&quot;&quot;</pre></li>
+                
+                  <li onclick="toggle('pre140476066338288', 'post140476066338288')"><pre>    @wraps(get_response, assigned=available_attrs(get_response))</pre></li>
+                
+                  <li onclick="toggle('pre140476066338288', 'post140476066338288')"><pre>    def inner(request):</pre></li>
+                
+                  <li onclick="toggle('pre140476066338288', 'post140476066338288')"><pre>        try:</pre></li>
+                
+                </ol>
+              
+              <ol start="41" class="context-line">
+                <li onclick="toggle('pre140476066338288', 'post140476066338288')"><pre>
+            response = get_response(request)</pre> <span>...</span></li></ol>
+              
+                <ol start='42' class="post-context" id="post140476066338288">
+                  
+                  <li onclick="toggle('pre140476066338288', 'post140476066338288')"><pre>        except Exception as exc:</pre></li>
+                  
+                  <li onclick="toggle('pre140476066338288', 'post140476066338288')"><pre>            response = response_for_exception(request, exc)</pre></li>
+                  
+                  <li onclick="toggle('pre140476066338288', 'post140476066338288')"><pre>        return response</pre></li>
+                  
+                  <li onclick="toggle('pre140476066338288', 'post140476066338288')"><pre>    return inner</pre></li>
+                  
+                  <li onclick="toggle('pre140476066338288', 'post140476066338288')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre140476066338288', 'post140476066338288')"><pre></pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            <div class="commands">
+                
+                    <a href="#" onclick="return varToggle(this, '140476066338288')"><span>&#x25b6;</span> Local vars</a>
+                
+            </div>
+            <table class="vars" id="v140476066338288">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>exc</td>
+                    <td class="code"><pre>IndexError(&#39;index 43 is out of bounds for axis 0 with size 43&#39;,)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>get_response</td>
+                    <td class="code"><pre>&lt;bound method WSGIHandler._get_response of &lt;django.core.handlers.wsgi.WSGIHandler object at 0x7fc38a818d10&gt;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>request</td>
+                    <td class="code"><pre>&lt;WSGIRequest: GET &#39;/finalTournament/&#39;&gt;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+          
+        </li>
+      
+        
+        <li class="frame django">
+          <code>/home/martin/cs3243project/cs3243projectenv/lib/python2.7/site-packages/django/core/handlers/base.py</code> in <code>_get_response</code>
+
+          
+            <div class="context" id="c140476066339872">
+              
+                <ol start="180" class="pre-context" id="pre140476066339872">
+                
+                  <li onclick="toggle('pre140476066339872', 'post140476066339872')"><pre>                break</pre></li>
+                
+                  <li onclick="toggle('pre140476066339872', 'post140476066339872')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre140476066339872', 'post140476066339872')"><pre>        if response is None:</pre></li>
+                
+                  <li onclick="toggle('pre140476066339872', 'post140476066339872')"><pre>            wrapped_callback = self.make_view_atomic(callback)</pre></li>
+                
+                  <li onclick="toggle('pre140476066339872', 'post140476066339872')"><pre>            try:</pre></li>
+                
+                  <li onclick="toggle('pre140476066339872', 'post140476066339872')"><pre>                response = wrapped_callback(request, *callback_args, **callback_kwargs)</pre></li>
+                
+                  <li onclick="toggle('pre140476066339872', 'post140476066339872')"><pre>            except Exception as e:</pre></li>
+                
+                </ol>
+              
+              <ol start="187" class="context-line">
+                <li onclick="toggle('pre140476066339872', 'post140476066339872')"><pre>
+                response = self.process_exception_by_middleware(e, request)</pre> <span>...</span></li></ol>
+              
+                <ol start='188' class="post-context" id="post140476066339872">
+                  
+                  <li onclick="toggle('pre140476066339872', 'post140476066339872')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre140476066339872', 'post140476066339872')"><pre>        # Complain if the view returned None (a common error).</pre></li>
+                  
+                  <li onclick="toggle('pre140476066339872', 'post140476066339872')"><pre>        if response is None:</pre></li>
+                  
+                  <li onclick="toggle('pre140476066339872', 'post140476066339872')"><pre>            if isinstance(callback, types.FunctionType):    # FBV</pre></li>
+                  
+                  <li onclick="toggle('pre140476066339872', 'post140476066339872')"><pre>                view_name = callback.__name__</pre></li>
+                  
+                  <li onclick="toggle('pre140476066339872', 'post140476066339872')"><pre>            else:                                           # CBV</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            <div class="commands">
+                
+                    <a href="#" onclick="return varToggle(this, '140476066339872')"><span>&#x25b6;</span> Local vars</a>
+                
+            </div>
+            <table class="vars" id="v140476066339872">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>callback</td>
+                    <td class="code"><pre>&lt;function final_tournament_view at 0x7fc3224b47d0&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>callback_args</td>
+                    <td class="code"><pre>()</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>callback_kwargs</td>
+                    <td class="code"><pre>{}</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>e</td>
+                    <td class="code"><pre>IndexError(&#39;index 43 is out of bounds for axis 0 with size 43&#39;,)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>middleware_method</td>
+                    <td class="code"><pre>&lt;bound method CsrfViewMiddleware.process_view of &lt;django.middleware.csrf.CsrfViewMiddleware object at 0x7fc38763f190&gt;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>request</td>
+                    <td class="code"><pre>&lt;WSGIRequest: GET &#39;/finalTournament/&#39;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>resolver</td>
+                    <td class="code"><pre>&lt;RegexURLResolver &#39;cs3243project.urls&#39; (None:None) ^/&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>resolver_match</td>
+                    <td class="code"><pre>ResolverMatch(func=kingOfTheHill.views.final_tournament_view, args=(), kwargs={}, url_name=Final tournament, app_names=[], namespaces=[])</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>response</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>&lt;django.core.handlers.wsgi.WSGIHandler object at 0x7fc38a818d10&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>wrapped_callback</td>
+                    <td class="code"><pre>&lt;function final_tournament_view at 0x7fc3224b47d0&gt;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+          
+        </li>
+      
+        
+        <li class="frame django">
+          <code>/home/martin/cs3243project/cs3243projectenv/lib/python2.7/site-packages/django/core/handlers/base.py</code> in <code>_get_response</code>
+
+          
+            <div class="context" id="c140476069958072">
+              
+                <ol start="178" class="pre-context" id="pre140476069958072">
+                
+                  <li onclick="toggle('pre140476069958072', 'post140476069958072')"><pre>            response = middleware_method(request, callback, callback_args, callback_kwargs)</pre></li>
+                
+                  <li onclick="toggle('pre140476069958072', 'post140476069958072')"><pre>            if response:</pre></li>
+                
+                  <li onclick="toggle('pre140476069958072', 'post140476069958072')"><pre>                break</pre></li>
+                
+                  <li onclick="toggle('pre140476069958072', 'post140476069958072')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre140476069958072', 'post140476069958072')"><pre>        if response is None:</pre></li>
+                
+                  <li onclick="toggle('pre140476069958072', 'post140476069958072')"><pre>            wrapped_callback = self.make_view_atomic(callback)</pre></li>
+                
+                  <li onclick="toggle('pre140476069958072', 'post140476069958072')"><pre>            try:</pre></li>
+                
+                </ol>
+              
+              <ol start="185" class="context-line">
+                <li onclick="toggle('pre140476069958072', 'post140476069958072')"><pre>
+                response = wrapped_callback(request, *callback_args, **callback_kwargs)</pre> <span>...</span></li></ol>
+              
+                <ol start='186' class="post-context" id="post140476069958072">
+                  
+                  <li onclick="toggle('pre140476069958072', 'post140476069958072')"><pre>            except Exception as e:</pre></li>
+                  
+                  <li onclick="toggle('pre140476069958072', 'post140476069958072')"><pre>                response = self.process_exception_by_middleware(e, request)</pre></li>
+                  
+                  <li onclick="toggle('pre140476069958072', 'post140476069958072')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre140476069958072', 'post140476069958072')"><pre>        # Complain if the view returned None (a common error).</pre></li>
+                  
+                  <li onclick="toggle('pre140476069958072', 'post140476069958072')"><pre>        if response is None:</pre></li>
+                  
+                  <li onclick="toggle('pre140476069958072', 'post140476069958072')"><pre>            if isinstance(callback, types.FunctionType):    # FBV</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            <div class="commands">
+                
+                    <a href="#" onclick="return varToggle(this, '140476069958072')"><span>&#x25b6;</span> Local vars</a>
+                
+            </div>
+            <table class="vars" id="v140476069958072">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>callback</td>
+                    <td class="code"><pre>&lt;function final_tournament_view at 0x7fc3224b47d0&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>callback_args</td>
+                    <td class="code"><pre>()</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>callback_kwargs</td>
+                    <td class="code"><pre>{}</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>e</td>
+                    <td class="code"><pre>IndexError(&#39;index 43 is out of bounds for axis 0 with size 43&#39;,)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>middleware_method</td>
+                    <td class="code"><pre>&lt;bound method CsrfViewMiddleware.process_view of &lt;django.middleware.csrf.CsrfViewMiddleware object at 0x7fc38763f190&gt;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>request</td>
+                    <td class="code"><pre>&lt;WSGIRequest: GET &#39;/finalTournament/&#39;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>resolver</td>
+                    <td class="code"><pre>&lt;RegexURLResolver &#39;cs3243project.urls&#39; (None:None) ^/&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>resolver_match</td>
+                    <td class="code"><pre>ResolverMatch(func=kingOfTheHill.views.final_tournament_view, args=(), kwargs={}, url_name=Final tournament, app_names=[], namespaces=[])</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>response</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>&lt;django.core.handlers.wsgi.WSGIHandler object at 0x7fc38a818d10&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>wrapped_callback</td>
+                    <td class="code"><pre>&lt;function final_tournament_view at 0x7fc3224b47d0&gt;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          <code>/home/martin/cs3243project/kingOfTheHill/views.py</code> in <code>final_tournament_view</code>
+
+          
+            <div class="context" id="c140476069457720">
+              
+                <ol start="177" class="pre-context" id="pre140476069457720">
+                
+                  <li onclick="toggle('pre140476069457720', 'post140476069457720')"><pre>    numberOfGames = np.zeros([len(users),len(users)])</pre></li>
+                
+                  <li onclick="toggle('pre140476069457720', 'post140476069457720')"><pre>    for fight in finalFights:</pre></li>
+                
+                  <li onclick="toggle('pre140476069457720', 'post140476069457720')"><pre>    	if(fight.outcome == &quot;Win&quot;):</pre></li>
+                
+                  <li onclick="toggle('pre140476069457720', 'post140476069457720')"><pre>    		winner_id = int(str(fight.winner_id)[5:]) - 1</pre></li>
+                
+                  <li onclick="toggle('pre140476069457720', 'post140476069457720')"><pre>    		loser_id = int(str(fight.loser_id)[5:]) -1</pre></li>
+                
+                  <li onclick="toggle('pre140476069457720', 'post140476069457720')"><pre>    		results[winner_id,loser_id] += fight.profit</pre></li>
+                
+                  <li onclick="toggle('pre140476069457720', 'post140476069457720')"><pre>    		results[loser_id,winner_id] -= fight.profit</pre></li>
+                
+                </ol>
+              
+              <ol start="184" class="context-line">
+                <li onclick="toggle('pre140476069457720', 'post140476069457720')"><pre>
+    		numberOfGames[winner_id,loser_id] += 1</pre> <span>...</span></li></ol>
+              
+                <ol start='185' class="post-context" id="post140476069457720">
+                  
+                  <li onclick="toggle('pre140476069457720', 'post140476069457720')"><pre>    		numberOfGames[loser_id,winner_id] += 1</pre></li>
+                  
+                  <li onclick="toggle('pre140476069457720', 'post140476069457720')"><pre>    results = results/numberOfGames</pre></li>
+                  
+                  <li onclick="toggle('pre140476069457720', 'post140476069457720')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre140476069457720', 'post140476069457720')"><pre>    if current_user.username == &quot;martin&quot; or current_user.username == &quot;Yair&quot; :</pre></li>
+                  
+                  <li onclick="toggle('pre140476069457720', 'post140476069457720')"><pre>        martin = True</pre></li>
+                  
+                  <li onclick="toggle('pre140476069457720', 'post140476069457720')"><pre>    return render(request, &#39;finaltournament.html&#39;, {&#39;user&#39;: current_user, &#39;current_best&#39;: current_best, &#39;money_made&#39;:money_made , &#39;position&#39;:position, &#39;groups&#39;: users, &#39;haveMessage&#39;: False,</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            <div class="commands">
+                
+                    <a href="#" onclick="return varToggle(this, '140476069457720')"><span>&#x25b6;</span> Local vars</a>
+                
+            </div>
+            <table class="vars" id="v140476069457720">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>argsorted_position</td>
+                    <td class="code"><pre>array([23,  2, 38, 17, 24, 20, 10, 39,  9, 14, 18, 35, 28,  6, 31,  4,  3,
+       27,  1, 33, 37,  8, 19, 34, 25,  5, 42, 15,  0, 13, 16, 29, 12, 11,
+       32,  7, 21, 26, 30, 41, 40, 36, 22])</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>counter</td>
+                    <td class="code"><pre>42</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>current_best</td>
+                    <td class="code"><pre>u&#39;Group23&#39;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>current_user</td>
+                    <td class="code"><pre>&lt;SimpleLazyObject: &lt;User: Group23&gt;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>fight</td>
+                    <td class="code"><pre>&lt;Final2TournamentResult: Final2TournamentResult object&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>finalFights</td>
+                    <td class="code"><pre>&lt;QuerySet [&lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &lt;Final2TournamentResult: Final2TournamentResult object&gt;, &#39;...(remaining elements truncated)...&#39;]&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>form</td>
+                    <td class="code"><pre>&lt;StartFinalTournamentForm bound=False, valid=Unknown, fields=()&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>i</td>
+                    <td class="code"><pre>42</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>j</td>
+                    <td class="code"><pre>22</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>los</td>
+                    <td class="code"><pre>&lt;FinalTournamentResult: FinalTournamentResult object&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>loser_id</td>
+                    <td class="code"><pre>41</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>martin</td>
+                    <td class="code"><pre>False</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>modifier</td>
+                    <td class="code"><pre>0</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>money_made</td>
+                    <td class="code"><pre>7084</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>number</td>
+                    <td class="code"><pre>22</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>numberOfGames</td>
+                    <td class="code"><pre>array([[0., 1., 1., ..., 0., 0., 0.],
+       [1., 0., 0., ..., 0., 0., 0.],
+       [1., 0., 0., ..., 0., 0., 0.],
+       ...,
+       [0., 0., 0., ..., 0., 0., 0.],
+       [0., 0., 0., ..., 0., 0., 0.],
+       [0., 0., 0., ..., 0., 0., 0.]])</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>number_opponents</td>
+                    <td class="code"><pre>42</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>number_users</td>
+                    <td class="code"><pre>43</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>nums_opponents</td>
+                    <td class="code"><pre>[42,
+ 42,
+ 42,
+ 42,
+ 42,
+ 42,
+ 42,
+ 42,
+ 42,
+ 42,
+ 39,
+ 42,
+ 41,
+ 42,
+ 42,
+ 42,
+ 40,
+ 37,
+ 42,
+ 41,
+ 42,
+ 42,
+ 42,
+ 41,
+ 42,
+ 42,
+ 42,
+ 42,
+ 41,
+ 42,
+ 39,
+ 42,
+ 42,
+ 41,
+ 41,
+ 41,
+ 42,
+ 42,
+ 41,
+ 38,
+ 41,
+ 38,
+ 42]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>opponents</td>
+                    <td class="code"><pre>[3480,
+ 6040,
+ 9980,
+ 420,
+ 9980,
+ 1320,
+ 10000,
+ -1300,
+ 2680,
+ 10000,
+ 10000,
+ -3900,
+ -6420,
+ -3580,
+ 9980,
+ 820,
+ -10000,
+ 10000,
+ 10000,
+ -3240,
+ 9980,
+ -10000,
+ -10000,
+ 10000,
+ 10000,
+ -9980,
+ -6420,
+ -340,
+ 3260,
+ 3620,
+ -10000,
+ 9980,
+ -7300,
+ 9980,
+ 10000,
+ 10000,
+ -9980,
+ 10000,
+ 5020,
+ 10000,
+ -10000,
+ -440,
+ u&#39;N.A.&#39;]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>position</td>
+                    <td class="code"><pre>u&#39;1/43&#39;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>profits</td>
+                    <td class="code"><pre>[3415,
+ -1666,
+ -8064,
+ -1924,
+ -2238,
+ 1211,
+ -2367,
+ 5695,
+ -514,
+ -4462,
+ -5125,
+ 4656,
+ 4382,
+ 3773,
+ -4114,
+ 2982,
+ 4154,
+ -6678,
+ -3898,
+ -402,
+ -5799,
+ 5879,
+ 7084,
+ -9534,
+ -6257,
+ 312,
+ 5945,
+ -1700,
+ -2770,
+ 4293,
+ 5947,
+ -2313,
+ 5518,
+ -890,
+ -214,
+ -3656,
+ 6590,
+ -735,
+ -6716,
+ -4864,
+ 6047,
+ 6008,
+ 2229]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>rank</td>
+                    <td class="code"><pre>{u&#39;group&#39;: u&#39;Group23&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: 7084, u&#39;rank&#39;: 1}</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>ranks</td>
+                    <td class="code"><pre>[{u&#39;group&#39;: u&#39;Group23&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: 7084, u&#39;rank&#39;: 1},
+ {u&#39;group&#39;: u&#39;Group44&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: 6590, u&#39;rank&#39;: 2},
+ {u&#39;group&#39;: u&#39;Group48&#39;, u&#39;num_fights&#39;: 41, u&#39;profit&#39;: 6047, u&#39;rank&#39;: 3},
+ {u&#39;group&#39;: u&#39;Group49&#39;, u&#39;num_fights&#39;: 38, u&#39;profit&#39;: 6008, u&#39;rank&#39;: 4},
+ {u&#39;group&#39;: u&#39;Group32&#39;, u&#39;num_fights&#39;: 39, u&#39;profit&#39;: 5947, u&#39;rank&#39;: 5},
+ {u&#39;group&#39;: u&#39;Group27&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: 5945, u&#39;rank&#39;: 6},
+ {u&#39;group&#39;: u&#39;Group22&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: 5879, u&#39;rank&#39;: 7},
+ {u&#39;group&#39;: u&#39;Group08&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: 5695, u&#39;rank&#39;: 8},
+ {u&#39;group&#39;: u&#39;Group35&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: 5518, u&#39;rank&#39;: 9},
+ {u&#39;group&#39;: u&#39;Group12&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: 4656, u&#39;rank&#39;: 10},
+ {u&#39;group&#39;: u&#39;Group13&#39;, u&#39;num_fights&#39;: 41, u&#39;profit&#39;: 4382, u&#39;rank&#39;: 11},
+ {u&#39;group&#39;: u&#39;Group31&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: 4293, u&#39;rank&#39;: 12},
+ {u&#39;group&#39;: u&#39;Group17&#39;, u&#39;num_fights&#39;: 40, u&#39;profit&#39;: 4154, u&#39;rank&#39;: 13},
+ {u&#39;group&#39;: u&#39;Group14&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: 3773, u&#39;rank&#39;: 14},
+ {u&#39;group&#39;: u&#39;Group01&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: 3415, u&#39;rank&#39;: 15},
+ {u&#39;group&#39;: u&#39;Group16&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: 2982, u&#39;rank&#39;: 16},
+ {u&#39;group&#39;: u&#39;Group50&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: 2229, u&#39;rank&#39;: 17},
+ {u&#39;group&#39;: u&#39;Group06&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: 1211, u&#39;rank&#39;: 18},
+ {u&#39;group&#39;: u&#39;Group26&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: 312, u&#39;rank&#39;: 19},
+ {u&#39;group&#39;: u&#39;Group40&#39;, u&#39;num_fights&#39;: 41, u&#39;profit&#39;: -214, u&#39;rank&#39;: 20},
+ {u&#39;group&#39;: u&#39;Group20&#39;, u&#39;num_fights&#39;: 41, u&#39;profit&#39;: -402, u&#39;rank&#39;: 21},
+ {u&#39;group&#39;: u&#39;Group09&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: -514, u&#39;rank&#39;: 22},
+ {u&#39;group&#39;: u&#39;Group45&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: -735, u&#39;rank&#39;: 23},
+ {u&#39;group&#39;: u&#39;Group36&#39;, u&#39;num_fights&#39;: 41, u&#39;profit&#39;: -890, u&#39;rank&#39;: 24},
+ {u&#39;group&#39;: u&#39;Group02&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: -1666, u&#39;rank&#39;: 25},
+ {u&#39;group&#39;: u&#39;Group28&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: -1700, u&#39;rank&#39;: 26},
+ {u&#39;group&#39;: u&#39;Group04&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: -1924, u&#39;rank&#39;: 27},
+ {u&#39;group&#39;: u&#39;Group05&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: -2238, u&#39;rank&#39;: 28},
+ {u&#39;group&#39;: u&#39;Group33&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: -2313, u&#39;rank&#39;: 29},
+ {u&#39;group&#39;: u&#39;Group07&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: -2367, u&#39;rank&#39;: 30},
+ {u&#39;group&#39;: u&#39;Group30&#39;, u&#39;num_fights&#39;: 41, u&#39;profit&#39;: -2770, u&#39;rank&#39;: 31},
+ {u&#39;group&#39;: u&#39;Group42&#39;, u&#39;num_fights&#39;: 41, u&#39;profit&#39;: -3656, u&#39;rank&#39;: 32},
+ {u&#39;group&#39;: u&#39;Group19&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: -3898, u&#39;rank&#39;: 33},
+ {u&#39;group&#39;: u&#39;Group15&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: -4114, u&#39;rank&#39;: 34},
+ {u&#39;group&#39;: u&#39;Group10&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: -4462, u&#39;rank&#39;: 35},
+ {u&#39;group&#39;: u&#39;Group47&#39;, u&#39;num_fights&#39;: 38, u&#39;profit&#39;: -4864, u&#39;rank&#39;: 36},
+ {u&#39;group&#39;: u&#39;Group11&#39;, u&#39;num_fights&#39;: 39, u&#39;profit&#39;: -5125, u&#39;rank&#39;: 37},
+ {u&#39;group&#39;: u&#39;Group21&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: -5799, u&#39;rank&#39;: 38},
+ {u&#39;group&#39;: u&#39;Group25&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: -6257, u&#39;rank&#39;: 39},
+ {u&#39;group&#39;: u&#39;Group18&#39;, u&#39;num_fights&#39;: 37, u&#39;profit&#39;: -6678, u&#39;rank&#39;: 40},
+ {u&#39;group&#39;: u&#39;Group46&#39;, u&#39;num_fights&#39;: 41, u&#39;profit&#39;: -6716, u&#39;rank&#39;: 41},
+ {u&#39;group&#39;: u&#39;Group03&#39;, u&#39;num_fights&#39;: 42, u&#39;profit&#39;: -8064, u&#39;rank&#39;: 42},
+ {u&#39;group&#39;: u&#39;Group24&#39;, u&#39;num_fights&#39;: 41, u&#39;profit&#39;: -9534, u&#39;rank&#39;: 43}]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>request</td>
+                    <td class="code"><pre>&lt;WSGIRequest: GET &#39;/finalTournament/&#39;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>results</td>
+                    <td class="code"><pre>array([[     0.,   9980.,  10000., ...,      0.,      0.,      0.],
+       [ -9980.,      0.,      0., ...,      0.,      0.,      0.],
+       [-10000.,      0.,      0., ...,      0.,      0.,      0.],
+       ...,
+       [     0.,      0.,      0., ...,      0.,      0.,      0.],
+       [     0.,      0.,      0., ...,      0.,      0.,      0.],
+       [     0.,      0.,      0., ...,      0.,      0.,      0.]])</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>setting</td>
+                    <td class="code"><pre>&lt;Setting: Setting object&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>user</td>
+                    <td class="code"><pre>&lt;User: Group50&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>user2</td>
+                    <td class="code"><pre>&lt;User: Group50&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>users</td>
+                    <td class="code"><pre>&lt;QuerySet [&lt;User: Group01&gt;, &lt;User: Group02&gt;, &lt;User: Group03&gt;, &lt;User: Group04&gt;, &lt;User: Group05&gt;, &lt;User: Group06&gt;, &lt;User: Group07&gt;, &lt;User: Group08&gt;, &lt;User: Group09&gt;, &lt;User: Group10&gt;, &lt;User: Group11&gt;, &lt;User: Group12&gt;, &lt;User: Group13&gt;, &lt;User: Group14&gt;, &lt;User: Group15&gt;, &lt;User: Group16&gt;, &lt;User: Group17&gt;, &lt;User: Group18&gt;, &lt;User: Group19&gt;, &lt;User: Group20&gt;, &#39;...(remaining elements truncated)...&#39;]&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>win</td>
+                    <td class="code"><pre>&lt;FinalTournamentResult: FinalTournamentResult object&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>winner_id</td>
+                    <td class="code"><pre>43</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+          
+        </li>
+      
+    </ul>
+  </div>
+  <form action="http://dpaste.com/" name="pasteform" id="pasteform" method="post">
+
+  <div id="pastebinTraceback" class="pastebin">
+    <input type="hidden" name="language" value="PythonConsole">
+    <input type="hidden" name="title"
+      value="IndexError at /finalTournament/">
+    <input type="hidden" name="source" value="Django Dpaste Agent">
+    <input type="hidden" name="poster" value="Django">
+    <textarea name="content" id="traceback_area" cols="140" rows="25">
+Environment:
+
+
+Request Method: GET
+Request URL: http://ddstratcollab01.d2.comp.nus.edu.sg/finalTournament/
+
+Django Version: 1.11.18
+Python Version: 2.7.15
+Installed Applications:
+[&#39;django.contrib.admin&#39;,
+ &#39;django.contrib.auth&#39;,
+ &#39;django.contrib.contenttypes&#39;,
+ &#39;django.contrib.sessions&#39;,
+ &#39;django.contrib.messages&#39;,
+ &#39;django.contrib.staticfiles&#39;,
+ &#39;kingOfTheHill&#39;,
+ &#39;background_task&#39;]
+Installed Middleware:
+[&#39;django.middleware.security.SecurityMiddleware&#39;,
+ &#39;django.contrib.sessions.middleware.SessionMiddleware&#39;,
+ &#39;django.middleware.common.CommonMiddleware&#39;,
+ &#39;django.middleware.csrf.CsrfViewMiddleware&#39;,
+ &#39;django.contrib.auth.middleware.AuthenticationMiddleware&#39;,
+ &#39;django.contrib.messages.middleware.MessageMiddleware&#39;,
+ &#39;django.middleware.clickjacking.XFrameOptionsMiddleware&#39;]
+
+
+
+Traceback:
+
+File "/home/martin/cs3243project/cs3243projectenv/lib/python2.7/site-packages/django/core/handlers/exception.py" in inner
+  41.             response = get_response(request)
+
+File "/home/martin/cs3243project/cs3243projectenv/lib/python2.7/site-packages/django/core/handlers/base.py" in _get_response
+  187.                 response = self.process_exception_by_middleware(e, request)
+
+File "/home/martin/cs3243project/cs3243projectenv/lib/python2.7/site-packages/django/core/handlers/base.py" in _get_response
+  185.                 response = wrapped_callback(request, *callback_args, **callback_kwargs)
+
+File "/home/martin/cs3243project/kingOfTheHill/views.py" in final_tournament_view
+  184.     		numberOfGames[winner_id,loser_id] += 1
+
+Exception Type: IndexError at /finalTournament/
+Exception Value: index 43 is out of bounds for axis 0 with size 43
+</textarea>
+  <br><br>
+  <input type="submit" value="Share this traceback on a public website">
+  </div>
+</form>
+</div>
+
+
+
+<div id="requestinfo">
+  <h2>Request information</h2>
+
+
+  
+    <h3 id="user-info">USER</h3>
+    <p>Group23</p>
+  
+
+  <h3 id="get-info">GET</h3>
+  
+    <p>No GET data</p>
+  
+
+  <h3 id="post-info">POST</h3>
+  
+    <p>No POST data</p>
+  
+  <h3 id="files-info">FILES</h3>
+  
+    <p>No FILES data</p>
+  
+
+
+  <h3 id="cookie-info">COOKIES</h3>
+  
+    <table class="req">
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            <td>incap_ses_1219_1988269</td>
+            <td class="code"><pre>&#39;bkrlA/xoDlEvDUCJNMLqEFKly1wAAAAAspidKxgiZ+pTSqGX/sGK/A==&#39;</pre></td>
+          </tr>
+        
+          <tr>
+            <td>_ga</td>
+            <td class="code"><pre>&#39;GA1.3.2076910979.1555251610&#39;</pre></td>
+          </tr>
+        
+          <tr>
+            <td>csrftoken</td>
+            <td class="code"><pre>&#39;zdTuiwW30WUBByUmBZHNjmTOoF9mvMEOGkkgcVHWUJazH7SyMavIlfAAMXVDdQWq&#39;</pre></td>
+          </tr>
+        
+          <tr>
+            <td>sessionid</td>
+            <td class="code"><pre>&#39;al6im50vcljfrj37gdnjrrynch63bo40&#39;</pre></td>
+          </tr>
+        
+          <tr>
+            <td>_gid</td>
+            <td class="code"><pre>&#39;GA1.3.1124009879.1556850004&#39;</pre></td>
+          </tr>
+        
+          <tr>
+            <td>visid_incap_1750112</td>
+            <td class="code"><pre>&#39;NKqZkh+1TQeMa82t7NzowY9Bs1wAAAAAQUIPAAAAAAANkRVJK/m9kCojowJ0HNf4&#39;</pre></td>
+          </tr>
+        
+          <tr>
+            <td>visid_incap_1988269</td>
+            <td class="code"><pre>&#39;EEiQiwkxRd+QcbDN2hlZolKly1wAAAAAQUIPAAAAAAD0MWcLUtzA3Iqro4lulu4i&#39;</pre></td>
+          </tr>
+        
+      </tbody>
+    </table>
+  
+
+  <h3 id="meta-info">META</h3>
+  <table class="req">
+    <thead>
+      <tr>
+        <th>Variable</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+        <tr>
+          <td>CSRF_COOKIE</td>
+          <td class="code"><pre>&#39;zdTuiwW30WUBByUmBZHNjmTOoF9mvMEOGkkgcVHWUJazH7SyMavIlfAAMXVDdQWq&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_ACCEPT</td>
+          <td class="code"><pre>&#39;text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_ACCEPT_ENCODING</td>
+          <td class="code"><pre>&#39;gzip, deflate&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_ACCEPT_LANGUAGE</td>
+          <td class="code"><pre>&#39;en-US,en;q=0.9,eo;q=0.8&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_CACHE_CONTROL</td>
+          <td class="code"><pre>&#39;max-age=0&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_CONNECTION</td>
+          <td class="code"><pre>&#39;close&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_COOKIE</td>
+          <td class="code"><pre>&#39;visid_incap_1750112=NKqZkh+1TQeMa82t7NzowY9Bs1wAAAAAQUIPAAAAAAANkRVJK/m9kCojowJ0HNf4; _ga=GA1.3.2076910979.1555251610; visid_incap_1988269=EEiQiwkxRd+QcbDN2hlZolKly1wAAAAAQUIPAAAAAAD0MWcLUtzA3Iqro4lulu4i; incap_ses_1219_1988269=bkrlA/xoDlEvDUCJNMLqEFKly1wAAAAAspidKxgiZ+pTSqGX/sGK/A==; _gid=GA1.3.1124009879.1556850004; csrftoken=zdTuiwW30WUBByUmBZHNjmTOoF9mvMEOGkkgcVHWUJazH7SyMavIlfAAMXVDdQWq; sessionid=al6im50vcljfrj37gdnjrrynch63bo40&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_DNT</td>
+          <td class="code"><pre>&#39;1&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_HOST</td>
+          <td class="code"><pre>&#39;ddstratcollab01.d2.comp.nus.edu.sg&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_REFERER</td>
+          <td class="code"><pre>&#39;http://ddstratcollab01.d2.comp.nus.edu.sg/ranking/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_UPGRADE_INSECURE_REQUESTS</td>
+          <td class="code"><pre>&#39;1&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_USER_AGENT</td>
+          <td class="code"><pre>&#39;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.108 Safari/537.36&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_X_FORWARDED_FOR</td>
+          <td class="code"><pre>&#39;192.168.48.134&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_X_FORWARDED_PROTO</td>
+          <td class="code"><pre>&#39;http&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_X_REAL_IP</td>
+          <td class="code"><pre>&#39;192.168.48.134&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PATH_INFO</td>
+          <td class="code"><pre>u&#39;/finalTournament/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>QUERY_STRING</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>RAW_URI</td>
+          <td class="code"><pre>&#39;/finalTournament/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>REMOTE_ADDR</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>REQUEST_METHOD</td>
+          <td class="code"><pre>&#39;GET&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SCRIPT_NAME</td>
+          <td class="code"><pre>u&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_NAME</td>
+          <td class="code"><pre>&#39;ddstratcollab01.d2.comp.nus.edu.sg&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_PORT</td>
+          <td class="code"><pre>&#39;80&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_PROTOCOL</td>
+          <td class="code"><pre>&#39;HTTP/1.0&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_SOFTWARE</td>
+          <td class="code"><pre>&#39;gunicorn/19.9.0&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>gunicorn.socket</td>
+          <td class="code"><pre>&lt;socket._socketobject object at 0x7fc32215ad00&gt;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.errors</td>
+          <td class="code"><pre>&lt;gunicorn.http.wsgi.WSGIErrorsWrapper object at 0x7fc38764fed0&gt;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.file_wrapper</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.input</td>
+          <td class="code"><pre>&lt;gunicorn.http.body.Body object at 0x7fc38764fc50&gt;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.multiprocess</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.multithread</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.run_once</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.url_scheme</td>
+          <td class="code"><pre>&#39;http&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.version</td>
+          <td class="code"><pre>(1, 0)</pre></td>
+        </tr>
+      
+    </tbody>
+  </table>
+
+
+  <h3 id="settings-info">Settings</h3>
+  <h4>Using settings module <code>cs3243project.settings</code></h4>
+  <table class="req">
+    <thead>
+      <tr>
+        <th>Setting</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+        <tr>
+          <td>ABSOLUTE_URL_OVERRIDES</td>
+          <td class="code"><pre>{}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ADMINS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ALLOWED_HOSTS</td>
+          <td class="code"><pre>[u&#39;localhost&#39;, &#39;.ddstratcollab01.d2.comp.nus.edu.sg&#39;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>APPEND_SLASH</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>AUTHENTICATION_BACKENDS</td>
+          <td class="code"><pre>[u&#39;django.contrib.auth.backends.ModelBackend&#39;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>AUTH_PASSWORD_VALIDATORS</td>
+          <td class="code"><pre>u&#39;********************&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>AUTH_USER_MODEL</td>
+          <td class="code"><pre>u&#39;auth.User&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>BACKGROUND_TASK_RUN_ASYNC</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>BASE_DIR</td>
+          <td class="code"><pre>&#39;/home/martin/cs3243project&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CACHES</td>
+          <td class="code"><pre>{u&#39;default&#39;: {u&#39;BACKEND&#39;: u&#39;django.core.cache.backends.locmem.LocMemCache&#39;}}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CACHE_MIDDLEWARE_ALIAS</td>
+          <td class="code"><pre>u&#39;default&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CACHE_MIDDLEWARE_KEY_PREFIX</td>
+          <td class="code"><pre>u&#39;********************&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CACHE_MIDDLEWARE_SECONDS</td>
+          <td class="code"><pre>600</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_AGE</td>
+          <td class="code"><pre>31449600</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_DOMAIN</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_HTTPONLY</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_NAME</td>
+          <td class="code"><pre>u&#39;csrftoken&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_PATH</td>
+          <td class="code"><pre>u&#39;/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_SECURE</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_FAILURE_VIEW</td>
+          <td class="code"><pre>u&#39;django.views.csrf.csrf_failure&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_HEADER_NAME</td>
+          <td class="code"><pre>u&#39;HTTP_X_CSRFTOKEN&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_TRUSTED_ORIGINS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_USE_SESSIONS</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATABASES</td>
+          <td class="code"><pre>{&#39;default&#39;: {&#39;ATOMIC_REQUESTS&#39;: False,
+             &#39;AUTOCOMMIT&#39;: True,
+             &#39;CONN_MAX_AGE&#39;: 0,
+             &#39;ENGINE&#39;: &#39;django.db.backends.postgresql_psycopg2&#39;,
+             &#39;HOST&#39;: &#39;localhost&#39;,
+             &#39;NAME&#39;: &#39;cs3243project&#39;,
+             &#39;OPTIONS&#39;: {},
+             &#39;PASSWORD&#39;: u&#39;********************&#39;,
+             &#39;PORT&#39;: &#39;&#39;,
+             &#39;TEST&#39;: {&#39;CHARSET&#39;: None,
+                      &#39;COLLATION&#39;: None,
+                      &#39;MIRROR&#39;: None,
+                      &#39;NAME&#39;: None},
+             &#39;TIME_ZONE&#39;: None,
+             &#39;USER&#39;: &#39;cs3243projectuser&#39;}}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATABASE_ROUTERS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATA_UPLOAD_MAX_MEMORY_SIZE</td>
+          <td class="code"><pre>2621440</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATA_UPLOAD_MAX_NUMBER_FIELDS</td>
+          <td class="code"><pre>1000</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATETIME_FORMAT</td>
+          <td class="code"><pre>u&#39;N j, Y, P&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATETIME_INPUT_FORMATS</td>
+          <td class="code"><pre>[u&#39;%Y-%m-%d %H:%M:%S&#39;,
+ u&#39;%Y-%m-%d %H:%M:%S.%f&#39;,
+ u&#39;%Y-%m-%d %H:%M&#39;,
+ u&#39;%Y-%m-%d&#39;,
+ u&#39;%m/%d/%Y %H:%M:%S&#39;,
+ u&#39;%m/%d/%Y %H:%M:%S.%f&#39;,
+ u&#39;%m/%d/%Y %H:%M&#39;,
+ u&#39;%m/%d/%Y&#39;,
+ u&#39;%m/%d/%y %H:%M:%S&#39;,
+ u&#39;%m/%d/%y %H:%M:%S.%f&#39;,
+ u&#39;%m/%d/%y %H:%M&#39;,
+ u&#39;%m/%d/%y&#39;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATE_FORMAT</td>
+          <td class="code"><pre>u&#39;N j, Y&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATE_INPUT_FORMATS</td>
+          <td class="code"><pre>[u&#39;%Y-%m-%d&#39;,
+ u&#39;%m/%d/%Y&#39;,
+ u&#39;%m/%d/%y&#39;,
+ u&#39;%b %d %Y&#39;,
+ u&#39;%b %d, %Y&#39;,
+ u&#39;%d %b %Y&#39;,
+ u&#39;%d %b, %Y&#39;,
+ u&#39;%B %d %Y&#39;,
+ u&#39;%B %d, %Y&#39;,
+ u&#39;%d %B %Y&#39;,
+ u&#39;%d %B, %Y&#39;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEBUG</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEBUG_PROPAGATE_EXCEPTIONS</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DECIMAL_SEPARATOR</td>
+          <td class="code"><pre>u&#39;.&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_CHARSET</td>
+          <td class="code"><pre>u&#39;utf-8&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_CONTENT_TYPE</td>
+          <td class="code"><pre>u&#39;text/html&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_EXCEPTION_REPORTER_FILTER</td>
+          <td class="code"><pre>u&#39;django.views.debug.SafeExceptionReporterFilter&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_FILE_STORAGE</td>
+          <td class="code"><pre>u&#39;django.core.files.storage.FileSystemStorage&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_FROM_EMAIL</td>
+          <td class="code"><pre>u&#39;webmaster@localhost&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_INDEX_TABLESPACE</td>
+          <td class="code"><pre>u&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_TABLESPACE</td>
+          <td class="code"><pre>u&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DISALLOWED_USER_AGENTS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_BACKEND</td>
+          <td class="code"><pre>u&#39;django.core.mail.backends.smtp.EmailBackend&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_HOST</td>
+          <td class="code"><pre>u&#39;localhost&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_HOST_PASSWORD</td>
+          <td class="code"><pre>u&#39;********************&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_HOST_USER</td>
+          <td class="code"><pre>u&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_PORT</td>
+          <td class="code"><pre>25</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_SSL_CERTFILE</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_SSL_KEYFILE</td>
+          <td class="code"><pre>u&#39;********************&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_SUBJECT_PREFIX</td>
+          <td class="code"><pre>u&#39;[Django] &#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_TIMEOUT</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_USE_LOCALTIME</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_USE_SSL</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_USE_TLS</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_CHARSET</td>
+          <td class="code"><pre>u&#39;utf-8&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_DIRECTORY_PERMISSIONS</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_HANDLERS</td>
+          <td class="code"><pre>[u&#39;django.core.files.uploadhandler.MemoryFileUploadHandler&#39;,
+ u&#39;django.core.files.uploadhandler.TemporaryFileUploadHandler&#39;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_MAX_MEMORY_SIZE</td>
+          <td class="code"><pre>2621440</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_PERMISSIONS</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_TEMP_DIR</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FIRST_DAY_OF_WEEK</td>
+          <td class="code"><pre>0</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FIXTURE_DIRS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FORCE_SCRIPT_NAME</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FORMAT_MODULE_PATH</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FORM_RENDERER</td>
+          <td class="code"><pre>u&#39;django.forms.renderers.DjangoTemplates&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>IGNORABLE_404_URLS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>INSTALLED_APPS</td>
+          <td class="code"><pre>[&#39;django.contrib.admin&#39;,
+ &#39;django.contrib.auth&#39;,
+ &#39;django.contrib.contenttypes&#39;,
+ &#39;django.contrib.sessions&#39;,
+ &#39;django.contrib.messages&#39;,
+ &#39;django.contrib.staticfiles&#39;,
+ &#39;kingOfTheHill&#39;,
+ &#39;background_task&#39;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>INTERNAL_IPS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGES</td>
+          <td class="code"><pre>[(u&#39;af&#39;, u&#39;Afrikaans&#39;),
+ (u&#39;ar&#39;, u&#39;Arabic&#39;),
+ (u&#39;ast&#39;, u&#39;Asturian&#39;),
+ (u&#39;az&#39;, u&#39;Azerbaijani&#39;),
+ (u&#39;bg&#39;, u&#39;Bulgarian&#39;),
+ (u&#39;be&#39;, u&#39;Belarusian&#39;),
+ (u&#39;bn&#39;, u&#39;Bengali&#39;),
+ (u&#39;br&#39;, u&#39;Breton&#39;),
+ (u&#39;bs&#39;, u&#39;Bosnian&#39;),
+ (u&#39;ca&#39;, u&#39;Catalan&#39;),
+ (u&#39;cs&#39;, u&#39;Czech&#39;),
+ (u&#39;cy&#39;, u&#39;Welsh&#39;),
+ (u&#39;da&#39;, u&#39;Danish&#39;),
+ (u&#39;de&#39;, u&#39;German&#39;),
+ (u&#39;dsb&#39;, u&#39;Lower Sorbian&#39;),
+ (u&#39;el&#39;, u&#39;Greek&#39;),
+ (u&#39;en&#39;, u&#39;English&#39;),
+ (u&#39;en-au&#39;, u&#39;Australian English&#39;),
+ (u&#39;en-gb&#39;, u&#39;British English&#39;),
+ (u&#39;eo&#39;, u&#39;Esperanto&#39;),
+ (u&#39;es&#39;, u&#39;Spanish&#39;),
+ (u&#39;es-ar&#39;, u&#39;Argentinian Spanish&#39;),
+ (u&#39;es-co&#39;, u&#39;Colombian Spanish&#39;),
+ (u&#39;es-mx&#39;, u&#39;Mexican Spanish&#39;),
+ (u&#39;es-ni&#39;, u&#39;Nicaraguan Spanish&#39;),
+ (u&#39;es-ve&#39;, u&#39;Venezuelan Spanish&#39;),
+ (u&#39;et&#39;, u&#39;Estonian&#39;),
+ (u&#39;eu&#39;, u&#39;Basque&#39;),
+ (u&#39;fa&#39;, u&#39;Persian&#39;),
+ (u&#39;fi&#39;, u&#39;Finnish&#39;),
+ (u&#39;fr&#39;, u&#39;French&#39;),
+ (u&#39;fy&#39;, u&#39;Frisian&#39;),
+ (u&#39;ga&#39;, u&#39;Irish&#39;),
+ (u&#39;gd&#39;, u&#39;Scottish Gaelic&#39;),
+ (u&#39;gl&#39;, u&#39;Galician&#39;),
+ (u&#39;he&#39;, u&#39;Hebrew&#39;),
+ (u&#39;hi&#39;, u&#39;Hindi&#39;),
+ (u&#39;hr&#39;, u&#39;Croatian&#39;),
+ (u&#39;hsb&#39;, u&#39;Upper Sorbian&#39;),
+ (u&#39;hu&#39;, u&#39;Hungarian&#39;),
+ (u&#39;ia&#39;, u&#39;Interlingua&#39;),
+ (u&#39;id&#39;, u&#39;Indonesian&#39;),
+ (u&#39;io&#39;, u&#39;Ido&#39;),
+ (u&#39;is&#39;, u&#39;Icelandic&#39;),
+ (u&#39;it&#39;, u&#39;Italian&#39;),
+ (u&#39;ja&#39;, u&#39;Japanese&#39;),
+ (u&#39;ka&#39;, u&#39;Georgian&#39;),
+ (u&#39;kk&#39;, u&#39;Kazakh&#39;),
+ (u&#39;km&#39;, u&#39;Khmer&#39;),
+ (u&#39;kn&#39;, u&#39;Kannada&#39;),
+ (u&#39;ko&#39;, u&#39;Korean&#39;),
+ (u&#39;lb&#39;, u&#39;Luxembourgish&#39;),
+ (u&#39;lt&#39;, u&#39;Lithuanian&#39;),
+ (u&#39;lv&#39;, u&#39;Latvian&#39;),
+ (u&#39;mk&#39;, u&#39;Macedonian&#39;),
+ (u&#39;ml&#39;, u&#39;Malayalam&#39;),
+ (u&#39;mn&#39;, u&#39;Mongolian&#39;),
+ (u&#39;mr&#39;, u&#39;Marathi&#39;),
+ (u&#39;my&#39;, u&#39;Burmese&#39;),
+ (u&#39;nb&#39;, u&#39;Norwegian Bokm\xe5l&#39;),
+ (u&#39;ne&#39;, u&#39;Nepali&#39;),
+ (u&#39;nl&#39;, u&#39;Dutch&#39;),
+ (u&#39;nn&#39;, u&#39;Norwegian Nynorsk&#39;),
+ (u&#39;os&#39;, u&#39;Ossetic&#39;),
+ (u&#39;pa&#39;, u&#39;Punjabi&#39;),
+ (u&#39;pl&#39;, u&#39;Polish&#39;),
+ (u&#39;pt&#39;, u&#39;Portuguese&#39;),
+ (u&#39;pt-br&#39;, u&#39;Brazilian Portuguese&#39;),
+ (u&#39;ro&#39;, u&#39;Romanian&#39;),
+ (u&#39;ru&#39;, u&#39;Russian&#39;),
+ (u&#39;sk&#39;, u&#39;Slovak&#39;),
+ (u&#39;sl&#39;, u&#39;Slovenian&#39;),
+ (u&#39;sq&#39;, u&#39;Albanian&#39;),
+ (u&#39;sr&#39;, u&#39;Serbian&#39;),
+ (u&#39;sr-latn&#39;, u&#39;Serbian Latin&#39;),
+ (u&#39;sv&#39;, u&#39;Swedish&#39;),
+ (u&#39;sw&#39;, u&#39;Swahili&#39;),
+ (u&#39;ta&#39;, u&#39;Tamil&#39;),
+ (u&#39;te&#39;, u&#39;Telugu&#39;),
+ (u&#39;th&#39;, u&#39;Thai&#39;),
+ (u&#39;tr&#39;, u&#39;Turkish&#39;),
+ (u&#39;tt&#39;, u&#39;Tatar&#39;),
+ (u&#39;udm&#39;, u&#39;Udmurt&#39;),
+ (u&#39;uk&#39;, u&#39;Ukrainian&#39;),
+ (u&#39;ur&#39;, u&#39;Urdu&#39;),
+ (u&#39;vi&#39;, u&#39;Vietnamese&#39;),
+ (u&#39;zh-hans&#39;, u&#39;Simplified Chinese&#39;),
+ (u&#39;zh-hant&#39;, u&#39;Traditional Chinese&#39;)]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGES_BIDI</td>
+          <td class="code"><pre>[u&#39;he&#39;, u&#39;ar&#39;, u&#39;fa&#39;, u&#39;ur&#39;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_CODE</td>
+          <td class="code"><pre>&#39;en-us&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_AGE</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_DOMAIN</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_NAME</td>
+          <td class="code"><pre>u&#39;django_language&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_PATH</td>
+          <td class="code"><pre>u&#39;/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOCALE_PATHS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGGING</td>
+          <td class="code"><pre>{&#39;disable_existing_loggers&#39;: False,
+ &#39;handlers&#39;: {&#39;console&#39;: {&#39;class&#39;: &#39;logging.StreamHandler&#39;}},
+ &#39;loggers&#39;: {&#39;background_task.tasks&#39;: {&#39;handlers&#39;: [&#39;console&#39;],
+                                       &#39;level&#39;: &#39;INFO&#39;}},
+ &#39;version&#39;: 1}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGGING_CONFIG</td>
+          <td class="code"><pre>u&#39;logging.config.dictConfig&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGIN_REDIRECT_URL</td>
+          <td class="code"><pre>u&#39;/accounts/profile/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGIN_URL</td>
+          <td class="code"><pre>u&#39;/accounts/login/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGIN__REDIRECT_URL</td>
+          <td class="code"><pre>&#39;/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGOUT_REDIRECT_URL</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGOUT__REDIRECT_URL</td>
+          <td class="code"><pre>&#39;/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MANAGERS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MEDIA_ROOT</td>
+          <td class="code"><pre>u&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MEDIA_URL</td>
+          <td class="code"><pre>u&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MESSAGE_STORAGE</td>
+          <td class="code"><pre>u&#39;django.contrib.messages.storage.fallback.FallbackStorage&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MIDDLEWARE</td>
+          <td class="code"><pre>[&#39;django.middleware.security.SecurityMiddleware&#39;,
+ &#39;django.contrib.sessions.middleware.SessionMiddleware&#39;,
+ &#39;django.middleware.common.CommonMiddleware&#39;,
+ &#39;django.middleware.csrf.CsrfViewMiddleware&#39;,
+ &#39;django.contrib.auth.middleware.AuthenticationMiddleware&#39;,
+ &#39;django.contrib.messages.middleware.MessageMiddleware&#39;,
+ &#39;django.middleware.clickjacking.XFrameOptionsMiddleware&#39;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MIDDLEWARE_CLASSES</td>
+          <td class="code"><pre>[u&#39;django.middleware.common.CommonMiddleware&#39;,
+ u&#39;django.middleware.csrf.CsrfViewMiddleware&#39;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MIGRATION_MODULES</td>
+          <td class="code"><pre>{}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MONTH_DAY_FORMAT</td>
+          <td class="code"><pre>u&#39;F j&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>NUMBER_GROUPING</td>
+          <td class="code"><pre>0</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PASSWORD_HASHERS</td>
+          <td class="code"><pre>u&#39;********************&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PASSWORD_RESET_TIMEOUT_DAYS</td>
+          <td class="code"><pre>u&#39;********************&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PREPEND_WWW</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ROOT_URLCONF</td>
+          <td class="code"><pre>&#39;cs3243project.urls&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECRET_KEY</td>
+          <td class="code"><pre>u&#39;********************&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_BROWSER_XSS_FILTER</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_CONTENT_TYPE_NOSNIFF</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_HSTS_INCLUDE_SUBDOMAINS</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_HSTS_PRELOAD</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_HSTS_SECONDS</td>
+          <td class="code"><pre>0</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_PROXY_SSL_HEADER</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_REDIRECT_EXEMPT</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_SSL_HOST</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_SSL_REDIRECT</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_EMAIL</td>
+          <td class="code"><pre>u&#39;root@localhost&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_CACHE_ALIAS</td>
+          <td class="code"><pre>u&#39;default&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_AGE</td>
+          <td class="code"><pre>1209600</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_DOMAIN</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_HTTPONLY</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_NAME</td>
+          <td class="code"><pre>u&#39;sessionid&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_PATH</td>
+          <td class="code"><pre>u&#39;/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_SECURE</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_ENGINE</td>
+          <td class="code"><pre>u&#39;django.contrib.sessions.backends.db&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_EXPIRE_AT_BROWSER_CLOSE</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_FILE_PATH</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_SAVE_EVERY_REQUEST</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_SERIALIZER</td>
+          <td class="code"><pre>u&#39;django.contrib.sessions.serializers.JSONSerializer&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SETTINGS_MODULE</td>
+          <td class="code"><pre>&#39;cs3243project.settings&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SHORT_DATETIME_FORMAT</td>
+          <td class="code"><pre>u&#39;m/d/Y P&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SHORT_DATE_FORMAT</td>
+          <td class="code"><pre>u&#39;m/d/Y&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SIGNING_BACKEND</td>
+          <td class="code"><pre>u&#39;django.core.signing.TimestampSigner&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SILENCED_SYSTEM_CHECKS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATICFILES_DIRS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATICFILES_FINDERS</td>
+          <td class="code"><pre>[u&#39;django.contrib.staticfiles.finders.FileSystemFinder&#39;,
+ u&#39;django.contrib.staticfiles.finders.AppDirectoriesFinder&#39;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATICFILES_STORAGE</td>
+          <td class="code"><pre>u&#39;django.contrib.staticfiles.storage.StaticFilesStorage&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATIC_ROOT</td>
+          <td class="code"><pre>&#39;/home/martin/cs3243project/static/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATIC_URL</td>
+          <td class="code"><pre>&#39;/static/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEMPLATES</td>
+          <td class="code"><pre>[{&#39;APP_DIRS&#39;: True,
+  &#39;BACKEND&#39;: &#39;django.template.backends.django.DjangoTemplates&#39;,
+  &#39;DIRS&#39;: [&#39;/home/martin/cs3243project/templates&#39;],
+  &#39;OPTIONS&#39;: {&#39;context_processors&#39;: [&#39;django.template.context_processors.debug&#39;,
+                                     &#39;django.template.context_processors.request&#39;,
+                                     &#39;django.contrib.auth.context_processors.auth&#39;,
+                                     &#39;django.contrib.messages.context_processors.messages&#39;]}}]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEST_NON_SERIALIZED_APPS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEST_RUNNER</td>
+          <td class="code"><pre>u&#39;django.test.runner.DiscoverRunner&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>THOUSAND_SEPARATOR</td>
+          <td class="code"><pre>u&#39;,&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TIME_FORMAT</td>
+          <td class="code"><pre>u&#39;P&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TIME_INPUT_FORMATS</td>
+          <td class="code"><pre>[u&#39;%H:%M:%S&#39;, u&#39;%H:%M:%S.%f&#39;, u&#39;%H:%M&#39;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TIME_ZONE</td>
+          <td class="code"><pre>&#39;Asia/Singapore&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_ETAGS</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_I18N</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_L10N</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_THOUSAND_SEPARATOR</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_TZ</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_X_FORWARDED_HOST</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_X_FORWARDED_PORT</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>WSGI_APPLICATION</td>
+          <td class="code"><pre>&#39;cs3243project.wsgi.application&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>X_FRAME_OPTIONS</td>
+          <td class="code"><pre>u&#39;SAMEORIGIN&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>YEAR_MONTH_FORMAT</td>
+          <td class="code"><pre>u&#39;F Y&#39;</pre></td>
+        </tr>
+      
+    </tbody>
+  </table>
+
+</div>
+
+  <div id="explanation">
+    <p>
+      You're seeing this error because you have <code>DEBUG = True</code> in your
+      Django settings file. Change that to <code>False</code>, and Django will
+      display a standard page generated by the handler for this status code.
+    </p>
+  </div>
+
+</body>
+</html>
