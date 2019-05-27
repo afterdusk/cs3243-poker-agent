@@ -2,7 +2,7 @@
 
 **CS3243 Introduction to Artificial Intelligence - Term Project**
 
-A project which develops an agent that can play a simplified version of poker.
+A project which develops an agent that can play a simplified version of poker. Our report can be found [here](../master/report/report.pdf).
 
 ## Project overview
 
